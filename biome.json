@@ -1,0 +1,14 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+    "javascript": {
+        "formatter": {
+            "enabled": true,
+            "bracketSpacing": true,
+            "indentSize": 4,
+            "indentStyle": "space",
+            "jsxQuoteStyle": "double",
+            "lineWidth": 240,
+            "quoteStyle": "double"
+        }
+    }
+}
