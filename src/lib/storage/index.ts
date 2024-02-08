@@ -81,7 +81,7 @@ export function useProxy<T>(storage: T & { [key: symbol]: any }): T {
     return storage;
 }
 
-export async function createStorage<T>(backend: StorageBackend): Promise<Awaited<T>> {
+export async function createStorage<T>(backend: StorageBackend): Promise<Awaited<T & { [key: symbol]: any }>> {
     const data = await backend.get();
     const { proxy, emitter } = createProxy(data);
 

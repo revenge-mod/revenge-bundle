@@ -486,7 +486,7 @@ interface VendettaObject {
     };
     storage: {
         createProxy: <T>(target: T) => { proxy: T, emitter: Emitter };
-        useProxy: <T>(storage: T) => T;
+        useProxy: <T>(storage: T & { [key: symbol]: any }) => T;
         createStorage: <T>(backend: StorageBackend) => Promise<Awaited<T>>;
         wrapSync: <T extends Promise<any>>(store: T) => Awaited<T>;
         awaitSyncWrapper: (store: any) => Promise<void>;
@@ -514,7 +514,7 @@ declare global {
     const __vendettaVersion: string;
 
     interface Window {
-        [key: PropertyKey]: any;
+        [key: Exclude<PropertyKey, number>]: any;
         modules: MetroModules;
         vendetta: VendettaObject;
         React: typeof _React;

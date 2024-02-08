@@ -12,6 +12,7 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
+        "skipLibCheck": true,
         "paths": {
             "@/*": ["src/*"],
             "@types": ["src/def.d.ts"],
