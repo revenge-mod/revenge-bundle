@@ -44,8 +44,7 @@ try {
             alias(aliases),
         ],
         define: {
-            // TODO: Rename this property
-            __vendettaVersion: `"${commit}"`,
+            __revengeVersion: `"${commit}"`,
         },
         footer: {
             js: "//# sourceURL=Revenge",

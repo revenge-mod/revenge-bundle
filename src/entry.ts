@@ -13,7 +13,7 @@ import(".").then((m) => m.default()).catch((e) => {
         "Failed to load Revenge!\n",
         `Build Number: ${ClientInfoManager.Build}`,
         // TODO: Rename this
-        `Revenge: ${__vendettaVersion}`,
+        `Revenge: ${__revengeVersion}`,
         e?.stack || e.toString(),
     ].join("\n"));
 });
