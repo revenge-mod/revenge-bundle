@@ -40,6 +40,6 @@ if (window.__vendetta_loader?.features.themes) {
     try {
         initThemes();
     } catch (e) {
-        console.error("[Vendetta] Failed to initialize themes...", e);
+        console.error("[Revenge] Failed to initialize themes...", e);
     }
 }

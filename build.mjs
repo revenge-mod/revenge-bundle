@@ -14,7 +14,7 @@ const commit = (await exec("git rev-parse HEAD")).stdout.trim().substring(0, 7) 
 try {
     await build({
         entryPoints: ["./src/entry.ts"],
-        outfile: "./dist/vendetta.js",
+        outfile: "./dist/revenge.js",
         minify: true,
         bundle: true,
         format: "iife",
@@ -44,10 +44,11 @@ try {
             alias(aliases),
         ],
         define: {
+            // TODO: Rename this property
             __vendettaVersion: `"${commit}"`,
         },
         footer: {
-            js: "//# sourceURL=Vendetta",
+            js: "//# sourceURL=Revenge",
         },
         legalComments: "none",
     });

@@ -34,13 +34,13 @@ const keyMap = (screens: Screen[], data: string | ((s: Screen) => any) | null) =
 
 export const getScreens = (youKeys = false): Screen[] => [
     {
-        key: formatKey("VendettaSettings", youKeys),
+        key: formatKey("RevengeSettings", youKeys),
         title: "General",
         icon: "settings",
         render: General,
     },
     {
-        key: formatKey("VendettaPlugins", youKeys),
+        key: formatKey("RevengePlugins", youKeys),
         title: "Plugins",
         icon: "debug",
         options: {
@@ -51,7 +51,7 @@ export const getScreens = (youKeys = false): Screen[] => [
                         if (!input.startsWith(PROXY_PREFIX) && !settings.developerSettings)
                             setImmediate(() => showConfirmationAlert({
                                 title: "Unproxied Plugin",
-                                content: "The plugin you are trying to install has not been proxied/verified by Vendetta staff. Are you sure you want to continue?",
+                                content: "The plugin you are trying to install has not been verified by Revenge staff. Are you sure you want to continue?",
                                 confirmText: "Install",
                                 onConfirm: () =>
                                     installPlugin(input)
@@ -67,7 +67,7 @@ export const getScreens = (youKeys = false): Screen[] => [
         render: Plugins,
     },
     {
-        key: formatKey("VendettaThemes", youKeys),
+        key: formatKey("RevengeThemes", youKeys),
         title: "Themes",
         icon: "ic_theme_24px",
         // TODO: bad
@@ -78,15 +78,15 @@ export const getScreens = (youKeys = false): Screen[] => [
         render: Themes,
     },
     {
-        key: formatKey("VendettaDeveloper", youKeys),
+        key: formatKey("RevengeDeveloper", youKeys),
         title: "Developer",
         icon: "ic_progress_wrench_24px",
         shouldRender: () => settings.developerSettings ?? false,
         render: Developer,
     },
     {
-        key: formatKey("VendettaCustomPage", youKeys),
-        title: "Vendetta Page",
+        key: formatKey("RevengeCustomPage", youKeys),
+        title: "Revenge Page",
         shouldRender: () => false,
         render: ({ render: PageView, noErrorBoundary, ...options }: { render: React.ComponentType; noErrorBoundary: boolean } & Record<string, object>) => {
             const navigation = NavigationNative.useNavigation();
@@ -110,8 +110,8 @@ export const getYouData = () => {
 
     return {
         getLayout: () => ({
-            title: "Vendetta",
-            label: "Vendetta",
+            title: "Revenge",
+            label: "Revenge",
             // We can't use our keyMap function here since `settings` is an array not an object
             settings: getRenderableScreens(true).map(s => s.key)
         }),

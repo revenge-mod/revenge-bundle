@@ -1,7 +1,7 @@
 {
-  "name": "vendetta",
+  "name": "revenge",
   "version": "1.0.0",
-  "description": "A mod for Discord's mobile apps.",
+  "description": "A modification for the Discord Android app.",
   "scripts": {
     "build": "bun run build.mjs"
   },
@@ -11,7 +11,7 @@
     "ios",
     "react native"
   ],
-  "author": "Beef",
+  "author": "maisymoe",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
