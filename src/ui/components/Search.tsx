@@ -9,7 +9,6 @@ const styles = stylesheet.createThemedStyleSheet({
         margin: 0,
         padding: 0,
         borderBottomWidth: 0,
-        background: "none",
         backgroundColor: "none",
     }
 });
