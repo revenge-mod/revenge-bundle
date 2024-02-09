@@ -80,7 +80,7 @@ export default function Developer() {
                         label="Asset Browser"
                         leading={<FormRow.Icon source={getAssetIDByName("ic_image")} />}
                         trailing={FormRow.Arrow}
-                        onPress={() => navigation.push("RevengeCustomPage", {
+                        onPress={() => navigation.push("VendettaCustomPage", {
                             title: "Asset Browser",
                             render: AssetBrowser,
                         })}
@@ -100,8 +100,8 @@ export default function Developer() {
                             options: [
                                 // @ts-expect-error 
                                 // Of course, to trigger an error, we need to do something incorrectly. The below will do!
-                                { label: "Revenge", onPress: () => navigation.push("RevengeCustomPage", { render: () => <undefined /> }) },
-                                { label: "Discord", isDestructive: true, onPress: () => navigation.push("RevengeCustomPage", { noErrorBoundary: true }) },
+                                { label: "Revenge", onPress: () => navigation.push("VendettaCustomPage", { render: () => <undefined /> }) },
+                                { label: "Discord", isDestructive: true, onPress: () => navigation.push("VendettaCustomPage", { noErrorBoundary: true }) },
                             ],
                         })}
                     />

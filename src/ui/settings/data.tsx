@@ -85,7 +85,7 @@ export const getScreens = (youKeys = false): Screen[] => [
         render: Developer,
     },
     {
-        key: formatKey("RevengeCustomPage", youKeys),
+        key: formatKey("VendettaCustomPage", youKeys),
         title: "Revenge Page",
         shouldRender: () => false,
         render: ({ render: PageView, noErrorBoundary, ...options }: { render: React.ComponentType; noErrorBoundary: boolean } & Record<string, object>) => {

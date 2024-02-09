@@ -114,7 +114,7 @@ export default function PluginCard({ item: plugin, index }: CardWrapper<Plugin>)
             actions={[
                 ...(settings ? [{
                     icon: "settings",
-                    onPress: () => navigation.push("RevengeCustomPage", {
+                    onPress: () => navigation.push("VendettaCustomPage", {
                         title: plugin.manifest.name,
                         render: settings,
                     })
