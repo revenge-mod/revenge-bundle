@@ -1,44 +1,44 @@
 name: Build
 on:
-    push:
-          branches: [rewrite]
+  push:
+    branches: [main]
 
 jobs:
-    build:
-        name: Build and push
-        runs-on: ubuntu-latest
+  build:
+    name: Build and push
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v3
-            - uses: actions/checkout@v3
-              with:
-                  repository: "vendetta-mod/builds"
-                  path: "builds"
-                  token: ${{ secrets.BEEF_TOKEN }}
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: 16
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: "revenge-mod/builds"
+          path: "builds"
+          token: ${{ secrets.BUILDS_PUSH_TOKEN }}
 
-            - name: Install dependencies
-              run: |
-                  npm i -g pnpm
-                  pnpm i
+      - uses: oven-sh/setup-bun@v1
 
-            - name: Build
-              run: pnpm build
+      - name: Install dependencies
+        run: |
+          bun i
 
-            - name: Push builds
-              run: |
-                  rm $GITHUB_WORKSPACE/builds/* || true
-                  cp -r dist/* $GITHUB_WORKSPACE/builds || true
-                  cd $GITHUB_WORKSPACE/builds
-                  git config --local user.email "actions@github.com"
-                  git config --local user.name "GitHub Actions"
-                  git add .
-                  git commit -m "Build $GITHUB_SHA" || exit 0
-                  git push
+      - name: Build
+        run: bun run build
 
-            - name: Purge CDN cache
-              run: |
-                  curl https://purge.jsdelivr.net/gh/vendetta-mod/builds
-                  
+      - name: Push builds
+        run: |
+          rm $GITHUB_WORKSPACE/builds/* || true
+          cp -r dist/* $GITHUB_WORKSPACE/builds || true
+          cd $GITHUB_WORKSPACE/builds
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Build $GITHUB_SHA" || exit 0
+          git push
+
+      # NOTE: Temporarily disabled, enable if needed
+      - name: Purge CDN cache
+        if: ${{ false }}
+        run: |
+          curl https://purge.jsdelivr.net/gh/vendetta-mod/builds
+
