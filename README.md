@@ -7,13 +7,15 @@ A modification for the Discord Android app. Continuation of [Vendetta](https://g
 > [!NOTE]
 > While Revenge is platform-agnostic, there is no guarantee it will always work on iOS. I do not have a device to test the changes I've made, so feel free to report iOS-specific issues in the Issues tab if you encounter one.
 
-<!--1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
-2. Go to Settings > General and enable Developer Settings
-3. Go to Settings > Developer, then enable `Load from custom url` and input `[PLACEHOLDER]`
-   - If that settings section does not appear, restart the app.
-4. Restart the app and check if it says Revenge in the settings--->
-
-Installing is currently not possible yet. Please check back later.
+1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
+2. Go to **Settings** > **General** enable **Developer Settings**
+3. Go to **Settings** > **Developer**, enable **Load from custom URL**, and input
+   ```
+   https://cdn.jsdelivr.net/gh/revenge-mod/builds@main/revenge.js
+   ```
+   in the new input box labelled **VENDETTA URL**.
+   - If the **Developer** settings section does not appear, restart the app
+5. Restart the app and check if it says Revenge in the settings
 
 ## 💖 Contributing
 
@@ -23,29 +25,28 @@ Installing is currently not possible yet. Please check back later.
 >
 > If you're on Windows, we recommend checking out WSL.
 
-1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
+1. Follow the first two steps listed [**⬇️ Installing**](#-installing) section
 
-1. Go to Settings > General and enable Developer Settings.
-
-2. Clone the repo:
+2. Clone the repository
     ```
     git clone https://github.com/revenge-mod/Revenge
     ```
 
-3. Install dependencies:
+3. Install dependencies
     ```
     bun i
     ```
 
-4. Build Revenge's code:
+4. Build Revenge
     ```
     bun run build
     ```
 
 5. In the newly created `dist` directory, run a HTTP server. We recommend [http-server](https://www.npmjs.com/package/http-server).
 
-6. Go to Settings > Developer enabled earlier). Enable `Load from custom url` and input the IP address and port of the server (e.g.  e.g. `http://192.168.1.236:4040`) in the new input box labelled `VENDETTA URL`.
+6. Go to **Settings** > **Developer**, enable **Load from custom URL**, and input the IP address and port of the server (e.g. `http://192.168.1.236:4040`) in the new input box labelled **VENDETTA URL**.
+   - If the **Developer** setting section doesn't appear, restart the app
 
-7. Restart Discord. Upon reload, you should notice that your device will download Revenge's bundled code from your server, rather than GitHub.
+8. Restart Discord. Upon reload, you should notice that your device will download Revenge's bundled code from your server, rather than GitHub.
 
-8. Make your changes, rebuild, reload, go wild!
+9. Make your changes, rebuild, reload, go wild!
