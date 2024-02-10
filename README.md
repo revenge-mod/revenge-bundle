@@ -1,5 +1,7 @@
 # Revenge
 
+bruh
+
 A modification for the Discord Android app. Continuation of [Vendetta](https://github.com/vendetta-mod). Get it? Vendetta is like, revenging..., yeah.
 
 ## ⬇️ Installing
