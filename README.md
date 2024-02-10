@@ -4,11 +4,16 @@ A modification for the Discord Android app. Continuation of [Vendetta](https://g
 
 ## ⬇️ Installing
 
-> [!NOTE]  
-> While [Vendetta](https://github.com/vendetta-mod) used to be platform-agnostic, Revenge will only focus on Android as alternatives exist for iOS.  
-> Focusig on just Android gives us more benefit, as we can add Android-only features more easily.
+> [!NOTE]
+> While Revenge is platform-agnostic, there is no guarantee it will always work on iOS. I do not have a device to test the changes I've made, so feel free to report iOS-specific issues in the Issues tab if you encounter one.
 
-Installing is not currently possible yet, as we're on the process of moving and renaming things.
+<!--1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
+2. Go to Settings > General and enable Developer Settings
+3. Go to Settings > Developer, then enable `Load from custom url` and input `[PLACEHOLDER]`
+   - If that settings section does not appear, restart the app.
+4. Restart the app and check if it says Revenge in the settings--->
+
+Installing is currently not possible yet. Please check back later.
 
 ## 💖 Contributing
 
@@ -18,15 +23,13 @@ Installing is not currently possible yet, as we're on the process of moving and 
 >
 > If you're on Windows, we recommend checking out WSL.
 
-This section will be worked on once the [**⬇️ Installing**](#%EF%B8%8F-installing) section is finished.
-
-<!-- 1. Install a Vendetta loader with loader config support (any mentioned in the [Installing](#installing) section).
+1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
 
 1. Go to Settings > General and enable Developer Settings.
 
 2. Clone the repo:
     ```
-    git clone https://github.com/vendetta-mod/Vendetta
+    git clone https://github.com/revenge-mod/Revenge
     ```
 
 3. Install dependencies:
@@ -34,7 +37,7 @@ This section will be worked on once the [**⬇️ Installing**](#%EF%B8%8F-insta
     bun i
     ```
 
-4. Build Vendetta's code:
+4. Build Revenge's code:
     ```
     bun run build
     ```
@@ -43,6 +46,6 @@ This section will be worked on once the [**⬇️ Installing**](#%EF%B8%8F-insta
 
 6. Go to Settings > Developer enabled earlier). Enable `Load from custom url` and input the IP address and port of the server (e.g.  e.g. `http://192.168.1.236:4040`) in the new input box labelled `VENDETTA URL`.
 
-7. Restart Discord. Upon reload, you should notice that your device will download Vendetta's bundled code from your server, rather than GitHub.
+7. Restart Discord. Upon reload, you should notice that your device will download Revenge's bundled code from your server, rather than GitHub.
 
-8. Make your changes, rebuild, reload, go wild! -->
+8. Make your changes, rebuild, reload, go wild!
