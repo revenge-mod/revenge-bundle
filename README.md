@@ -18,8 +18,7 @@ A modification for the Discord Android app. Continuation of [Vendetta](https://g
 ```
 > [!NOTE]
 > This is default location of module if you use *default downloads folder* and *you don't have any `app-release.apk` saved*. If you move module or it has different name - change the path respectively.
-
-6. Install!
+5. Head back to main screen and install!
 ## 💖 Contributing
 
 > [!NOTE]  
