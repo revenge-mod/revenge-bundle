@@ -9,16 +9,16 @@ interface AddonPageProps<T> {
     safeModeMessage: string;
     safeModeExtras?: JSX.Element | JSX.Element[];
     card: React.ComponentType<CardWrapper<T>>;
+    keyGetter: (item: T) => (string | undefined)[]
 }
 
-export default function AddonPage<T>({ items, safeModeMessage, safeModeExtras, card: CardComponent }: AddonPageProps<T>) {
+export default function AddonPage<T>({ items, safeModeMessage, safeModeExtras, card: CardComponent, keyGetter }: AddonPageProps<T>) {
     useProxy(settings)
     useProxy(items);
     const [search, setSearch] = React.useState("");
 
     return (
         <ErrorBoundary>
-            {/* TODO: Implement better searching than just by ID */}
             <RN.FlatList
                 ListHeaderComponent={<>
                     {settings.safeMode?.enabled && <RN.View style={{ marginBottom: 10 }}>
@@ -33,8 +33,8 @@ export default function AddonPage<T>({ items, safeModeMessage, safeModeExtras, c
                 </>}
                 style={{ paddingHorizontal: 10, paddingTop: 10 }}
                 contentContainerStyle={{ paddingBottom: 20 }}
-                data={Object.values(items).filter(i => i.id?.toLowerCase().includes(search))}
-                renderItem={({ item, index }) => <CardComponent item={item} index={index} />}
+                data={Object.values(items).filter(i => keyGetter(i).some(x => x?.toLowerCase().includes(search)))}
+                renderItem={({ item, index }) => <CardComponent item={item} index={index} highlight={search} />}
             />
         </ErrorBoundary>
     )

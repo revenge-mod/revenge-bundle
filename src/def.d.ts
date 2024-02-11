@@ -416,6 +416,7 @@ interface VendettaObject {
         PROXY_PREFIX: string;
         HTTP_REGEX: RegExp;
         HTTP_REGEX_MULTI: RegExp;
+        ESCAPE_REGEX: RegExp;
     };
     utils: {
         findInReactTree: (tree: SearchTree, filter: SearchFilter) => any;

@@ -13,19 +13,22 @@ async function stopThenStart(plugin: Plugin, callback: Function) {
     if (plugin.enabled) await startPlugin(plugin.id);
 }
 
-export default function PluginCard({ item: plugin, index }: CardWrapper<Plugin>) {
+export default function PluginCard({ item: plugin, index, highlight }: CardWrapper<Plugin>) {
     const settings = getSettings(plugin.id);
     const navigation = NavigationNative.useNavigation();
     const [removed, setRemoved] = React.useState(false);
 
     // This is needed because of React™
     if (removed) return null;
+    
+    const authors = plugin.manifest.authors;
 
     return (
         <Card
             index={index}
             // TODO: Actually make use of user IDs
-            headerLabel={`${plugin.manifest.name} by ${plugin.manifest.authors.map(i => i.name).join(", ")}`}
+            headerLabel={plugin.manifest.name}
+            headerSublabel={authors?.[0] && `by ${plugin.manifest.authors.map(i => i.name).join(", ")}`}
             headerIcon={plugin.manifest.vendetta?.icon || "ic_application_command_24px"}
             toggleType="switch"
             toggleValue={plugin.enabled}
@@ -120,6 +123,7 @@ export default function PluginCard({ item: plugin, index }: CardWrapper<Plugin>)
                     })
                 }] : []),
             ]}
+            highlight={highlight}
         />
     )
 }
