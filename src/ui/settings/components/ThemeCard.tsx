@@ -14,7 +14,7 @@ async function selectAndReload(value: boolean, id: string) {
     BundleUpdaterManager.reload();
 }
 
-export default function ThemeCard({ item: theme, index }: CardWrapper<Theme>) {
+export default function ThemeCard({ item: theme, index, highlight }: CardWrapper<Theme>) {
     useProxy(settings);
     const [removed, setRemoved] = React.useState(false);
 
@@ -26,7 +26,8 @@ export default function ThemeCard({ item: theme, index }: CardWrapper<Theme>) {
     return (
         <Card
             index={index}
-            headerLabel={`${theme.data.name} ${authors ? `by ${authors.map(i => i.name).join(", ")}` : ""}`}
+            headerLabel={theme.data.name}
+            headerSublabel={authors?.[0] && `by ${authors.map(i => i.name).join(", ")}`}
             descriptionLabel={theme.data.description ?? "No description."}
             toggleType={!settings.safeMode?.enabled ? "radio" : undefined}
             toggleValue={theme.selected}
@@ -86,6 +87,7 @@ export default function ThemeCard({ item: theme, index }: CardWrapper<Theme>) {
                     })
                 },
             ]}
+            highlight={highlight}
         />
     )
 }

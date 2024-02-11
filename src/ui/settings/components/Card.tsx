@@ -1,7 +1,8 @@
+import { ESCAPE_REGEX } from "@/lib/constants";
 import { ReactNative as RN, stylesheet } from "@metro/common";
-import { findByProps } from "@metro/filters";
+import { findByProps, findByStoreName } from "@metro/filters";
 import { getAssetIDByName } from "@ui/assets";
-import { semanticColors } from "@ui/color";
+import { rawColors, semanticColors } from "@ui/color";
 import { Forms } from "@ui/components";
 
 const { FormRow, FormSwitch, FormRadio } = Forms;
@@ -9,16 +10,28 @@ const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 const { showSimpleActionSheet } = findByProps("showSimpleActionSheet");
 
 // TODO: These styles work weirdly. iOS has cramped text, Android with low DPI probably does too. Fix?
+const { TextStyleSheet } = findByProps("TextStyleSheet");
 const styles = stylesheet.createThemedStyleSheet({
     card: {
         backgroundColor: semanticColors?.BACKGROUND_SECONDARY,
-        borderRadius: 5,
+        borderRadius: 12,
     },
     header: {
         padding: 0,
         backgroundColor: semanticColors?.BACKGROUND_TERTIARY,
-        borderTopLeftRadius: 5,
-        borderTopRightRadius: 5,
+        borderRadius: 12
+    },
+    headerChildren: {
+        flexDirection: "column",
+        justifyContent: "center"
+    },
+    headerLabel: {
+        color: semanticColors?.TEXT_NORMAL,
+        ...TextStyleSheet["text-md/semibold"]
+    },
+    headerSubtitle: {
+        color: semanticColors?.TEXT_MUTED,
+        ...TextStyleSheet["text-sm/semibold"]
     },
     actions: {
         flexDirection: "row-reverse",
@@ -30,6 +43,22 @@ const styles = stylesheet.createThemedStyleSheet({
         marginLeft: 5,
         tintColor: semanticColors?.INTERACTIVE_NORMAL,
     },
+    iconContainer: {
+        width: 33,
+        height: 33,
+        borderRadius: 17,
+        backgroundColor: semanticColors?.BACKGROUND_ACCENT,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    smallerIcon: {
+        width: 22,
+        height: 22,
+        tintColor: semanticColors?.INTERACTIVE_NORMAL
+    },
+    highlight: {
+        backgroundColor: "#F0" + rawColors.YELLOW_300.slice(1),
+    }
 })
 
 interface Action {
@@ -45,19 +74,36 @@ interface OverflowAction extends Action {
 export interface CardWrapper<T> {
     item: T;
     index: number;
+    highlight: string
 }
 
 interface CardProps {
     index?: number;
-    headerLabel: string | React.ComponentType;
+    headerLabel: string;
+    headerSublabel?: string;
     headerIcon?: string;
     toggleType?: "switch" | "radio";
     toggleValue?: boolean;
     onToggleChange?: (v: boolean) => void;
-    descriptionLabel?: string | React.ComponentType;
+    descriptionLabel?: string;
     actions?: Action[];
     overflowTitle?: string;
     overflowActions?: OverflowAction[];
+    highlight: string
+}
+
+const highlighter = (str: string, highlight: string) => {
+    if (!highlight) return str;
+
+    return str
+        .split(new RegExp("(" + highlight.replace(ESCAPE_REGEX, "\\$&") + ")", "gi"))
+        .map((x, i) =>
+            i % 2 === 1 ? (
+                <RN.Text style={styles.highlight}>{x}</RN.Text>
+            ) : (
+                x
+            )
+        );
 }
 
 export default function Card(props: CardProps) {
@@ -67,8 +113,24 @@ export default function Card(props: CardProps) {
         <RN.View style={[styles.card, { marginTop: props.index !== 0 ? 10 : 0 }]}>
             <FormRow
                 style={styles.header}
-                label={props.headerLabel}
-                leading={props.headerIcon && <FormRow.Icon source={getAssetIDByName(props.headerIcon)} />}
+                label={
+                    <RN.View style={styles.headerChildren}>
+                        <RN.Text style={styles.headerLabel}>{highlighter(props.headerLabel, props.highlight)}</RN.Text>
+                        {props.headerSublabel && (
+                            <RN.Text style={styles.headerSubtitle}>{highlighter(props.headerSublabel, props.highlight)}</RN.Text>
+                        )}
+                    </RN.View>
+                }
+                leading={
+                    props.headerIcon && (
+                        <RN.View style={styles.iconContainer}>
+                            <RN.Image
+                                source={getAssetIDByName(props.headerIcon)}
+                                style={styles.smallerIcon}
+                            />
+                        </RN.View>
+                    )
+                }
                 trailing={props.toggleType && (props.toggleType === "switch" ? 
                     (<FormSwitch
                         style={RN.Platform.OS === "android" && { marginVertical: -15 }}
@@ -80,13 +142,12 @@ export default function Card(props: CardProps) {
                         pressableState = !pressableState;
                         props.onToggleChange?.(pressableState)
                     }}>
-                        {/* TODO: Look into making this respect brand color */}
                         <FormRadio selected={props.toggleValue} />
                     </RN.Pressable>)
                 )}
             />
             <FormRow
-                label={props.descriptionLabel}
+                label={props.descriptionLabel && highlighter(props.descriptionLabel, props.highlight)}
                 trailing={
                     <RN.View style={styles.actions}>
                         {props.overflowActions && <RN.TouchableOpacity

@@ -23,6 +23,14 @@ export default function Themes() {
                 style={{ marginTop: 8 }}
             /> : undefined}
             card={ThemeCard}
+            keyGetter={(i) =>
+                [
+                    i.id,
+                    i.data.name,
+                    i.data.description,
+                    i.data.authors?.map((x) => x.name),
+                ].flat()
+            }
         />
     )
 }

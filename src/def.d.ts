@@ -33,6 +33,37 @@ interface SearchProps {
     style?: _RN.TextStyle;
 }
 
+interface RedesignObj {
+    TextInput: React.FC<{
+        style?: any,
+        size?: "sm" | "md" | "lg";
+        label?: string;
+        description?: string;
+        editable?: boolean;
+        focusable?: boolean;
+        placeholder?: string;
+        placeholderTextColor?: string;
+        defaultValue?: string;
+        value?: string;
+        isDisabled?: boolean;
+        leadingPressableProps?: _RN.PressableProps;
+        leadingIcon?: React.FC<any>;
+        leadingText?: string;
+        trailingPressableProps?: _RN.PressableProps;
+        trailingIcon?: React.FC<any>;
+        trailingText?: string;
+        secureTextEntry?: boolean;
+        isClearable?: boolean;
+        status?: "error" | "default";
+        errorMessage?: string;
+        spellCheck?: boolean;
+        isCentered?: boolean;
+        returnKeyType?: "search";
+        grow?: boolean;
+        onChange?: (value: string) => void;
+    }>;
+}
+
 // Helper types for API functions
 type PropIntellisense<P extends string | symbol> = Record<P, any> & Record<PropertyKey, any>;
 type PropsFinder = <T extends string | symbol>(...props: T[]) => PropIntellisense<T>;
@@ -416,6 +447,7 @@ interface VendettaObject {
         PROXY_PREFIX: string;
         HTTP_REGEX: RegExp;
         HTTP_REGEX_MULTI: RegExp;
+        ESCAPE_REGEX: RegExp;
     };
     utils: {
         findInReactTree: (tree: SearchTree, filter: SearchFilter) => any;
