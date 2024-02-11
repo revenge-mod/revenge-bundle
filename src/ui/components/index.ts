@@ -1,3 +1,4 @@
+import { RedesignObj } from "@/def";
 import { ReactNative as RN } from "@metro/common";
 import { findByDisplayName, findByName, findByProps } from "@metro/filters";
 
@@ -9,6 +10,7 @@ export const Button = findByProps("Looks", "Colors", "Sizes") as React.Component
 export const HelpMessage = findByName("HelpMessage");
 // React Native's included SafeAreaView only adds padding on iOS.
 export const SafeAreaView = findByProps("useSafeAreaInsets").SafeAreaView as typeof RN.SafeAreaView;
+export const Redesign = (findByProps("Button", "ContextMenu", "TextInput") ?? {}) as RedesignObj;
 
 // Vendetta
 export { default as Summary } from "@ui/components/Summary";
