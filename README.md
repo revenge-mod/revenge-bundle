@@ -10,10 +10,16 @@ A modification for the Discord Android app. Continuation of [Vendetta](https://g
 > While Revenge is platform-agnostic, there is no guarantee it will always work on iOS. I do not have a device to test the changes I've made, so feel free to report iOS-specific issues if you encounter one.
 
 1. Install [Vendetta Manager](https://github.com/vendetta-mod/VendettaManager/releases/latest/download/Manager.apk)
-2. Download (don't install!) [latest Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
+2. Download (don't install!) the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
 3. Go to Vendetta manager's **Settings > About** and press version number **10 times**
-4. Set the custom Xposed module location to *`/storage/emulated/0/Download/app-release.apk`*
-5. Install!
+4. Set the custom Xposed module location to:
+```
+/storage/emulated/0/Download/app-release.apk
+```
+> [!NOTE]
+> This is default location of module if you use *default downloads folder* and *you don't have any `app-release.apk` saved*. If you move module or it has different name - change the path respectively.
+
+6. Install!
 ## 💖 Contributing
 
 > [!NOTE]  
