@@ -17,7 +17,7 @@ const { getChannel } = findByProps("getChannel");
 const { TextStyleSheet } = findByProps("TextStyleSheet");
 
 function typeFromUrl(url: string) {
-    if (url.startsWith(PROXY_PREFIX)) {
+    if (PROXY_PREFIX.filter((proxy) => url.startsWith(proxy)).length > 0) {
         return "Plugin";
     } else if (url.endsWith(".json") && window.__vendetta_loader?.features.themes) {
         return "Theme";
