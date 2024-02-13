@@ -48,7 +48,7 @@ export const getScreens = (youKeys = false): Screen[] => [
                 <InstallButton
                     alertTitle="Install Plugin"
                     installFunction={async (input) => {
-                        if (!input.startsWith(PROXY_PREFIX) && !settings.developerSettings)
+                        if (!(PROXY_PREFIX.filter((proxy) => input.startsWith(proxy)).length > 0) && !settings.developerSettings)
                             setImmediate(() => showConfirmationAlert({
                                 title: "Unproxied Plugin",
                                 content: "The plugin you are trying to install has not been verified by Revenge staff. Are you sure you want to continue?",
