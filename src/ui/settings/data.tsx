@@ -13,7 +13,7 @@ import General from "@ui/settings/pages/General";
 import Plugins from "@ui/settings/pages/Plugins";
 import Themes from "@ui/settings/pages/Themes";
 import Developer from "@ui/settings/pages/Developer";
-import { PROXY_PREFIX } from "@/lib/constants";
+import { PROXY_PREFIXES } from "@/lib/constants";
 
 interface Screen {
     [index: string]: any;
@@ -48,7 +48,7 @@ export const getScreens = (youKeys = false): Screen[] => [
                 <InstallButton
                     alertTitle="Install Plugin"
                     installFunction={async (input) => {
-                        if (!(PROXY_PREFIX.filter((proxy) => input.startsWith(proxy)).length > 0) && !settings.developerSettings)
+                        if (!(PROXY_PREFIXES.filter((proxy) => input.startsWith(proxy)).length > 0) && !settings.developerSettings)
                             setImmediate(() => showConfirmationAlert({
                                 title: "Unproxied Plugin",
                                 content: "The plugin you are trying to install has not been verified by Revenge staff. Are you sure you want to continue?",
