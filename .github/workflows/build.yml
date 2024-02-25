@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Revenge
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Checkout Revenge Build
+      - name: Checkout builds
         uses: actions/checkout@v4
         with:
           repository: "revenge-mod/builds"
