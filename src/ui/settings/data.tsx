@@ -13,7 +13,7 @@ import General from "@ui/settings/pages/General";
 import Plugins from "@ui/settings/pages/Plugins";
 import Themes from "@ui/settings/pages/Themes";
 import Developer from "@ui/settings/pages/Developer";
-import { PROXY_PREFIXES } from "@/lib/constants";
+import { PROXY_PREFIXES } from "@lib/constants";
 
 interface Screen {
     [index: string]: any;

@@ -1,4 +1,4 @@
-import { RedesignObj } from "@/def";
+import { RedesignObj } from "@types";
 import { ReactNative as RN } from "@metro/common";
 import { findByDisplayName, findByName, findByProps } from "@metro/filters";
 
