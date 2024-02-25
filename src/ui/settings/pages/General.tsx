@@ -1,12 +1,14 @@
 import { ReactNative as RN, url } from "@metro/common";
 import { DISCORD_SERVER, GITHUB } from "@lib/constants";
 import { getDebugInfo, toggleSafeMode } from "@lib/debug";
-import { useProxy } from "@lib/storage";
+import { removeMMKVBackend, useProxy } from "@lib/storage";
 import { BundleUpdaterManager } from "@lib/native";
 import { getAssetIDByName } from "@ui/assets";
 import { Forms, Summary, ErrorBoundary } from "@ui/components";
 import settings from "@lib/settings";
 import Version from "@ui/settings/components/Version";
+import { showConfirmationAlert } from '@ui/alerts'
+import { ButtonColors } from '@types'
 
 const { FormRow, FormSwitchRow, FormSection, FormDivider } = Forms;
 const debugInfo = getDebugInfo();
@@ -139,6 +141,39 @@ export default function General() {
                             </>
                         ))}
                     </Summary>
+                </FormSection>
+                <FormSection title="Advanced">
+                    <FormRow
+                        label="Clear plugin storage"
+                        leading={<FormRow.Icon source={getAssetIDByName("ic_message_delete")} />}
+                        onPress={() => showConfirmationAlert({
+                            title: "Clear plugin storage?",
+                            content: "All installed plugins will be removed and the app will be reloaded. Plugin settings will still be retained. This is only neccessary if you have a corrupted storage.",
+                            confirmText: "Yes, I have a corrupted storage",
+                            cancelText: "Cancel",
+                            confirmColor: ButtonColors.RED,
+                            onConfirm: () => {
+                                removeMMKVBackend('VENDETTA_PLUGINS')
+                                BundleUpdaterManager.reload()
+                            },
+                        })}
+                    />
+                    <FormDivider />
+                    <FormRow
+                        label="Clear theme storage"
+                        leading={<FormRow.Icon source={getAssetIDByName("ic_message_delete")} />}
+                        onPress={() => showConfirmationAlert({
+                            title: "Clear theme storage?",
+                            content: "All installed themes will be removed and the app will be reloaded. This is only neccessary if you have a corrupted storage.",
+                            confirmText: "Yes, I have a corrupted storage",
+                            cancelText: "Cancel",
+                            confirmColor: ButtonColors.RED,
+                            onConfirm: () => {
+                                removeMMKVBackend('VENDETTA_THEMES')
+                                BundleUpdaterManager.reload()
+                            },
+                        })}
+                    />
                 </FormSection>
             </RN.ScrollView>
         </ErrorBoundary>
