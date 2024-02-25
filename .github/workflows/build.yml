@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   build:
@@ -15,6 +15,7 @@ jobs:
           repository: "revenge-mod/builds"
           path: "builds"
           token: ${{ secrets.BUILDS_PUSH_TOKEN }}
+          ref: ${{ github.ref_name }}
 
       - uses: oven-sh/setup-bun@v1
 
@@ -40,5 +41,5 @@ jobs:
       - name: Purge CDN cache
         if: ${{ false }}
         run: |
-          curl https://purge.jsdelivr.net/gh/vendetta-mod/builds
+          curl https://purge.jsdelivr.net/gh/revenge-mod/builds
 
