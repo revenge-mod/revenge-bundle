@@ -1,7 +1,10 @@
 name: Build
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
+    paths-ignore:
+      - "**/*.md"
+      - ".github/**"
 
 jobs:
   build:
@@ -9,12 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout builds
+        uses: actions/checkout@v4
         with:
           repository: "revenge-mod/builds"
           path: "builds"
           token: ${{ secrets.BUILDS_PUSH_TOKEN }}
+          ref: ${{ github.ref_name }}
 
       - uses: oven-sh/setup-bun@v1
 
@@ -40,5 +46,5 @@ jobs:
       - name: Purge CDN cache
         if: ${{ false }}
         run: |
-          curl https://purge.jsdelivr.net/gh/vendetta-mod/builds
+          curl https://purge.jsdelivr.net/gh/revenge-mod/builds
 

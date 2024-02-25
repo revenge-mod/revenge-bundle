@@ -1,4 +1,4 @@
-import { ESCAPE_REGEX } from "@/lib/constants";
+import { ESCAPE_REGEX } from "@lib/constants";
 import { ReactNative as RN, stylesheet } from "@metro/common";
 import { findByProps, findByStoreName } from "@metro/filters";
 import { getAssetIDByName } from "@ui/assets";

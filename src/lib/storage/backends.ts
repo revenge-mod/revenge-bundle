@@ -60,6 +60,11 @@ export const createMMKVBackend = (store: string) => {
     })());
 }
 
+export const removeMMKVBackend = (store: string) => {
+    const mmkvPath = getMMKVPath(store);
+    return FileManager.removeFile('documents', filePathFixer(mmkvPath))
+}
+
 export const createFileBackend = (file: string, migratePromise?: Promise<void>): StorageBackend => {
     let created: boolean;
     return {
