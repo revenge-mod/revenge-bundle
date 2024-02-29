@@ -5,13 +5,14 @@
   "info.manufacturer": "Manufacturer",
   "info.brand": "Brand",
   "info.model": "Model",
+  "info.android": "Codename",
+  "info.ios": "Machine ID",
   
   "header.versions": "Versions",
   "header.platform": "Platform",
   "header.actions": "Actions",
   "header.info": "Info",
   "header.advanced": "Advanced",
-  
   "discord": "Discord Server",
 
   "actions.reload": "Reload Discord",
