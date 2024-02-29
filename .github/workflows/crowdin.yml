@@ -1,0 +1,94 @@
+name: Sync Crowdin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - crowdin.yml
+      - lang/base/*
+      - .github/workflows/crowdin.yml
+      - crowdin.mjs
+  schedule:
+    - cron: "59 16 * * 6" # “At 16:59 on Saturday.”
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync-crowdin:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crowdin
+        uses: crowdin/github-action@v1.17.0
+        with:
+          config: crowdin.yml
+          upload_translations: true
+          download_translations: true
+          push_translations: true
+          create_pull_request: false
+          localization_branch_name: i18n
+          commit_message: "chore(i18n): sync translations"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_API_TOKEN: ${{ secrets.CROWDIN_API_TOKEN }}
+
+  merge:
+    needs: sync-crowdin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Pull main
+        uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Pull i18n
+        uses: actions/checkout@v4
+        with:
+          ref: i18n
+          path: i18n
+
+      - uses: pnpm/action-setup@v2
+        with:
+          package_json_file: main/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "21"
+          cache: "pnpm"
+          cache-dependency-path: main/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: main
+
+      - name: Clear old files
+        run: rm *.json
+        working-directory: main/lang
+
+      - name: Write files
+        run: node ../../../main/scripts/crowdin.mjs
+        working-directory: i18n/lang
+
+      - name: Publish changes
+        working-directory: main
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add lang/values/.
+
+          git commit -m "chore(i18n): sync translations" || true
+
+          git pull
+          git push
