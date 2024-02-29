@@ -8,7 +8,7 @@ on:
       - crowdin.yml
       - lang/base/*
       - .github/workflows/crowdin.yml
-      - crowdin.mjs
+      - scripts/rowdin.mjs
   schedule:
     - cron: "59 16 * * 6" # “At 16:59 on Saturday.”
   workflow_dispatch:
