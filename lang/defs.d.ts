@@ -21,6 +21,8 @@ export interface LangValues {
   "actions.safemode.enable": ["name"];
   "actions.safemode.disable": ["name"];
   "actions.safemode": ["name"];
+  "actions.safemode.normal": ["name"];
+  "actions.safemode.noplugins": ["name"];
   "actions.devmode": ["name"];
   "actions.clear.plugin": ["name"];
   "actions.clear.theme": ["name"];
