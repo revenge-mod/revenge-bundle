@@ -13,11 +13,14 @@
   "header.actions": "Actions",
   "header.info": "Info",
   "header.advanced": "Advanced",
+  "header.links": "Links",
+  "header.debug": "Debug",
   "discord": "Discord Server",
 
   "actions.reload": "Reload Discord",
   "actions.safemode.enable": "Reload in Safe Mode",
   "actions.safemode.disable": "Return to Normal Mode",
+  "actions.safemode": "`This will reload Discord ${settings.safeMode?.enabled ? "normally." : "without loading plugins."}`",
   "actions.devmode": "Developer Settings",
   "actions.clear.plugin": "Clear plugin storage",
   "actions.clear.theme": "Clear theme storage",
@@ -30,9 +33,11 @@
 
   "developer.websocket": "Connect to debug websocket",
   "developer.reactdev": "Connect to React DevTools",
+  "developer.reactdev.load": "Load React DevTools",
   "developer.customurl.label": "Load from custom url",
   "developer.customurl.sublabel": "Load Revenge from a custom endpoint.",
   "developer.assetbrowser": "Asset Browser",
+  "developer.errorboundary": "Which ErrorBoundary do you want to trip?",
 
   "theme.safemode": "You are in Safe Mode, meaning themes have been temporarily disabled.",
   "theme.safemode.disable": "If a theme appears to be causing the issue, you can press below to disable it persistently.",
@@ -41,14 +46,18 @@
   "theme.refetch.title": "Theme refetched",
   "theme.refetch.prompt": "A reload is required to see the changes. Do you want to reload now?",
   "theme.delete.prompt": "Are you sure you wish to delete ${theme.data.name}?",
+  "theme.disable": "Disable Theme",
 
   "installer.confirm": "Install",
   
   "plugin.safemode": "You are in Safe Mode, so plugins cannot be loaded. Disable any misbehaving plugins, then return to Normal Mode from the General settings page.",
-  "plugin.update.title": "${plugin.update ? "Enable" : "Disable"} updates",
+  "plugin.update.enable": "Enable updates",
+  "plugin.update.disable": "Disable updates",
   "plugin.update.toast": "${plugin.update ? "Enabled" : "Disabled"} updates for ${plugin.manifest.name}",
   "plugin.cleardata": "Clear data",
   "plugin.cleardata.prompt": "Are you sure you wish to clear the data of ${plugin.manifest.name}?",
+  "plugin.cleardata.success": "Cleared data for ${plugin.manifest.name}.",
+  "plugin.cleardata.error": "Failed to clear data for ${plugin.manifest.name}!",
   "plugin.delete.prompt": "Are you sure you wish to delete ${plugin.manifest.name}? This will clear all of the plugin's data.",
   "plugin.refetch.error": "Failed to refetch plugin!",
   "plugin.refetch.success": "Successfully refetched plugin.",
@@ -58,9 +67,9 @@
   "button.delete": "Delete",
   "button.refetch": "Refetch",
   "button.copy": "Copy URL",
-  "button.copy.toast": "Copied theme URL to clipboard.",
+  "button.copy.toast": "Copied URL to clipboard.",
   "button.reload": "Reload",
   "wait": "Wait!",
 
-  "version.copy": "Copied version to clipboard.",
+  "version.copy": "Copied version to clipboard."
 }

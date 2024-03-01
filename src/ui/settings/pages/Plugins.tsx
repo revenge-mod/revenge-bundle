@@ -4,6 +4,7 @@ import { plugins } from "@lib/plugins";
 import settings from "@lib/settings";
 import AddonPage from "@ui/settings/components/AddonPage";
 import PluginCard from "@ui/settings/components/PluginCard";
+import { lang } from "..";
 
 export default function Plugins() {
     useProxy(settings)
@@ -11,7 +12,7 @@ export default function Plugins() {
     return (
         <AddonPage<Plugin>
             items={plugins}
-            safeModeMessage="You are in Safe Mode, so plugins cannot be loaded. Disable any misbehaving plugins, then return to Normal Mode from the General settings page."
+            safeModeMessage={lang.format("plugin.safemode", {})}
             card={PluginCard}
             keyGetter={(i) =>
                 [

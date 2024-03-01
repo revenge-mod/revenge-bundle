@@ -5,6 +5,7 @@ import { Button } from "@ui/components";
 import settings from "@lib/settings";
 import AddonPage from "@ui/settings/components/AddonPage";
 import ThemeCard from "@ui/settings/components/ThemeCard";
+import { lang } from "..";
 
 export default function Themes() {
     useProxy(settings);
@@ -12,9 +13,9 @@ export default function Themes() {
     return (
         <AddonPage<Theme>
             items={themes}
-            safeModeMessage={`You are in Safe Mode, meaning themes have been temporarily disabled.${settings.safeMode?.currentThemeId ? " If a theme appears to be causing the issue, you can press below to disable it persistently." : ""}`}
+            safeModeMessage={`${lang.format("theme.safemode", {})}${settings.safeMode?.currentThemeId ? lang.format("theme.safemode.disable", {}) : ""}`}
             safeModeExtras={settings.safeMode?.currentThemeId ? <Button
-                text="Disable Theme"
+                text={lang.format("theme.disable", {})}
                 color={ButtonColors.BRAND}
                 size="small"
                 onPress={() => {

@@ -9,6 +9,7 @@ import settings from "@lib/settings";
 import Version from "@ui/settings/components/Version";
 import { showConfirmationAlert } from '@ui/alerts'
 import { ButtonColors } from '@types'
+import { lang } from "..";
 
 const { FormRow, FormSwitchRow, FormSection, FormDivider } = Forms;
 const debugInfo = getDebugInfo();
@@ -38,7 +39,7 @@ export default function General() {
             icon: "mobile",
         },
         {
-            label: "Bytecode",
+            label: {lang.format("info.bytecode", {})},
             version: debugInfo.hermes.bytecodeVersion,
             icon: "ic_server_security_24px",
         },
@@ -46,12 +47,12 @@ export default function General() {
 
     const platformInfo = [
         {
-            label: "Loader",
+            label: {lang.format("info.loader", {})},
             version: debugInfo.vendetta.loader,
             icon: "ic_download_24px",
         },
         {
-            label: "Operating System",
+            label: {lang.format("info.os", {})},
             version: `${debugInfo.os.name} ${debugInfo.os.version}`,
             icon: "ic_cog_24px"
         },
@@ -61,22 +62,22 @@ export default function General() {
             icon: "ic_profile_badge_verified_developer_color"
         }] : []),
         {
-            label: "Manufacturer",
+            label: {lang.format("info.manufacturer", {})},
             version: debugInfo.device.manufacturer,
             icon: "ic_badge_staff"
         },
         {
-            label: "Brand",
+            label: {lang.format("info.brand", {})},
             version: debugInfo.device.brand,
             icon: "ic_settings_boost_24px"
         },
         {
-            label: "Model",
+            label: {lang.format("info.model", {})},
             version: debugInfo.device.model,
             icon: "ic_phonelink_24px"
         },
         {
-            label: RN.Platform.select({ android: "Codename", ios: "Machine ID" })!,
+            label: RN.Platform.select({ android: lang.format("info.android", {}), ios: lang.format("info.bytecode", {})})!,
             version: debugInfo.device.codename,
             icon: "ic_compose_24px"
         }
@@ -85,9 +86,9 @@ export default function General() {
     return (
         <ErrorBoundary>
             <RN.ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
-                <FormSection title="Links" titleStyleType="no_border">
+                <FormSection title={lang.format("header.links", {})} titleStyleType="no_border">
                     <FormRow
-                        label="Discord Server"
+                        label={lang.format("discord", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("Discord")} />}
                         trailing={FormRow.Arrow}
                         onPress={() => url.openDeeplink(DISCORD_SERVER)}
@@ -100,22 +101,22 @@ export default function General() {
                         onPress={() => url.openURL(GITHUB)}
                     />
                 </FormSection>
-                <FormSection title="Actions">
+                <FormSection title={lang.format("header.actions", {})}>
                     <FormRow
-                        label="Reload Discord"
+                        label={lang.format("actions.reload", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_message_retry")} />}
                         onPress={() => BundleUpdaterManager.reload()}
                     />
                     <FormDivider />
                     <FormRow
-                        label={settings.safeMode?.enabled ? "Return to Normal Mode" : "Reload in Safe Mode"}
-                        subLabel={`This will reload Discord ${settings.safeMode?.enabled ? "normally." : "without loading plugins."}`}
+                        label={settings.safeMode?.enabled ? lang.format("actions.safemode.disable", {}) : lang.format("actions.safemode.enable", {})}
+                        subLabel={lang.format("actions.safemode", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_privacy_24px")} />}
                         onPress={toggleSafeMode}
                     />
                     <FormDivider />
                     <FormSwitchRow
-                        label="Developer Settings"
+                        label={lang.format("actions.devmode", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_progress_wrench_24px")} />}
                         value={settings.developerSettings}
                         onValueChange={(v: boolean) => {
@@ -123,8 +124,8 @@ export default function General() {
                         }}
                     />
                 </FormSection>
-                <FormSection title="Info">
-                    <Summary label="Versions" icon="ic_information_filled_24px">
+                <FormSection title={lang.format("header.info", {})}>
+                    <Summary label={lang.format("header.versions", {})} icon="ic_information_filled_24px">
                         {versions.map((v, i) => (
                             <>
                                 <Version label={v.label} version={v.version} icon={v.icon} />
@@ -133,7 +134,7 @@ export default function General() {
                         ))}
                     </Summary>
                     <FormDivider />
-                    <Summary label="Platform" icon="ic_mobile_device">
+                    <Summary label={lang.format("header.platform", {})} icon="ic_mobile_device">
                         {platformInfo.map((p, i) => (
                             <>
                                 <Version label={p.label} version={p.version} icon={p.icon} />
@@ -142,15 +143,15 @@ export default function General() {
                         ))}
                     </Summary>
                 </FormSection>
-                <FormSection title="Advanced">
+                <FormSection title={lang.format("header.advanced", {})}>
                     <FormRow
-                        label="Clear plugin storage"
+                        label={lang.format("actions.clear.plugin.title", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_message_delete")} />}
                         onPress={() => showConfirmationAlert({
-                            title: "Clear plugin storage?",
-                            content: "All installed plugins will be removed and the app will be reloaded. Plugin settings will still be retained. This is only neccessary if you have a corrupted storage.",
-                            confirmText: "Yes, I have a corrupted storage",
-                            cancelText: "Cancel",
+                            title: lang.format("actions.clear.plugin", {}),
+                            content: lang.format("actions.clear.plugin.warn", {}),
+                            confirmText: lang.format("actions.clear.confirm", {}),
+                            cancelText: lang.format("button.cancel", {}),
                             confirmColor: ButtonColors.RED,
                             onConfirm: () => {
                                 removeMMKVBackend('VENDETTA_PLUGINS')
@@ -160,13 +161,13 @@ export default function General() {
                     />
                     <FormDivider />
                     <FormRow
-                        label="Clear theme storage"
+                        label={lang.format("actions.clear.theme", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_message_delete")} />}
                         onPress={() => showConfirmationAlert({
-                            title: "Clear theme storage?",
-                            content: "All installed themes will be removed and the app will be reloaded. This is only neccessary if you have a corrupted storage.",
-                            confirmText: "Yes, I have a corrupted storage",
-                            cancelText: "Cancel",
+                            title: lang.format("actions.clear.theme.title", {}),
+                            content: lang.format("actions.clear.theme.warn", {}),
+                            confirmText: lang.format("actions.clear.confirm", {}),
+                            cancelText: lang.format("button.cancel", {}),
                             confirmColor: ButtonColors.RED,
                             onConfirm: () => {
                                 removeMMKVBackend('VENDETTA_THEMES')

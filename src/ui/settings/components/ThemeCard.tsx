@@ -8,6 +8,7 @@ import { showConfirmationAlert } from "@ui/alerts";
 import { showToast } from "@ui/toasts";
 import settings from "@lib/settings";
 import Card, { CardWrapper } from "@ui/settings/components/Card";
+import { lang } from "..";
 
 async function selectAndReload(value: boolean, id: string) {
     await selectTheme(value ? id : "default");
@@ -38,43 +39,43 @@ export default function ThemeCard({ item: theme, index, highlight }: CardWrapper
             overflowActions={[
                 {
                     icon: "ic_sync_24px",
-                    label: "Refetch",
+                    label: lang.format("button.refetch", {}),
                     onPress: () => {
                         fetchTheme(theme.id, theme.selected).then(() => {
                             if (theme.selected) {
                                 showConfirmationAlert({
-                                    title: "Theme refetched",
-                                    content: "A reload is required to see the changes. Do you want to reload now?",
-                                    confirmText: "Reload",
-                                    cancelText: "Cancel",
+                                    title: lang.format("theme.refetch.title", {}),
+                                    content: lang.format("theme.refetch.prompt", {}),
+                                    confirmText: lang.format("button.reload", {}),
+                                    cancelText: lang.format("button.cancel", {}),
                                     confirmColor: ButtonColors.RED,
                                     onConfirm: () => BundleUpdaterManager.reload(),
                                 })
                             } else {
-                                showToast("Successfully refetched theme.", getAssetIDByName("toast_image_saved"));
+                                showToast(lang.format("theme.refetch.success", {}), getAssetIDByName("toast_image_saved"));
                             }
                         }).catch(() => {
-                            showToast("Failed to refetch theme!", getAssetIDByName("Small"));
+                            showToast(lang.format("theme.refetch.error", {}), getAssetIDByName("Small"));
                         });
                     },
                 },
                 {
                     icon: "copy",
-                    label: "Copy URL",
+                    label: lang.format("button.copy", {}),
                     onPress: () => {
                         clipboard.setString(theme.id);
-                        showToast("Copied theme URL to clipboard.", getAssetIDByName("toast_copy_link"));
+                        showToast(lang.format("button.copy.toast", {}), getAssetIDByName("toast_copy_link"));
                     }
                 },
                 {
                     icon: "ic_message_delete",
-                    label: "Delete",
+                    label: {lang.format("button.delete", {})},
                     isDestructive: true,
                     onPress: () => showConfirmationAlert({
                         title: "Wait!",
-                        content: `Are you sure you wish to delete ${theme.data.name}?`,
-                        confirmText: "Delete",
-                        cancelText: "Cancel",
+                        content: `${lang.format("theme.delete.prompt", {})}`,
+                        confirmText: lang.format("button.delete", {}),
+                        cancelText: lang.format("button.cancel", {}),
                         confirmColor: ButtonColors.RED,
                         onConfirm: () => {
                             removeTheme(theme.id).then((wasSelected) => {

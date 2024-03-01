@@ -2,6 +2,7 @@ import { clipboard } from "@metro/common";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 import { Forms } from "@ui/components";
+import { lang } from "..";
 
 interface VersionProps {
     label: string;
@@ -19,7 +20,7 @@ export default function Version({ label, version, icon }: VersionProps) {
             trailing={<FormText>{version}</FormText>}
             onPress={() => {
                 clipboard.setString(`${label} - ${version}`);
-                showToast("Copied version to clipboard.", getAssetIDByName("toast_copy_link"));
+                showToast(lang.format("version.copy", {}), getAssetIDByName("toast_copy_link"));
             }}
         />
     )

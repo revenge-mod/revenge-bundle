@@ -6,6 +6,7 @@ import { getAssetIDByName } from "@ui/assets";
 import { Forms, ErrorBoundary } from "@ui/components";
 import settings, { loaderConfig } from "@lib/settings";
 import AssetBrowser from "@ui/settings/pages/AssetBrowser";
+import { lang } from "..";
 
 const { FormSection, FormRow, FormSwitchRow, FormInput, FormDivider } = Forms;
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
@@ -20,7 +21,7 @@ export default function Developer() {
     return (
         <ErrorBoundary>
             <RN.ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
-                <FormSection title="Debug" titleStyleType="no_border">
+                <FormSection title={lang.format("header.debug", {})} titleStyleType="no_border">
                     <FormInput
                         value={settings.debuggerUrl}
                         onChange={(v: string) => settings.debuggerUrl = v}
@@ -29,14 +30,14 @@ export default function Developer() {
                     />
                     <FormDivider />
                     <FormRow
-                        label="Connect to debug websocket"
+                        label={lang.format("developer.websocket", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
                         onPress={() => connectToDebugger(settings.debuggerUrl)}
                     />
                     {window.__vendetta_rdc && <>
                         <FormDivider />
                         <FormRow
-                            label="Connect to React DevTools"
+                            label={lang.format("developer.reactdev", {})}
                             leading={<FormRow.Icon source={getAssetIDByName("ic_badge_staff")} />}
                             onPress={() => window.__vendetta_rdc?.connectToDevTools({
                                 host: settings.debuggerUrl.split(":")?.[0],
@@ -47,8 +48,8 @@ export default function Developer() {
                 </FormSection>
                 {window.__vendetta_loader?.features.loaderConfig && <FormSection title="Loader config">
                     <FormSwitchRow
-                        label="Load from custom url"
-                        subLabel={"Load Revenge from a custom endpoint."}
+                        label={lang.format("developer.customurl.label", {})}
+                        subLabel={lang.format("developer.customurl.sublabel", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
                         value={loaderConfig.customLoadUrl.enabled}
                         onValueChange={(v: boolean) => {
@@ -66,7 +67,7 @@ export default function Developer() {
                         <FormDivider />
                     </>}
                     {window.__vendetta_loader.features.devtools && <FormSwitchRow
-                        label="Load React DevTools"
+                        label={lang.format("developer.reactdev.load", {})}
                         subLabel={`Version: ${window.__vendetta_loader.features.devtools.version}`}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_badge_staff")} />}
                         value={loaderConfig.loadReactDevTools}
@@ -77,11 +78,11 @@ export default function Developer() {
                 </FormSection>}
                 <FormSection title="Other">
                     <FormRow
-                        label="Asset Browser"
+                        label={lang.format("developer.assetbrowser", {})}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_image")} />}
                         trailing={FormRow.Arrow}
                         onPress={() => navigation.push("VendettaCustomPage", {
-                            title: "Asset Browser",
+                            title: lang.format("developer.assetbrowser", {}),
                             render: AssetBrowser,
                         })}
                     />
@@ -93,7 +94,7 @@ export default function Developer() {
                         onPress={() => showSimpleActionSheet({
                             key: "ErrorBoundaryTools",
                             header: {
-                                title: "Which ErrorBoundary do you want to trip?",
+                                title: lang.format("developer.errorboundary", {}),
                                 icon: <FormRow.Icon style={{ marginRight: 8 }} source={getAssetIDByName("ic_warning_24px")} />,
                                 onClose: () => hideActionSheet(),
                             },
