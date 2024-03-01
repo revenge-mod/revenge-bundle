@@ -39,7 +39,7 @@ export default function General() {
             icon: "mobile",
         },
         {
-            label: {lang.format("info.bytecode", {})},
+            label: lang.format("info.bytecode", {}),
             version: debugInfo.hermes.bytecodeVersion,
             icon: "ic_server_security_24px",
         },
@@ -47,12 +47,12 @@ export default function General() {
 
     const platformInfo = [
         {
-            label: {lang.format("info.loader", {})},
+            label: lang.format("info.loader", {}),
             version: debugInfo.vendetta.loader,
             icon: "ic_download_24px",
         },
         {
-            label: {lang.format("info.os", {})},
+            label: lang.format("info.os", {}),
             version: `${debugInfo.os.name} ${debugInfo.os.version}`,
             icon: "ic_cog_24px"
         },
@@ -62,17 +62,17 @@ export default function General() {
             icon: "ic_profile_badge_verified_developer_color"
         }] : []),
         {
-            label: {lang.format("info.manufacturer", {})},
+            label: lang.format("info.manufacturer", {}),
             version: debugInfo.device.manufacturer,
             icon: "ic_badge_staff"
         },
         {
-            label: {lang.format("info.brand", {})},
+            label: lang.format("info.brand", {}),
             version: debugInfo.device.brand,
             icon: "ic_settings_boost_24px"
         },
         {
-            label: {lang.format("info.model", {})},
+            label: lang.format("info.model", {}),
             version: debugInfo.device.model,
             icon: "ic_phonelink_24px"
         },
@@ -110,7 +110,7 @@ export default function General() {
                     <FormDivider />
                     <FormRow
                         label={settings.safeMode?.enabled ? lang.format("actions.safemode.disable", {}) : lang.format("actions.safemode.enable", {})}
-                        subLabel={lang.format("actions.safemode", {})}
+                        subLabel={`${lang.format("actions.safemode", {})} ${settings.safeMode?.enabled ? lang.format("actions.safemode.normal", {}) : lang.format("actions.safemode.noplugins", {})`}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_privacy_24px")} />}
                         onPress={toggleSafeMode}
                     />
