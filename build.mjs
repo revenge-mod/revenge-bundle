@@ -10,8 +10,22 @@ const exec = promisify(_exec);
 const tsconfig = JSON.parse(await fs.readFile("./tsconfig.json"));
 const aliases = Object.fromEntries(Object.entries(tsconfig.compilerOptions.paths).map(([alias, [target]]) => [alias, path.resolve(target)]));
 const commit = (await exec("git rev-parse HEAD")).stdout.trim().substring(0, 7) || "custom";
+const langFiles = (await readdir(join("lang"))).filter((p) =>
+  p.endsWith(".json"),
+);
 
 try {
+    build({
+        minify: !onominify,
+        define: {
+          IS_DEV: String(onominify),
+          DEV_LANG: onominify
+            ? langFiles.find((x) => x === plugin + ".json")
+              ? await readFile(join("lang", "strings" + ".json"), "utf8")
+              : "null"
+            : "undefined",
+        },
+      }),
     await build({
         entryPoints: ["./src/entry.ts"],
         outfile: "./dist/revenge.js",
