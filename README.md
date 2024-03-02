@@ -1,4 +1,5 @@
 # Revenge
+[![Crowdin](https://badges.crowdin.net/revenge-mod/localized.svg)](https://crowdin.com/project/revenge-mod)
 
 A modification for Discord mobile apps. Continuation of [Vendetta](https://github.com/vendetta-mod). Get it? Vendetta is like, revenging..., yeah.
 
