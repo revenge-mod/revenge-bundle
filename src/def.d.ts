@@ -554,3 +554,8 @@ declare global {
         __vendetta_loader?: LoaderIdentity;
     }
 }
+
+declare const DEV_LANG:
+  | Record<string, Record<string, string>>
+  | null
+  | undefined;
