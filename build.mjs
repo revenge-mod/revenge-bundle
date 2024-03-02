@@ -5,6 +5,7 @@ import { promisify } from "util";
 import { exec as _exec } from "child_process";
 import fs from "fs/promises";
 import path from "path";
+import { readdir, readFile } from "fs/promises";
 const exec = promisify(_exec);
 
 const tsconfig = JSON.parse(await fs.readFile("./tsconfig.json"));
