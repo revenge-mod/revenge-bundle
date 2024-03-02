@@ -13,7 +13,7 @@ const tsconfig = JSON.parse(await fs.readFile("./tsconfig.json"));
 const aliases = Object.fromEntries(Object.entries(tsconfig.compilerOptions.paths).map(([alias, [target]]) => [alias, path.resolve(target)]));
 const commit = (await exec("git rev-parse HEAD")).stdout.trim().substring(0, 7) || "custom";
 //const langFiles = (await readdir(join("lang"))).filter((p) =>
-  p.endsWith(".json"),
+//  p.endsWith(".json"),
 //);
 //const onominify = process.argv.includes("--nominify");
 
