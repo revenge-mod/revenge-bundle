@@ -4,7 +4,7 @@ import RNFS from "$/wrappers/RNFS";
 
 import type { LangValues } from "../../lang/defs";
 
-const url = `https://raw.githubusercontent.com/nexpid/RevengePlugins/main/lang/values/`;
+const url = `https://raw.githubusercontent.com/riivx/Revenge/main/lang/strings.json`;
 
 const make = () =>
   RNFS.hasRNFS &&
@@ -29,9 +29,9 @@ export class Lang<Plugin extends keyof LangValues> {
 
   private async load() {
     const read = async () => {
-      if (await RNFS.exists(filePath())
+      if (await RNFS.exists(filePath()))
         try {
-          this.values = JSON.parse(await RNFS.readFile(filePath());
+          this.values = JSON.parse(await RNFS.readFile(filePath()));
         } catch {
           return;
         }
@@ -39,7 +39,7 @@ export class Lang<Plugin extends keyof LangValues> {
 
     if (DEV_LANG) this.values = DEV_LANG;
     else {
-      const res = await fetch(`${url}${this.plugin}.json`, {
+      const res = await fetch(url, {
         headers: {
           "cache-control": "public, max-age=20",
         },
@@ -48,8 +48,8 @@ export class Lang<Plugin extends keyof LangValues> {
 
       make();
       const lastEtag =
-        (await RNFS.exists(etagPath()) &&
-        (await RNFS.readFile(etagPath());
+        (await RNFS.exists(etagPath())) &&
+        (await RNFS.readFile(etagPath()));
 
       const newEtag = res.headers.get("etag");
       if (!newEtag) return read();
