@@ -59,6 +59,7 @@ jobs:
           path: i18n
 
       - uses: pnpm/action-setup@v2
+        version: 8
         with:
           package_json_file: main/package.json
 
