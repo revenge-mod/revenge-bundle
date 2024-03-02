@@ -66,6 +66,8 @@ export interface LangValues {
   "button.copy.toast": ["name"];
   "button.reload": ["name"];
   "wait": ["name"];
+  "enabled": ["name"];
+  "disabled": ["name"];
   "version.copy": ["name"];
   };
 };
