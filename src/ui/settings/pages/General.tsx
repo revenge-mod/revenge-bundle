@@ -110,7 +110,7 @@ export default function General() {
                     <FormDivider />
                     <FormRow
                         label={settings.safeMode?.enabled ? lang.format("actions.safemode.disable", {}) : lang.format("actions.safemode.enable", {})}
-                        subLabel={`${lang.format("actions.safemode", {})} ${settings.safeMode?.enabled ? lang.format("actions.safemode.normal", {}) : lang.format("actions.safemode.noplugins", {})`}
+                        subLabel={`${lang.format("actions.safemode", {})} ${settings.safeMode?.enabled ? lang.format("actions.safemode.normal", {}) : lang.format("actions.safemode.noplugins", {})}`}
                         leading={<FormRow.Icon source={getAssetIDByName("ic_privacy_24px")} />}
                         onPress={toggleSafeMode}
                     />
