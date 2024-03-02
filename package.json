@@ -24,12 +24,12 @@
     "esbuild": "^0.17.16",
     "esbuild-plugin-alias": "^0.2.1",
     "moment": "2.22.2",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "@revenge-mod/vendetta-types": "github:revenge-mod/vendetta-types"
   },
   "dependencies": {
     "@swc/helpers": "0.5.0",
-    "spitroast": "^1.4.3",
-    "@revenge-mod/vendetta-types": "github:revenge-mod/vendetta-types"
+    "spitroast": "^1.4.3"
   },
   "pnpm": {
     "peerDependencyRules": {
