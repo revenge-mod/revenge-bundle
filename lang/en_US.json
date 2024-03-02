@@ -7,7 +7,6 @@
   "info.model": "Model",
   "info.android": "Codename",
   "info.ios": "Machine ID",
-  
   "header.versions": "Versions",
   "header.platform": "Platform",
   "header.actions": "Actions",
@@ -16,7 +15,6 @@
   "header.links": "Links",
   "header.debug": "Debug",
   "discord": "Discord Server",
-
   "actions.reload": "Reload Discord",
   "actions.safemode.enable": "Reload in Safe Mode",
   "actions.safemode.disable": "Return to Normal Mode",
@@ -26,13 +24,11 @@
   "actions.devmode": "Developer Settings",
   "actions.clear.plugin": "Clear plugin storage",
   "actions.clear.theme": "Clear theme storage",
-
   "actions.clear.confirm": "Yes, I have a corrupted storage",
   "actions.clear.plugin.warn": "All installed plugins will be removed and the app will be reloaded. Plugin settings will still be retained. This is only neccessary if you have a corrupted storage.",
   "actions.clear.theme.warn": "All installed themes will be removed and the app will be reloaded. This is only neccessary if you have a corrupted storage.",
   "actions.clear.plugin.title": "Clear plugin storage?",
   "actions.clear.theme.title": "Clear theme storage?",
-
   "developer.websocket": "Connect to debug websocket",
   "developer.reactdev": "Connect to React DevTools",
   "developer.reactdev.load": "Load React DevTools",
@@ -40,7 +36,6 @@
   "developer.customurl.sublabel": "Load Revenge from a custom endpoint.",
   "developer.assetbrowser": "Asset Browser",
   "developer.errorboundary": "Which ErrorBoundary do you want to trip?",
-
   "theme.safemode": "You are in Safe Mode, meaning themes have been temporarily disabled.",
   "theme.safemode.disable": "If a theme appears to be causing the issue, you can press below to disable it persistently.",
   "theme.refetch.error": "Failed to refetch theme!",
@@ -49,9 +44,7 @@
   "theme.refetch.prompt": "A reload is required to see the changes. Do you want to reload now?",
   "theme.delete.prompt": "Are you sure you wish to delete ${theme.data.name}?",
   "theme.disable": "Disable Theme",
-
   "installer.confirm": "Install",
-  
   "plugin.safemode": "You are in Safe Mode, so plugins cannot be loaded. Disable any misbehaving plugins, then return to Normal Mode from the General settings page.",
   "plugin.update.enable": "Enable updates",
   "plugin.update.disable": "Disable updates",
@@ -63,7 +56,6 @@
   "plugin.delete.prompt": "Are you sure you wish to delete ${plugin.manifest.name}? This will clear all of the plugin's data.",
   "plugin.refetch.error": "Failed to refetch plugin!",
   "plugin.refetch.success": "Successfully refetched plugin.",
-
   "button.cancel": "Cancel",
   "button.clear": "Clear",
   "button.delete": "Delete",
@@ -74,6 +66,5 @@
   "wait": "Wait!",
   "enabled": "Enabled",
   "disabled": "Disabled",
-
   "version.copy": "Copied version to clipboard."
 }
