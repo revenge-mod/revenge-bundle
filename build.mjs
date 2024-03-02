@@ -28,7 +28,7 @@ try {
     //          : "null"
     //        : "undefined",
     //    },
-      }),
+    //  }),
     await build({
         entryPoints: ["./src/entry.ts"],
         outfile: "./dist/revenge.js",
