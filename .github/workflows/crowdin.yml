@@ -58,19 +58,10 @@ jobs:
           ref: i18n
           path: i18n
 
-      - uses: pnpm/action-setup@v2
-        with:
-          package_json_file: main/package.json
-          version: 8
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "21"
-          cache: "pnpm"
-          cache-dependency-path: main/pnpm-lock.yaml
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: main
+      #- uses: oven-sh/bun@v1
+        
+      #- run: bun i
+      #  working-directory: main
 
       #- name: Clear old files
       #  run: rm *.json
