@@ -1,5 +1,5 @@
 import { ButtonColors, Theme } from "@types";
-import { clipboard } from "@metro/common";
+import { React, clipboard } from "@metro/common";
 import { fetchTheme, removeTheme, selectTheme } from "@lib/themes";
 import { useProxy } from "@lib/storage";
 import { BundleUpdaterManager } from "@lib/native";
