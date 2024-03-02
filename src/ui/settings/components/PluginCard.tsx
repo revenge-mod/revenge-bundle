@@ -69,7 +69,7 @@ export default function PluginCard({ item: plugin, index, highlight }: CardWrapp
                     label: plugin.update ? lang.format("plugin.update.disable", {}) : lang.format("plugin.update.enable", {}),
                     onPress: () => {
                         plugin.update = !plugin.update;
-                        showToast(`${lang.format("plugin.update.toast", {})}.`, getAssetIDByName("toast_image_saved"));
+                        showToast(`${plugin.update ? lang.format("enabled", {}) : lang.format("disabled", {})} ${lang.format(plugin.update.toast)} ${plugin.manifest.name}.`, getAssetIDByName("toast_image_saved"));
                     }
                 },
                 {
