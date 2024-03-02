@@ -5,29 +5,29 @@ import { promisify } from "util";
 import { exec as _exec } from "child_process";
 import fs from "fs/promises";
 import path from "path";
-import { readdir, readFile } from "fs/promises";
-import { join } from "path";
+//import { readdir, readFile } from "fs/promises";
+//import { join } from "path";
 const exec = promisify(_exec);
 
 const tsconfig = JSON.parse(await fs.readFile("./tsconfig.json"));
 const aliases = Object.fromEntries(Object.entries(tsconfig.compilerOptions.paths).map(([alias, [target]]) => [alias, path.resolve(target)]));
 const commit = (await exec("git rev-parse HEAD")).stdout.trim().substring(0, 7) || "custom";
-const langFiles = (await readdir(join("lang"))).filter((p) =>
+//const langFiles = (await readdir(join("lang"))).filter((p) =>
   p.endsWith(".json"),
 );
-const onominify = process.argv.includes("--nominify");
+//const onominify = process.argv.includes("--nominify");
 
 try {
-    build({
-        minify: !onominify,
-        define: {
-          IS_DEV: String(onominify),
-          DEV_LANG: onominify
-            ? langFiles.find((x) => x === plugin + ".json")
-              ? await readFile(join("lang", "strings" + ".json"), "utf8")
-              : "null"
-            : "undefined",
-        },
+    //build({
+    //    minify: !onominify,
+    //    define: {
+    //      IS_DEV: String(onominify),
+    //      DEV_LANG: onominify
+    //        ? langFiles.find((x) => x === plugin + ".json")
+    //          ? await readFile(join("lang", "strings" + ".json"), "utf8")
+    //          : "null"
+    //        : "undefined",
+    //    },
       }),
     await build({
         entryPoints: ["./src/entry.ts"],
