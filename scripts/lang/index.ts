@@ -1,6 +1,6 @@
 import { i18n } from "@vendetta/metro/common";
 
-import RNFS from "$/wrappers/RNFS";
+import RNFS from "scripts/RNFS";
 
 import type { LangValues } from "../../lang/defs";
 
