@@ -1,3 +1,4 @@
+/// <reference path="../../node_modules/@revenge-mod/vendetta-types/defs.d.ts" />
 import { i18n } from "@vendetta/metro/common";
 
 import RNFS from "scripts/RNFS";
