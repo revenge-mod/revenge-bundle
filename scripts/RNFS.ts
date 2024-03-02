@@ -1,6 +1,6 @@
 // this is a basic rewrite for the RNFS js wrapper, with support for DCDFileManager for backwards compability
 
-import { RNFileManager, RNFSManager } from "../deps";
+import { RNFileManager, RNFSManager } from "scripts/deps";
 
 type Encoding = "utf8" | "ascii" | "base64";
 type EncodingOrOptions =
