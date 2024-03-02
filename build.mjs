@@ -15,6 +15,7 @@ const commit = (await exec("git rev-parse HEAD")).stdout.trim().substring(0, 7) 
 const langFiles = (await readdir(join("lang"))).filter((p) =>
   p.endsWith(".json"),
 );
+const onominify = process.argv.includes("--nominify");
 
 try {
     build({
