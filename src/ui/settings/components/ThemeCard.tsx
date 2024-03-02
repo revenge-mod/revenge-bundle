@@ -69,7 +69,7 @@ export default function ThemeCard({ item: theme, index, highlight }: CardWrapper
                 },
                 {
                     icon: "ic_message_delete",
-                    label: {lang.format("button.delete", {})},
+                    label: lang.format("button.delete", {}),
                     isDestructive: true,
                     onPress: () => showConfirmationAlert({
                         title: "Wait!",
