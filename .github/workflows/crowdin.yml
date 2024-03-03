@@ -6,10 +6,10 @@ on:
       - main
     paths:
       - crowdin.yml
-      - lang/en_us.json
+      - lang/strings.json
       - .github/workflows/crowdin.yml
   schedule:
-    - cron: "59 16 * * 6" # “At 16:59 on Saturday.”
+    - cron: "0 0 * * *" 
   workflow_dispatch:
 
 concurrency:
@@ -57,19 +57,6 @@ jobs:
         with:
           ref: i18n
           path: i18n
-
-      #- uses: oven-sh/bun@v1
-        
-      #- run: bun i
-      #  working-directory: main
-
-      #- name: Clear old files
-      #  run: rm *.json
-      #  working-directory: main/lang
-
-      #- name: Write files
-      #  run: node ../../../main/scripts/crowdin.mjs
-      #  working-directory: i18n/lang
 
       - name: Publish changes
         working-directory: main
