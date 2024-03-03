@@ -7,13 +7,17 @@ console.log("Hello from Revenge!");
 Object.freeze = Object;
 Object.seal = Object;
 
-import(".").then((m) => m.default()).catch((e) => {
+import(".")
+  .then((m) => m.default())
+  .catch((e) => {
     console.log(e?.stack ?? e.toString());
-    alert([
+    alert(
+      [
         "Failed to load Revenge!\n",
         `Build Number: ${ClientInfoManager.Build}`,
         // TODO: Rename this
         `Revenge: ${__revengeVersion}`,
         e?.stack || e.toString(),
-    ].join("\n"));
-});
+      ].join("\n")
+    );
+  });

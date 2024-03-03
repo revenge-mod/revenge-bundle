@@ -6,6 +6,8 @@ export const THEMES_CHANNEL_ID = "1091880434939482202";
 export const GITHUB = "https://github.com/revenge-mod";
 export const PROXY_PREFIX = "https://vd-plugins.github.io/proxy";
 export const PROXY_PREFIXES = ["https://vd-plugins.github.io/proxy"];
-export const HTTP_REGEX = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
-export const HTTP_REGEX_MULTI = /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+export const HTTP_REGEX =
+  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+export const HTTP_REGEX_MULTI =
+  /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 export const ESCAPE_REGEX = /[.*+?^${}()|[\]\\]/g;

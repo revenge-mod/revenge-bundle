@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A modification for the Discord Android app.",
   "scripts": {
-    "build": "bun run build.mjs"
+    "build": "bun run build.mjs",
+    "lint": "eslint . --fix",
+    "styles": "prettier . --write",
+    "fix": "bun run lint && bun run styles"
   },
   "keywords": [
     "discord",
@@ -21,8 +24,13 @@
     "@types/lodash": "^4.14.194",
     "@types/react": "18.0.35",
     "@types/react-native": "0.70.6",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "esbuild": "^0.17.16",
     "esbuild-plugin-alias": "^0.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-simple-import-sort": "^12.0.0",
+    "eslint-plugin-unused-imports": "^3.1.0",
     "moment": "2.22.2",
     "typescript": "^5.0.4"
   },
