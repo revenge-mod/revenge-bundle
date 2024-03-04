@@ -9,6 +9,8 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 
 ### Android
 
+#### Non-root
+
 1. Install [Vendetta Manager](https://github.com/vendetta-mod/VendettaManager/releases/latest/download/Manager.apk)
 2. Download *(don't install!)* the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
 3. Go to Vendetta Manager's **Settings > About** and press version number **10 times**
@@ -20,6 +22,13 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 > This is default location of downloaded module if you use the default `Downloads` folder **and** you don't have any file with the same name saved. If these two conditions don't match, you will have to change the path respectively.
 
 5. Head back to main screen and install!
+
+#### Root
+
+1. Install an Xposed implementation (eg. LSPosed)
+2. Download and install the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
+3. Enable the module
+4. Force stop Discord
 
 ### Alternative method / Other platforms
 
