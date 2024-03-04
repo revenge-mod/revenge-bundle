@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A modification for the Discord Android app.",
   "scripts": {
-    "build": "bun run build.mjs"
+    "build": "node build.mjs",
+    "build-bun": "bun run build.mjs"
   },
   "keywords": [
     "discord",
