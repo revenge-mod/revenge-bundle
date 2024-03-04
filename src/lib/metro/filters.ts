@@ -12,7 +12,7 @@ const blacklist = (id: number) =>
     value: window.modules[id],
     enumerable: false,
     configurable: true,
-    writable: true,
+    writable: true
   });
 
 // Blacklist any "bad-actor" modules, e.g. the dreaded null proxy, the window itself, or undefined modules
@@ -20,9 +20,8 @@ for (const key in window.modules) {
   const id = Number(key);
   const module = window.modules[id]?.publicModule?.exports;
 
-  if (!module || module === window || module["proxygone"] === null) {
+  if (!module || module === window || module.proxygone === null) {
     blacklist(id);
-    continue;
   }
 }
 
@@ -59,7 +58,7 @@ const filterModules =
 
       if (filter(module)) {
         if (single) return module;
-        else found.push(module);
+        found.push(module);
       }
     }
 

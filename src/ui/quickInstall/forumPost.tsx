@@ -3,7 +3,7 @@ import {
   HTTP_REGEX_MULTI,
   PLUGINS_CHANNEL_ID,
   PROXY_PREFIXES,
-  THEMES_CHANNEL_ID,
+  THEMES_CHANNEL_ID
 } from "@lib/constants";
 import { after } from "@lib/patcher";
 import { installPlugin } from "@lib/plugins";

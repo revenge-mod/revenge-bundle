@@ -1,3 +1,4 @@
+import { anyFunction } from "@/def";
 import { after } from "@lib/patcher";
 import { findInReactTree } from "@lib/utils";
 import { i18n } from "@metro/common";
@@ -9,12 +10,12 @@ const screensModule = findByName("getScreens", false);
 const settingsModule = findByName("UserSettingsOverviewWrapper", false);
 
 export default function patchPanels() {
-  const patches = new Array<Function>();
+  const patches = new Array<anyFunction>();
 
   patches.push(
     after("default", screensModule, (_, existingScreens) => ({
       ...existingScreens,
-      ...getPanelsScreens(),
+      ...getPanelsScreens()
     }))
   );
 
@@ -48,8 +49,8 @@ export default function patchPanels() {
           Overview.type.prototype,
           (_, { props: { children } }) => {
             const titles = [
-              i18n.Messages["BILLING_SETTINGS"],
-              i18n.Messages["PREMIUM_SETTINGS"],
+              i18n.Messages.BILLING_SETTINGS,
+              i18n.Messages.PREMIUM_SETTINGS
             ];
             //! Fix for Android 174201 and iOS 42188
             children = findInReactTree(

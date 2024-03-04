@@ -1,6 +1,6 @@
 import {
   FileManager as _FileManager,
-  MMKVManager as _MMKVManager,
+  MMKVManager as _MMKVManager
 } from "@types";
 const nmp = window.nativeModuleProxy;
 

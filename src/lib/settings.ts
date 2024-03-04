@@ -2,7 +2,7 @@ import {
   createFileBackend,
   createMMKVBackend,
   createStorage,
-  wrapSync,
+  wrapSync
 } from "@lib/storage";
 import { LoaderConfig, Settings } from "@types";
 

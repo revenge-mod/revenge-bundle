@@ -14,7 +14,7 @@ export function showConfirmationAlert(options: ConfirmationAlertOptions) {
   const internalOptions = options as InternalConfirmationAlertOptions;
 
   internalOptions.body = options.content;
-  delete internalOptions.content;
+  internalOptions.content = undefined;
 
   internalOptions.isDismissable ??= true;
 
@@ -26,7 +26,7 @@ export const showCustomAlert = (
   props: any
 ) =>
   Alerts.openLazy({
-    importer: async () => () => React.createElement(component, props),
+    importer: async () => () => React.createElement(component, props)
   });
 
 export const showInputAlert = (options: InputAlertProps) =>

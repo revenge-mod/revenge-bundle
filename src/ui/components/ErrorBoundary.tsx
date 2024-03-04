@@ -11,13 +11,13 @@ const styles = stylesheet.createThemedStyleSheet({
   view: {
     flex: 1,
     flexDirection: "column",
-    margin: 10,
+    margin: 10
   },
   title: {
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 5,
-  },
+    marginBottom: 5
+  }
 });
 
 export default class ErrorBoundary extends React.Component<
@@ -31,7 +31,7 @@ export default class ErrorBoundary extends React.Component<
 
   static getDerivedStateFromError = (error: Error) => ({
     hasErr: true,
-    errText: error.message,
+    errText: error.message
   });
 
   render() {

@@ -47,7 +47,7 @@ export default function Developer() {
                 onPress={() =>
                   window.__vendetta_rdc?.connectToDevTools({
                     host: settings.debuggerUrl.split(":")?.[0],
-                    resolveRNStyle: RN.StyleSheet.flatten,
+                    resolveRNStyle: RN.StyleSheet.flatten
                   })
                 }
               />
@@ -100,7 +100,7 @@ export default function Developer() {
             onPress={() =>
               navigation.push("VendettaCustomPage", {
                 title: "Asset Browser",
-                render: AssetBrowser,
+                render: AssetBrowser
               })
             }
           />
@@ -122,7 +122,7 @@ export default function Developer() {
                       source={getAssetIDByName("ic_warning_24px")}
                     />
                   ),
-                  onClose: () => hideActionSheet(),
+                  onClose: () => hideActionSheet()
                 },
                 options: [
                   {
@@ -130,18 +130,18 @@ export default function Developer() {
                     onPress: () =>
                       navigation.push("VendettaCustomPage", {
                         // @ts-expect-error Of course, to trigger an error, we need to do something incorrectly. The below will do!
-                        render: () => <undefined />,
-                      }),
+                        render: () => <undefined />
+                      })
                   },
                   {
                     label: "Discord",
                     isDestructive: true,
                     onPress: () =>
                       navigation.push("VendettaCustomPage", {
-                        noErrorBoundary: true,
-                      }),
-                  },
-                ],
+                        noErrorBoundary: true
+                      })
+                  }
+                ]
               })
             }
           />

@@ -1,20 +1,21 @@
+import { anyFunction } from "@/def";
 import { i18n } from "@lib/metro/common";
 import { after, before } from "@lib/patcher";
 import { findByProps } from "@metro/filters";
 import {
   getRenderableScreens,
   getScreens,
-  getYouData,
+  getYouData
 } from "@ui/settings/data";
 
 export default function patchYou() {
-  const patches = new Array<Function>();
+  const patches = new Array<anyFunction>();
 
   newYouPatch(patches) || oldYouPatch(patches);
   return () => patches.forEach((p) => p?.());
 }
 
-function oldYouPatch(patches: Function[]) {
+function oldYouPatch(patches: anyFunction[]) {
   const layoutModule = findByProps("useOverviewSettings");
   const titleConfigModule = findByProps("getSettingTitleConfig");
   const miscModule = findByProps(
@@ -49,7 +50,7 @@ function oldYouPatch(patches: Function[]) {
   patches.push(
     after("getSettingTitleConfig", titleConfigModule, (_, ret) => ({
       ...ret,
-      ...data.titleConfig,
+      ...data.titleConfig
     }))
   );
 
@@ -64,14 +65,14 @@ function oldYouPatch(patches: Function[]) {
             setting: s.key,
             title: data.titleConfig[s.key],
             breadcrumbs: ["Revenge"],
-            icon: data.rendererConfigs[s.key].icon,
+            icon: data.rendererConfigs[s.key].icon
           })),
         // .filter can be removed when dropping support for 189.3 and below (unless Discord changes things again)
         ...ret.filter(
           (i: any) =>
             usingNewGettersModule ||
             !screens.map((s) => s.key).includes(i.setting)
-        ),
+        )
       ].map((item, index, parent) => ({ ...item, index, total: parent.length }))
     )
   );
@@ -81,11 +82,11 @@ function oldYouPatch(patches: Function[]) {
 
   miscModule.SETTING_RELATIONSHIPS = {
     ...oldRelationships,
-    ...data.relationships,
+    ...data.relationships
   };
   miscModule.SETTING_RENDERER_CONFIGS = {
     ...oldRendererConfigs,
-    ...data.rendererConfigs,
+    ...data.rendererConfigs
   };
 
   patches.push(() => {
@@ -96,7 +97,7 @@ function oldYouPatch(patches: Function[]) {
   return true;
 }
 
-function newYouPatch(patches: Function[]) {
+function newYouPatch(patches: anyFunction[]) {
   const settingsListComponents = findByProps("SearchableSettingsList");
   const settingConstantsModule = findByProps("SETTING_RENDERER_CONFIG");
   const gettersModule = findByProps("getSettingListItems");
@@ -128,7 +129,7 @@ function newYouPatch(patches: Function[]) {
   const oldRendererConfig = settingConstantsModule.SETTING_RENDERER_CONFIG;
   settingConstantsModule.SETTING_RENDERER_CONFIG = {
     ...oldRendererConfig,
-    ...data.rendererConfigs,
+    ...data.rendererConfigs
   };
 
   patches.push(() => {

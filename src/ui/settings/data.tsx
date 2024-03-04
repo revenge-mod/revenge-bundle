@@ -4,10 +4,10 @@ import settings from "@lib/settings";
 import { installTheme } from "@lib/themes";
 import { without } from "@lib/utils";
 import {
-  lodash,
   NavigationNative,
   ReactNative as RN,
-  stylesheet,
+  lodash,
+  stylesheet
 } from "@metro/common";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
@@ -33,8 +33,8 @@ interface Screen {
 const styles = stylesheet.createThemedStyleSheet({
   container: {
     flex: 1,
-    backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY,
-  },
+    backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY
+  }
 });
 const formatKey = (key: string, youKeys: boolean) =>
   youKeys ? lodash.snakeCase(key).toUpperCase() : key;
@@ -51,8 +51,8 @@ const keyMap = (
       typeof data === "function"
         ? data(s)
         : typeof data === "string"
-        ? s[data]
-        : data,
+          ? s[data]
+          : data
     ])
   );
 
@@ -61,7 +61,7 @@ export const getScreens = (youKeys = false): Screen[] => [
     key: formatKey("RevengeSettings", youKeys),
     title: "General",
     icon: "settings",
-    render: General,
+    render: General
   },
   {
     key: formatKey("RevengePlugins", youKeys),
@@ -96,15 +96,15 @@ export const getScreens = (youKeys = false): Screen[] => [
                           getAssetIDByName("Small")
                         )
                       ),
-                  cancelText: "Cancel",
+                  cancelText: "Cancel"
                 })
               );
             else return await installPlugin(input);
           }}
         />
-      ),
+      )
     },
-    render: Plugins,
+    render: Plugins
   },
   {
     key: formatKey("RevengeThemes", youKeys),
@@ -123,16 +123,16 @@ export const getScreens = (youKeys = false): Screen[] => [
             alertTitle="Install Theme"
             installFunction={installTheme}
           />
-        ),
+        )
     },
-    render: Themes,
+    render: Themes
   },
   {
     key: formatKey("RevengeDeveloper", youKeys),
     title: "Developer",
     icon: "ic_progress_wrench_24px",
     shouldRender: () => settings.developerSettings ?? false,
-    render: Developer,
+    render: Developer
   },
   {
     key: formatKey("VendettaCustomPage", youKeys),
@@ -158,8 +158,8 @@ export const getScreens = (youKeys = false): Screen[] => [
           <PageView />
         </ErrorBoundary>
       );
-    },
-  },
+    }
+  }
 ];
 
 export const getRenderableScreens = (youKeys = false) =>
@@ -169,7 +169,7 @@ export const getPanelsScreens = () =>
   keyMap(getScreens(), (s) => ({
     title: s.title,
     render: s.render,
-    ...s.options,
+    ...s.options
   }));
 
 export const getYouData = () => {
@@ -180,7 +180,7 @@ export const getYouData = () => {
       title: "Revenge",
       label: "Revenge",
       // We can't use our keyMap function here since `settings` is an array not an object
-      settings: getRenderableScreens(true).map((s) => s.key),
+      settings: getRenderableScreens(true).map((s) => s.key)
     }),
     titleConfig: keyMap(screens, "title"),
     relationships: keyMap(screens, null),
@@ -202,9 +202,9 @@ export const getYouData = () => {
           // TODO: This is bad, we should not re-convert the key casing
           // For some context, just using the key here would make the route key be VENDETTA_CUSTOM_PAGE in you tab, which breaks compat with panels UI navigation
           route: lodash.chain(s.key).camelCase().upperFirst().value(),
-          getComponent: () => WrappedComponent,
-        },
+          getComponent: () => WrappedComponent
+        }
       };
-    }),
+    })
   };
 };

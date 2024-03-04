@@ -28,7 +28,7 @@ export default async (unloads: any[]): Promise<VendettaObject> => ({
     toasts,
     alerts,
     assets,
-    ...color,
+    ...color
   },
   plugins: utils.without(plugins, "initPlugins", "evalPlugin"),
   themes: utils.without(themes, "initThemes"),
@@ -37,13 +37,13 @@ export default async (unloads: any[]): Promise<VendettaObject> => ({
   settings,
   loader: {
     identity: window.__vendetta_loader,
-    config: loaderConfig,
+    config: loaderConfig
   },
   logger,
   version: debug.versionHash,
   unload: () => {
     unloads.filter((i) => typeof i === "function").forEach((p) => p());
     // @ts-expect-error On unload, nothing would be using this
-    delete window.vendetta;
-  },
+    window.vendetta = undefined;
+  }
 });

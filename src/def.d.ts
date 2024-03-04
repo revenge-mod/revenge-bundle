@@ -8,6 +8,8 @@ import * as _spitroast from "spitroast";
 
 type MetroModules = { [id: number]: any };
 
+type anyFunction = (...args: any[]) => void;
+
 // Component types
 interface SummaryProps {
   label: string;
@@ -107,7 +109,7 @@ export enum ButtonColors {
   GREY = "grey",
   LIGHTGREY = "lightgrey",
   WHITE = "white",
-  LINK = "link",
+  LINK = "link"
 }
 
 interface ConfirmationAlertOptions {
@@ -210,11 +212,11 @@ interface ApplicationCommand {
 }
 
 export enum ApplicationCommandInputType {
-  BUILT_IN,
-  BUILT_IN_TEXT,
-  BUILT_IN_INTEGRATION,
-  BOT,
-  PLACEHOLDER,
+  BUILT_IN = 0,
+  BUILT_IN_TEXT = 1,
+  BUILT_IN_INTEGRATION = 2,
+  BOT = 3,
+  PLACEHOLDER = 4
 }
 
 interface ApplicationCommandOption {
@@ -228,22 +230,22 @@ interface ApplicationCommandOption {
 
 export enum ApplicationCommandOptionType {
   SUB_COMMAND = 1,
-  SUB_COMMAND_GROUP,
-  STRING,
-  INTEGER,
-  BOOLEAN,
-  USER,
-  CHANNEL,
-  ROLE,
-  MENTIONABLE,
-  NUMBER,
-  ATTACHMENT,
+  SUB_COMMAND_GROUP = 2,
+  STRING = 3,
+  INTEGER = 4,
+  BOOLEAN = 5,
+  USER = 6,
+  CHANNEL = 7,
+  ROLE = 8,
+  MENTIONABLE = 9,
+  NUMBER = 10,
+  ATTACHMENT = 11
 }
 
 export enum ApplicationCommandType {
   CHAT = 1,
-  USER,
-  MESSAGE,
+  USER = 2,
+  MESSAGE = 3
 }
 
 interface CommandContext {

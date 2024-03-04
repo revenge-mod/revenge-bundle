@@ -2,13 +2,40 @@
   "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
   "javascript": {
     "formatter": {
-      "enabled": true,
       "bracketSpacing": true,
-      "indentSize": 4,
+      "enabled": true,
       "indentStyle": "space",
-      "jsxQuoteStyle": "double",
-      "lineWidth": 240,
-      "quoteStyle": "double"
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 80,
+      "quoteStyle": "double",
+      "trailingComma": "none"
     }
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noForEach": "off"
+      },
+      "correctness": {
+        "noChildrenProp": "off"
+      },
+      "performance": {
+        "noDelete": "off"
+      },
+      "recommended": true,
+      "style": {
+        "noCommaOperator": "off",
+        "noNonNullAssertion": "off",
+        "noParameterAssign": "off"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off",
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "organizeImports": {
+    "enabled": true
   }
 }

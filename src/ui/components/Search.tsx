@@ -2,9 +2,9 @@ import { ReactNative as RN, stylesheet } from "@metro/common";
 import { findByName } from "@metro/filters";
 import { SearchProps } from "@types";
 
+import { Redesign } from ".";
 import { getAssetIDByName } from "../assets";
 import { semanticColors } from "../color";
-import { Redesign } from ".";
 
 const Search = findByName("StaticSearchBarContainer");
 
@@ -13,17 +13,17 @@ const styles = stylesheet.createThemedStyleSheet({
     margin: 0,
     padding: 0,
     borderBottomWidth: 0,
-    backgroundColor: "none",
+    backgroundColor: "none"
   },
   redesignSearch: {
     paddingHorizontal: 8,
-    marginBottom: 4,
+    marginBottom: 4
   },
   icon: {
     width: 16,
     height: 16,
-    tintColor: semanticColors.INTERACTIVE_NORMAL,
-  },
+    tintColor: semanticColors.INTERACTIVE_NORMAL
+  }
 });
 
 export default ({ onChangeText, placeholder, style }: SearchProps) => {
@@ -44,12 +44,12 @@ export default ({ onChangeText, placeholder, style }: SearchProps) => {
         returnKeyType="search"
       />
     );
-  else
-    return (
-      <Search
-        style={[styles.search, style]}
-        placeholder={placeholder}
-        onChangeText={onChangeText}
-      />
-    );
+
+  return (
+    <Search
+      style={[styles.search, style]}
+      placeholder={placeholder}
+      onChangeText={onChangeText}
+    />
+  );
 };

@@ -3,13 +3,13 @@ import {
   EmitterEvent,
   EmitterListener,
   EmitterListenerData,
-  EmitterListeners,
+  EmitterListeners
 } from "@types";
 
 export enum Events {
   GET = "GET",
   SET = "SET",
-  DEL = "DEL",
+  DEL = "DEL"
 }
 
 export default function createEmitter(): Emitter {
@@ -38,6 +38,6 @@ export default function createEmitter(): Emitter {
 
     emit(event: EmitterEvent, data: EmitterListenerData) {
       for (const listener of this.listeners[event]) listener(event, data);
-    },
+    }
   };
 }

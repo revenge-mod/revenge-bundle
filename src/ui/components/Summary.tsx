@@ -8,7 +8,7 @@ export default function Summary({
   icon,
   noPadding = false,
   noAnimation = false,
-  children,
+  children
 }: SummaryProps) {
   const { FormRow, FormDivider } = Forms;
   const [hidden, setHidden] = React.useState(true);

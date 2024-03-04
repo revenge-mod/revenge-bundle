@@ -3,7 +3,7 @@ import { getDebugInfo, toggleSafeMode } from "@lib/debug";
 import { BundleUpdaterManager } from "@lib/native";
 import settings from "@lib/settings";
 import { removeMMKVBackend, useProxy } from "@lib/storage";
-import { ReactNative as RN, url } from "@metro/common";
+import { url, ReactNative as RN } from "@metro/common";
 import { ButtonColors } from "@types";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
@@ -20,70 +20,70 @@ export default function General() {
     {
       label: "Revenge",
       version: debugInfo.vendetta.version,
-      icon: "ic_progress_wrench_24px",
+      icon: "ic_progress_wrench_24px"
     },
     {
       label: "Discord",
       version: `${debugInfo.discord.version} (${debugInfo.discord.build})`,
-      icon: "Discord",
+      icon: "Discord"
     },
     {
       label: "React",
       version: debugInfo.react.version,
-      icon: "ic_category_16px",
+      icon: "ic_category_16px"
     },
     {
       label: "React Native",
       version: debugInfo.react.nativeVersion,
-      icon: "mobile",
+      icon: "mobile"
     },
     {
       label: "Bytecode",
       version: debugInfo.hermes.bytecodeVersion,
-      icon: "ic_server_security_24px",
-    },
+      icon: "ic_server_security_24px"
+    }
   ];
 
   const platformInfo = [
     {
       label: "Loader",
       version: debugInfo.vendetta.loader,
-      icon: "ic_download_24px",
+      icon: "ic_download_24px"
     },
     {
       label: "Operating System",
       version: `${debugInfo.os.name} ${debugInfo.os.version}`,
-      icon: "ic_cog_24px",
+      icon: "ic_cog_24px"
     },
     ...(debugInfo.os.sdk
       ? [
           {
             label: "SDK",
             version: debugInfo.os.sdk,
-            icon: "ic_profile_badge_verified_developer_color",
-          },
+            icon: "ic_profile_badge_verified_developer_color"
+          }
         ]
       : []),
     {
       label: "Manufacturer",
       version: debugInfo.device.manufacturer,
-      icon: "ic_badge_staff",
+      icon: "ic_badge_staff"
     },
     {
       label: "Brand",
       version: debugInfo.device.brand,
-      icon: "ic_settings_boost_24px",
+      icon: "ic_settings_boost_24px"
     },
     {
       label: "Model",
       version: debugInfo.device.model,
-      icon: "ic_phonelink_24px",
+      icon: "ic_phonelink_24px"
     },
     {
       label: RN.Platform.select({ android: "Codename", ios: "Machine ID" })!,
       version: debugInfo.device.codename,
-      icon: "ic_compose_24px",
-    },
+      icon: "ic_compose_24px"
+    }
   ];
 
   return (
@@ -186,7 +186,7 @@ export default function General() {
                 onConfirm: () => {
                   removeMMKVBackend("VENDETTA_PLUGINS");
                   BundleUpdaterManager.reload();
-                },
+                }
               })
             }
           />
@@ -207,7 +207,7 @@ export default function General() {
                 onConfirm: () => {
                   removeMMKVBackend("VENDETTA_THEMES");
                   BundleUpdaterManager.reload();
-                },
+                }
               })
             }
           />

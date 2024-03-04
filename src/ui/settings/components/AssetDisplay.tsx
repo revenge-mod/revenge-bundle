@@ -1,4 +1,4 @@
-import { clipboard, ReactNative as RN } from "@metro/common";
+import { ReactNative as RN, clipboard } from "@metro/common";
 import { Asset } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { Forms } from "@ui/components";

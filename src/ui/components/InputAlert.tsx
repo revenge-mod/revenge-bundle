@@ -13,7 +13,7 @@ export default function InputAlert({
   cancelText,
   placeholder,
   initialValue = "",
-  secureTextEntry,
+  secureTextEntry
 }: InputAlertProps) {
   const [value, setValue] = React.useState(initialValue);
   const [error, setError] = React.useState("");
@@ -56,7 +56,7 @@ export default function InputAlert({
         style={{
           paddingVertical: 5,
           alignSelf: "stretch",
-          paddingHorizontal: 0,
+          paddingHorizontal: 0
         }}
       />
     </Alert>

@@ -4,10 +4,10 @@ import {
   createFileBackend,
   createMMKVBackend,
   createStorage,
-  wrapSync,
+  wrapSync
 } from "@lib/storage";
 import { findInReactTree, safeFetch } from "@lib/utils";
-import { chroma, ReactNative as RN } from "@metro/common";
+import { ReactNative as RN, chroma } from "@metro/common";
 import { findByName, findByProps } from "@metro/filters";
 import { Theme, ThemeData } from "@types";
 
@@ -31,7 +31,7 @@ const semanticAlternativeMap: Record<string, string> = {
   BG_MOD_SUBTLE: "BACKGROUND_MODIFIER_ACCENT",
   BG_SURFACE_OVERLAY: "BACKGROUND_FLOATING",
   BG_SURFACE_OVERLAY_TMP: "BACKGROUND_FLOATING",
-  BG_SURFACE_RAISED: "BACKGROUND_MOBILE_PRIMARY",
+  BG_SURFACE_RAISED: "BACKGROUND_MOBILE_PRIMARY"
 };
 
 async function writeTheme(theme: Theme | object) {
@@ -63,7 +63,7 @@ export function patchChatBackground() {
           typeof currentBackground.blur === "number"
             ? currentBackground.blur
             : 0,
-        children: ret,
+        children: ret
       })
     ),
     after("render", MessagesWrapper.prototype, (_, ret) => {
@@ -76,11 +76,11 @@ export function patchChatBackground() {
         Messages.props.style = Object.assign(
           RN.StyleSheet.flatten(Messages.props.style ?? {}),
           {
-            backgroundColor: "#0000",
+            backgroundColor: "#0000"
           }
         );
       else logger.error("Didn't find Messages when patching MessagesWrapper!");
-    }),
+    })
   ];
 
   return () => patches.forEach((x) => x());
@@ -138,7 +138,7 @@ function applyAndroidAlphaKeys(rawColors: Record<string, string>) {
     PRIMARY_DARK_500_ALPHA_20: ["PRIMARY_500", 0.2],
     PRIMARY_DARK_700_ALPHA_60: ["PRIMARY_700", 0.6],
     STATUS_GREEN_500_ALPHA_20: ["GREEN_500", 0.2],
-    STATUS_RED_500_ALPHA_20: ["RED_500", 0.2],
+    STATUS_RED_500_ALPHA_20: ["RED_500", 0.2]
   };
 
   for (const key in alphaMap) {
@@ -160,7 +160,7 @@ export async function fetchTheme(id: string, selected = false) {
   themes[id] = {
     id: id,
     selected: selected,
-    data: processData(themeJSON),
+    data: processData(themeJSON)
   };
 
   // TODO: Should we prompt when the selected theme is updated?
@@ -223,7 +223,7 @@ export async function initThemes() {
         selectedTheme.data?.rawColors?.[colorProp] ??
         Reflect.get(oldRaw, colorProp)
       );
-    },
+    }
   });
 
   instead(

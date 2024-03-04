@@ -22,7 +22,7 @@ export function createProxy(target: any = {}): {
         if (value !== undefined && value !== null) {
           emitter.emit("GET", {
             path: newPath,
-            value,
+            value
           });
           if (typeof value === "object") {
             return createProxy(value, newPath);
@@ -37,7 +37,7 @@ export function createProxy(target: any = {}): {
         target[prop] = value;
         emitter.emit("SET", {
           path: [...path, prop],
-          value,
+          value
         });
         // we do not care about success, if this actually does fail we have other problems
         return true;
@@ -47,16 +47,16 @@ export function createProxy(target: any = {}): {
         const success = delete target[prop];
         if (success)
           emitter.emit("DEL", {
-            path: [...path, prop],
+            path: [...path, prop]
           });
         return success;
-      },
+      }
     });
   }
 
   return {
     proxy: createProxy(target, []),
-    emitter,
+    emitter
   };
 }
 
@@ -67,7 +67,7 @@ export function useProxy<T>(storage: T & { [key: symbol]: any }): T {
 
   if (!emitter)
     throw new Error(
-      "InvalidArgumentExcpetion - storage[emitterSymbol] is " + typeof emitter
+      `InvalidArgumentExcpetion - storage[emitterSymbol] is ${typeof emitter}`
     );
 
   const [, forceUpdate] = React.useReducer((n) => ~n, 0);
@@ -82,7 +82,7 @@ export function useProxy<T>(storage: T & { [key: symbol]: any }): T {
       emitter.off("SET", listener);
       emitter.off("DEL", listener);
     };
-  }, []);
+  }, [emitter]);
 
   return storage;
 }
@@ -120,14 +120,14 @@ export function wrapSync<T extends Promise<any>>(store: T): Awaited<T> {
     ...Object.fromEntries(
       Object.getOwnPropertyNames(Reflect).map((k) => [
         k,
-        (t: T, ...a: any[]) => (Reflect as any)[k](awaited ?? t, ...a),
+        (t: T, ...a: any[]) => (Reflect as any)[k](awaited ?? t, ...a)
       ])
     ),
     get(target, prop, recv) {
       if (prop === storageErrorSymbol) return error;
       if (prop === syncAwaitSymbol) return awaitInit;
       return Reflect.get(awaited ?? target, prop, recv);
-    },
+    }
   });
 }
 

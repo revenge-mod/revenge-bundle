@@ -2,7 +2,7 @@ import logger from "@lib/logger";
 import {
   BundleUpdaterManager,
   ClientInfoManager,
-  DeviceManager,
+  DeviceManager
 } from "@lib/native";
 import { after } from "@lib/patcher";
 import settings from "@lib/settings";
@@ -16,11 +16,11 @@ export let socket: WebSocket;
 export async function toggleSafeMode() {
   settings.safeMode = {
     ...settings.safeMode,
-    enabled: !settings.safeMode?.enabled,
+    enabled: !settings.safeMode?.enabled
   };
   if (window.__vendetta_loader?.features.themes) {
     if (getCurrentTheme()?.id)
-      settings.safeMode!.currentThemeId = getCurrentTheme()!.id;
+      settings.safeMode!.currentThemeId = getCurrentTheme()?.id;
     if (settings.safeMode?.enabled) {
       await selectTheme("default");
     } else if (settings.safeMode?.currentThemeId) {
@@ -69,7 +69,7 @@ export function patchLogHook() {
   });
 
   return () => {
-    socket && socket.close();
+    socket?.close();
     unpatch();
   };
 }
@@ -89,37 +89,37 @@ export function getDebugInfo() {
   return {
     vendetta: {
       version: versionHash,
-      loader: window.__vendetta_loader?.name ?? "Unknown",
+      loader: window.__vendetta_loader?.name ?? "Unknown"
     },
     discord: {
       version: ClientInfoManager.Version,
-      build: ClientInfoManager.Build,
+      build: ClientInfoManager.Build
     },
     react: {
       version: React.version,
       nativeVersion: hermesVer.startsWith(padding)
         ? hermesVer.substring(padding.length)
-        : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`,
+        : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`
     },
     hermes: {
       version: hermesVer,
-      buildType: hermesProps["Build"],
-      bytecodeVersion: hermesProps["Bytecode Version"],
+      buildType: hermesProps.Build,
+      bytecodeVersion: hermesProps["Bytecode Version"]
     },
     ...RN.Platform.select({
       android: {
         os: {
           name: "Android",
           version: PlatformConstants.Release,
-          sdk: PlatformConstants.Version,
-        },
+          sdk: PlatformConstants.Version
+        }
       },
       ios: {
         os: {
           name: PlatformConstants.systemName,
-          version: PlatformConstants.osVersion,
-        },
-      },
+          version: PlatformConstants.osVersion
+        }
+      }
     })!,
     ...RN.Platform.select({
       android: {
@@ -127,17 +127,17 @@ export function getDebugInfo() {
           manufacturer: PlatformConstants.Manufacturer,
           brand: PlatformConstants.Brand,
           model: PlatformConstants.Model,
-          codename: DeviceManager.device,
-        },
+          codename: DeviceManager.device
+        }
       },
       ios: {
         device: {
           manufacturer: DeviceManager.deviceManufacturer,
           brand: DeviceManager.deviceBrand,
           model: DeviceManager.deviceModel,
-          codename: DeviceManager.device,
-        },
-      },
-    })!,
+          codename: DeviceManager.device
+        }
+      }
+    })!
   };
 }

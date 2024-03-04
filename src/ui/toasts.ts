@@ -10,5 +10,5 @@ export const showToast = (content: string, asset?: number) =>
     key: `vd-toast-${uuid4()}`,
     content: content,
     source: asset,
-    icon: asset,
+    icon: asset
   });

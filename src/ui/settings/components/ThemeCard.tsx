@@ -17,7 +17,7 @@ async function selectAndReload(value: boolean, id: string) {
 export default function ThemeCard({
   item: theme,
   index,
-  highlight,
+  highlight
 }: CardWrapper<Theme>) {
   useProxy(settings);
   const [removed, setRemoved] = React.useState(false);
@@ -56,7 +56,7 @@ export default function ThemeCard({
                     confirmText: "Reload",
                     cancelText: "Cancel",
                     confirmColor: ButtonColors.RED,
-                    onConfirm: () => BundleUpdaterManager.reload(),
+                    onConfirm: () => BundleUpdaterManager.reload()
                   });
                 } else {
                   showToast(
@@ -71,7 +71,7 @@ export default function ThemeCard({
                   getAssetIDByName("Small")
                 );
               });
-          },
+          }
         },
         {
           icon: "copy",
@@ -82,7 +82,7 @@ export default function ThemeCard({
               "Copied theme URL to clipboard.",
               getAssetIDByName("toast_copy_link")
             );
-          },
+          }
         },
         {
           icon: "ic_message_delete",
@@ -104,9 +104,9 @@ export default function ThemeCard({
                   .catch((e: Error) => {
                     showToast(e.message, getAssetIDByName("Small"));
                   });
-              },
-            }),
-        },
+              }
+            })
+        }
       ]}
       highlight={highlight}
     />

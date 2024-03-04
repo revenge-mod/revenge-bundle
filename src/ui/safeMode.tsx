@@ -10,7 +10,7 @@ import {
   Button,
   Codeblock,
   ErrorBoundary as _ErrorBoundary,
-  SafeAreaView,
+  SafeAreaView
 } from "@ui/components";
 
 const ErrorBoundary = findByName("ErrorBoundary");
@@ -23,31 +23,31 @@ const styles = stylesheet.createThemedStyleSheet({
   container: {
     flex: 1,
     backgroundColor: semanticColors.BACKGROUND_PRIMARY,
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   header: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 8
   },
   headerTitle: {
     ...TextStyleSheet["heading-md/semibold"],
     textAlign: "center",
     textTransform: "uppercase",
-    color: semanticColors.HEADER_PRIMARY,
+    color: semanticColors.HEADER_PRIMARY
   },
   headerDescription: {
     ...TextStyleSheet["text-sm/medium"],
     textAlign: "center",
-    color: semanticColors.TEXT_MUTED,
+    color: semanticColors.TEXT_MUTED
   },
   footer: {
     flexDirection: DeviceManager.isTablet ? "row" : "column",
     justifyContent: "flex-end",
-    marginVertical: 8,
-  },
+    marginVertical: 8
+  }
 });
 
 interface Tab {
@@ -56,7 +56,7 @@ interface Tab {
   trimWhitespace?: boolean;
 }
 
-interface Button {
+interface ButtonType {
   text: string;
   // TODO: Proper types for the below
   color?: string;
@@ -67,7 +67,7 @@ interface Button {
 const tabs: Tab[] = [
   { id: "message", title: "Message" },
   { id: "stack", title: "Stack Trace" },
-  { id: "componentStack", title: "Component", trimWhitespace: true },
+  { id: "componentStack", title: "Component", trimWhitespace: true }
 ];
 
 export default () =>
@@ -82,7 +82,7 @@ export default () =>
     const errorText: string = this.state.error[this.state.activeTab];
 
     // This is in the patch and not outside of it so that we can use `this`, e.g. for setting state
-    const buttons: Button[] = [
+    const buttons: ButtonType[] = [
       { text: "Restart Discord", onPress: this.handleReload },
       ...(!settings.safeMode?.enabled
         ? [{ text: "Restart in Safe Mode", onPress: toggleSafeMode }]
@@ -90,8 +90,8 @@ export default () =>
       {
         text: "Retry Render",
         color: ButtonColors.RED,
-        onPress: () => this.setState({ info: null, error: null }),
-      },
+        onPress: () => this.setState({ info: null, error: null })
+      }
     ];
 
     return (
@@ -104,7 +104,7 @@ export default () =>
                   flex: 1,
                   resizeMode: "contain",
                   maxHeight: 96,
-                  paddingRight: 4,
+                  paddingRight: 4
                 }}
               />
             )}
@@ -132,7 +132,7 @@ export default () =>
             >
               {[
                 `Discord: ${debugInfo.discord.build} (${debugInfo.os.name})`,
-                `Vendetta: ${debugInfo.vendetta.version}`,
+                `Vendetta: ${debugInfo.vendetta.version}`
               ].join("\n")}
             </Codeblock>
             <Codeblock selectable style={{ flex: 1, textAlignVertical: "top" }}>

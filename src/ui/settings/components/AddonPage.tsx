@@ -17,7 +17,7 @@ export default function AddonPage<T>({
   safeModeMessage,
   safeModeExtras,
   card: CardComponent,
-  keyGetter,
+  keyGetter
 }: AddonPageProps<T>) {
   useProxy(settings);
   useProxy(items);

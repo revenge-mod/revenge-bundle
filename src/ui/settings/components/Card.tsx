@@ -14,34 +14,34 @@ const { TextStyleSheet } = findByProps("TextStyleSheet");
 const styles = stylesheet.createThemedStyleSheet({
   card: {
     backgroundColor: semanticColors?.BACKGROUND_SECONDARY,
-    borderRadius: 12,
+    borderRadius: 12
   },
   header: {
     padding: 0,
     backgroundColor: semanticColors?.BACKGROUND_TERTIARY,
-    borderRadius: 12,
+    borderRadius: 12
   },
   headerChildren: {
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   headerLabel: {
     color: semanticColors?.TEXT_NORMAL,
-    ...TextStyleSheet["text-md/semibold"],
+    ...TextStyleSheet["text-md/semibold"]
   },
   headerSubtitle: {
     color: semanticColors?.TEXT_MUTED,
-    ...TextStyleSheet["text-sm/semibold"],
+    ...TextStyleSheet["text-sm/semibold"]
   },
   actions: {
     flexDirection: "row-reverse",
-    alignItems: "center",
+    alignItems: "center"
   },
   icon: {
     width: 22,
     height: 22,
     marginLeft: 5,
-    tintColor: semanticColors?.INTERACTIVE_NORMAL,
+    tintColor: semanticColors?.INTERACTIVE_NORMAL
   },
   iconContainer: {
     width: 33,
@@ -49,16 +49,16 @@ const styles = stylesheet.createThemedStyleSheet({
     borderRadius: 17,
     backgroundColor: semanticColors?.BACKGROUND_ACCENT,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   smallerIcon: {
     width: 22,
     height: 22,
-    tintColor: semanticColors?.INTERACTIVE_NORMAL,
+    tintColor: semanticColors?.INTERACTIVE_NORMAL
   },
   highlight: {
-    backgroundColor: "#F0" + rawColors.YELLOW_300.slice(1),
-  },
+    backgroundColor: `#F0${rawColors.YELLOW_300.slice(1)}`
+  }
 });
 
 interface Action {
@@ -96,9 +96,7 @@ const highlighter = (str: string, highlight: string) => {
   if (!highlight) return str;
 
   return str
-    .split(
-      new RegExp("(" + highlight.replace(ESCAPE_REGEX, "\\$&") + ")", "gi")
-    )
+    .split(new RegExp(`(${highlight.replace(ESCAPE_REGEX, "\\$&")})`, "gi"))
     .map((x, i) =>
       i % 2 === 1 ? <RN.Text style={styles.highlight}>{x}</RN.Text> : x
     );
@@ -173,12 +171,12 @@ export default function Card(props: CardProps) {
                           source={getAssetIDByName(props.headerIcon)}
                         />
                       ),
-                      onClose: () => hideActionSheet(),
+                      onClose: () => hideActionSheet()
                     },
                     options: props.overflowActions?.map((i) => ({
                       ...i,
-                      icon: getAssetIDByName(i.icon),
-                    })),
+                      icon: getAssetIDByName(i.icon)
+                    }))
                   })
                 }
               >

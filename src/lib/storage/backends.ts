@@ -7,7 +7,7 @@ const ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g;
 const filePathFixer = (file: string): string =>
   RN.Platform.select({
     default: file,
-    ios: FileManager.saveFileToGallery ? file : `Documents/${file}`,
+    ios: FileManager.saveFileToGallery ? file : `Documents/${file}`
   });
 
 const getMMKVPath = (name: string): string => {
@@ -108,6 +108,6 @@ export const createFileBackend = (
         JSON.stringify(data),
         "utf8"
       );
-    },
+    }
   };
 };

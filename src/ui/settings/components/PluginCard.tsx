@@ -4,16 +4,16 @@ import {
   getSettings,
   removePlugin,
   startPlugin,
-  stopPlugin,
+  stopPlugin
 } from "@lib/plugins";
-import { clipboard, NavigationNative } from "@metro/common";
-import { ButtonColors, Plugin } from "@types";
+import { NavigationNative, clipboard } from "@metro/common";
+import { ButtonColors, Plugin, anyFunction } from "@types";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
 import Card, { CardWrapper } from "@ui/settings/components/Card";
 import { showToast } from "@ui/toasts";
 
-async function stopThenStart(plugin: Plugin, callback: Function) {
+async function stopThenStart(plugin: Plugin, callback: anyFunction) {
   if (plugin.enabled) stopPlugin(plugin.id, false);
   callback();
   if (plugin.enabled) await startPlugin(plugin.id);
@@ -22,7 +22,7 @@ async function stopThenStart(plugin: Plugin, callback: Function) {
 export default function PluginCard({
   item: plugin,
   index,
-  highlight,
+  highlight
 }: CardWrapper<Plugin>) {
   const settings = getSettings(plugin.id);
   const navigation = NavigationNative.useNavigation();
@@ -77,7 +77,7 @@ export default function PluginCard({
                   );
                 });
             });
-          },
+          }
         },
         {
           icon: "copy",
@@ -88,7 +88,7 @@ export default function PluginCard({
               "Copied plugin URL to clipboard.",
               getAssetIDByName("toast_copy_link")
             );
-          },
+          }
         },
         {
           icon: "ic_download_24px",
@@ -101,7 +101,7 @@ export default function PluginCard({
               }.`,
               getAssetIDByName("toast_image_saved")
             );
-          },
+          }
         },
         {
           icon: "ic_duplicate",
@@ -129,8 +129,8 @@ export default function PluginCard({
                     );
                   }
                 });
-              },
-            }),
+              }
+            })
         },
         {
           icon: "ic_message_delete",
@@ -150,9 +150,9 @@ export default function PluginCard({
                 } catch (e) {
                   showToast((e as Error).message, getAssetIDByName("Small"));
                 }
-              },
-            }),
-        },
+              }
+            })
+        }
       ]}
       actions={[
         ...(settings
@@ -162,11 +162,11 @@ export default function PluginCard({
                 onPress: () =>
                   navigation.push("VendettaCustomPage", {
                     title: plugin.manifest.name,
-                    render: settings,
-                  }),
-              },
+                    render: settings
+                  })
+              }
             ]
-          : []),
+          : [])
       ]}
       highlight={highlight}
     />

@@ -18,7 +18,7 @@ export default function Plugins() {
           i.id,
           i.manifest.name,
           i.manifest.description,
-          i.manifest.authors?.map((x) => x.name),
+          i.manifest.authors?.map((x) => x.name)
         ].flat()
       }
     />

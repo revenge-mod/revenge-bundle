@@ -17,7 +17,7 @@ import(".")
         `Build Number: ${ClientInfoManager.Build}`,
         // TODO: Rename this
         `Revenge: ${__revengeVersion}`,
-        e?.stack || e.toString(),
+        e?.stack || e.toString()
       ].join("\n")
     );
   });

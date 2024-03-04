@@ -36,7 +36,7 @@ export default function Themes() {
           i.id,
           i.data.name,
           i.data.description,
-          i.data.authors?.map((x) => x.name),
+          i.data.authors?.map((x) => x.name)
         ].flat()
       }
     />

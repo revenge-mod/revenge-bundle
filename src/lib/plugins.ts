@@ -6,7 +6,7 @@ import {
   createMMKVBackend,
   createStorage,
   purgeStorage,
-  wrapSync,
+  wrapSync
 } from "@lib/storage";
 import { safeFetch } from "@lib/utils";
 import { Plugin, PluginManifest } from "@types";
@@ -30,7 +30,7 @@ export async function fetchPlugin(id: string) {
 
   try {
     pluginManifest = await (
-      await safeFetch(id + "manifest.json", { cache: "no-store" })
+      await safeFetch(`${id}manifest.json`, { cache: "no-store" })
     ).json();
   } catch {
     throw new Error(`Failed to fetch manifest for ${id}`);
@@ -43,7 +43,7 @@ export async function fetchPlugin(id: string) {
       // by polymanifest spec, plugins should always specify their main file, but just in case
       pluginJs = await (
         await safeFetch(id + (pluginManifest.main || "index.js"), {
-          cache: "no-store",
+          cache: "no-store"
         })
       ).text();
     } catch {
@@ -59,7 +59,7 @@ export async function fetchPlugin(id: string) {
     manifest: pluginManifest,
     enabled: existingPlugin?.enabled ?? false,
     update: existingPlugin?.update ?? true,
-    js: pluginJs ?? existingPlugin.js,
+    js: pluginJs ?? existingPlugin.js
   };
 }
 
@@ -80,14 +80,14 @@ export async function evalPlugin(plugin: Plugin) {
       // Wrapping this with wrapSync is NOT an option.
       storage: await createStorage<Record<string, any>>(
         createMMKVBackend(plugin.id)
-      ),
+      )
     },
-    logger: new logModule(`Vendetta » ${plugin.manifest.name}`),
+    logger: new logModule(`Vendetta » ${plugin.manifest.name}`)
   };
   const pluginString = `vendetta=>{return ${plugin.js}}\n//# sourceURL=${plugin.id}`;
 
   const raw = (0, eval)(pluginString)(vendettaForPlugins);
-  const ret = typeof raw == "function" ? raw() : raw;
+  const ret = typeof raw === "function" ? raw() : raw;
   return ret?.default ?? ret ?? {};
 }
 

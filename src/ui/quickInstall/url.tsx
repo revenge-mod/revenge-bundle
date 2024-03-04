@@ -1,8 +1,9 @@
+import { anyFunction } from "@/def";
 import { PROXY_PREFIXES, THEMES_CHANNEL_ID } from "@lib/constants";
 import { after, instead } from "@lib/patcher";
 import { installPlugin } from "@lib/plugins";
 import { installTheme } from "@lib/themes";
-import { channels, ReactNative as RN, url } from "@metro/common";
+import { url, ReactNative as RN, channels } from "@metro/common";
 import { find, findByProps } from "@metro/filters";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
@@ -23,12 +24,11 @@ const { TextStyleSheet } = findByProps("TextStyleSheet");
 function typeFromUrl(url: string) {
   if (PROXY_PREFIXES.filter((proxy) => url.startsWith(proxy)).length > 0) {
     return "Plugin";
-  } else if (
-    url.endsWith(".json") &&
-    window.__vendetta_loader?.features.themes
-  ) {
+  }
+  if (url.endsWith(".json") && window.__vendetta_loader?.features.themes) {
     return "Theme";
-  } else return;
+  }
+  return;
 }
 
 function installWithToast(type: "Plugin" | "Theme", url: string) {
@@ -42,14 +42,14 @@ function installWithToast(type: "Plugin" | "Theme", url: string) {
 }
 
 export default () => {
-  const patches = new Array<Function>();
+  const patches = new Array<anyFunction>();
 
   patches.push(
     after("showSimpleActionSheet", showSimpleActionSheet, (args) => {
       if (args[0].key !== "LongPressUrl") return;
       const {
         header: { title: url },
-        options,
+        options
       } = args[0];
 
       const urlType = typeFromUrl(url);
@@ -57,7 +57,7 @@ export default () => {
 
       options.push({
         label: `Install ${urlType}`,
-        onPress: () => installWithToast(urlType, url),
+        onPress: () => installWithToast(urlType, url)
       });
     })
   );
@@ -83,13 +83,13 @@ export default () => {
           <RN.Text style={TextStyleSheet["text-md/semibold"]}>
             {urlType}
           </RN.Text>,
-          ", would you like to install it?",
+          ", would you like to install it?"
         ],
         onConfirm: () => installWithToast(urlType, url),
         confirmText: "Install",
         cancelText: "Cancel",
         secondaryConfirmText: "Open in Browser",
-        onConfirmSecondary: () => openURL(url),
+        onConfirmSecondary: () => openURL(url)
       });
     })
   );

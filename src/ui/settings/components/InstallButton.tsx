@@ -1,5 +1,5 @@
 import { HTTP_REGEX_MULTI } from "@lib/constants";
-import { clipboard, ReactNative as RN, stylesheet } from "@metro/common";
+import { ReactNative as RN, clipboard, stylesheet } from "@metro/common";
 import { showInputAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
 import { semanticColors } from "@ui/color";
@@ -7,8 +7,8 @@ import { semanticColors } from "@ui/color";
 const styles = stylesheet.createThemedStyleSheet({
   icon: {
     marginRight: 10,
-    tintColor: semanticColors.HEADER_PRIMARY,
-  },
+    tintColor: semanticColors.HEADER_PRIMARY
+  }
 });
 
 interface InstallButtonProps {
@@ -18,7 +18,7 @@ interface InstallButtonProps {
 
 export default function InstallButton({
   alertTitle,
-  installFunction: fetchFunction,
+  installFunction: fetchFunction
 }: InstallButtonProps) {
   return (
     <RN.TouchableOpacity
@@ -30,7 +30,7 @@ export default function InstallButton({
             placeholder: "https://example.com/",
             onConfirm: (input: string) => fetchFunction(input),
             confirmText: "Install",
-            cancelText: "Cancel",
+            cancelText: "Cancel"
           })
         )
       }

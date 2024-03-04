@@ -12,8 +12,8 @@ const styles = stylesheet.createThemedStyleSheet({
     borderWidth: 1,
     borderRadius: 4,
     borderColor: semanticColors.BACKGROUND_TERTIARY,
-    padding: 10,
-  },
+    padding: 10
+  }
 });
 
 // iOS doesn't support the selectable property on RN.Text...
@@ -28,7 +28,7 @@ const InputBasedCodeblock = ({ style, children }: CodeblockProps) => (
 const TextBasedCodeblock = ({
   selectable,
   style,
-  children,
+  children
 }: CodeblockProps) => (
   <RN.Text selectable={selectable} style={[styles.codeBlock, style && style]}>
     {children}
@@ -38,15 +38,13 @@ const TextBasedCodeblock = ({
 export default function Codeblock({
   selectable,
   style,
-  children,
+  children
 }: CodeblockProps) {
   if (!selectable)
     return <TextBasedCodeblock style={style} children={children} />;
 
   return RN.Platform.select({
     ios: <InputBasedCodeblock style={style} children={children} />,
-    default: (
-      <TextBasedCodeblock style={style} children={children} selectable />
-    ),
+    default: <TextBasedCodeblock style={style} children={children} selectable />
   });
 }

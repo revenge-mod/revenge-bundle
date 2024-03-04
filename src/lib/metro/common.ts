@@ -19,7 +19,7 @@ function createThemedStyleSheet<T extends StyleSheet.NamedStyles<T>>(sheet: T) {
         return colorResolver.isSemanticColor(res)
           ? colorResolver.resolveSemanticColor(ThemeStore.theme, res)
           : res;
-      },
+      }
     });
   }
 
@@ -46,7 +46,7 @@ export const toasts = find(
 export const stylesheet = {
   ...find((m) => m.createStyles && !m.ActionSheet),
   createThemedStyleSheet,
-  ...(findByProps("createThemedStyleSheet") as object),
+  ...(findByProps("createThemedStyleSheet") as object)
 } as DiscordStyleSheet;
 
 export const clipboard = findByProps(
