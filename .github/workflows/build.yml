@@ -41,7 +41,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add .
-          git commit -m "chore: ci" || exit 0
+          git commit -m "style: format according to rules" || exit 0
           git push
 
       - name: Build
