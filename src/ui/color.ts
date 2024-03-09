@@ -1,5 +1,5 @@
-import { constants } from "@metro/common";
 import { color } from "@lib/themes";
+import { constants } from "@metro/common";
 
 //! This module is only found on 165.0+, under the assumption that iOS 165.0 is the same as Android 165.0.
 //* In 167.1, most if not all traces of the old color modules were removed.
@@ -10,8 +10,9 @@ import { color } from "@lib/themes";
 // const colorModule = findByProps("colors", "meta");
 
 //? SemanticColor and default.colors are effectively ThemeColorMap
-export const semanticColors = (color?.default?.colors ?? constants?.ThemeColorMap);
+export const semanticColors =
+  color?.default?.colors ?? constants?.ThemeColorMap;
 
 //? RawColor and default.unsafe_rawColors are effectively Colors
 //* Note that constants.Colors does still appear to exist on newer versions despite Discord not internally using it - what the fuck?
-export const rawColors = (color?.default?.unsafe_rawColors ?? constants?.Colors);
+export const rawColors = color?.default?.unsafe_rawColors ?? constants?.Colors;

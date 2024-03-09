@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - "**/*.md"
       - ".github/**"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: main
+
       - name: Checkout builds
         uses: actions/checkout@v4
         with:
@@ -25,19 +29,22 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
-        run: |
-          bun i
+        working-directory: main
+        run: bun i
+
+      - name: CI
+        working-directory: main
+        run: bun run format
 
       - name: Build
-        run: bun run build
+        working-directory: main
+        run: bun run build-bun
 
       - name: Push builds
         run: |
           rm $GITHUB_WORKSPACE/builds/* || true
           cp -r dist/* $GITHUB_WORKSPACE/builds || true
           cd $GITHUB_WORKSPACE/builds
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
           git add .
           git commit -m "Build $GITHUB_SHA" || exit 0
           git push
@@ -47,4 +54,3 @@ jobs:
         if: ${{ false }}
         run: |
           curl https://purge.jsdelivr.net/gh/revenge-mod/builds
-
