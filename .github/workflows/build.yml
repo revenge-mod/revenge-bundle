@@ -35,17 +35,8 @@ jobs:
         working-directory: main
         run: bun run format
 
-      - name: Push CI
-        working-directory: main
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add .
-          git commit -m "style: format according to rules" || exit 0
-          git push
-
       - name: Build
-        run: bun run build
+        run: bun run build-bun
 
       - name: Push builds
         run: |

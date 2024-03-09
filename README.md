@@ -59,12 +59,12 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 
 3. Install dependencies
     ```
-    npm install
+    pnpm install
     ```
 
 4. Build Revenge
     ```
-    npm run build
+    pnpm run build
     ```
 
 5. In the newly created `dist` directory, run a HTTP server. We recommend [http-server](https://www.npmjs.com/package/http-server).
