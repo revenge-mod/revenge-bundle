@@ -15,10 +15,9 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 2. Download _(don't install!)_ the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
 3. Go to Vendetta Manager's **Settings > About** and press version number **10 times**
 4. Set **Custom Xposed module location** to:
-   `    /storage/emulated/0/Download/app-release.apk
-   `
-
-   > [!NOTE]
+   ```
+   /storage/emulated/0/Download/app-release.apk
+   ```
    > This is default location of downloaded module if you use the default `Downloads` folder **and** you don't have any file with the same name saved. If these two conditions don't match, you will have to change the path respectively.
 
 5. Head back to main screen and install!
@@ -33,7 +32,7 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 ### Alternative method / Other platforms
 
 > [!IMPORTANT]
-> While Revenge is platform-agnostic, there is no guarantee it will always work on other platforms. we do not have a device to test the changes I've made, so feel free to report issues if you encounter them.
+> While Revenge is platform-agnostic, there is no guarantee it will always work on other platforms. we do not have a device to test the changes we've made, so feel free to report issues if you encounter them.
 
 1. Install [Vendetta](https://github.com/vendetta-mod/Vendetta)
 2. Head to **Settings > General** under the **Vendetta** section
