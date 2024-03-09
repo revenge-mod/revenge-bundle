@@ -1,24 +1,24 @@
 {
-    "include": ["src"],
-    "exclude": ["node_modules"],
-    "compilerOptions": {
-        "baseUrl": ".",
-        "sourceMap": true,
-        "module": "ESNext",
-        "target": "ESNext",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "jsx": "react",
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "paths": {
-            "@/*": ["src/*"],
-            "@types": ["src/def.d.ts"],
-            "@lib/*": ["src/lib/*"],
-            "@metro/*": ["src/lib/metro/*"],
-            "@ui/*": ["src/ui/*"]
-        }
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "sourceMap": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "jsx": "react",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "@types": ["src/def.d.ts"],
+      "@lib/*": ["src/lib/*"],
+      "@metro/*": ["src/lib/metro/*"],
+      "@ui/*": ["src/ui/*"]
     }
+  }
 }

@@ -1,8 +1,8 @@
-import { ReactNative as RN } from "@metro/common";
-import { useProxy } from "@lib/storage";
-import { HelpMessage, ErrorBoundary, Search } from "@ui/components";
-import { CardWrapper } from "@ui/settings/components/Card";
 import settings from "@lib/settings";
+import { useProxy } from "@lib/storage";
+import { ReactNative as RN } from "@metro/common";
+import { ErrorBoundary, HelpMessage, Search } from "@ui/components";
+import type { CardWrapper } from "@ui/settings/components/Card";
 
 interface AddonPageProps<T> {
   items: Record<string, T & { id: string }>;
@@ -17,7 +17,7 @@ export default function AddonPage<T>({
   safeModeMessage,
   safeModeExtras,
   card: CardComponent,
-  keyGetter,
+  keyGetter
 }: AddonPageProps<T>) {
   useProxy(settings);
   useProxy(items);

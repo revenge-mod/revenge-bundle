@@ -1,27 +1,33 @@
-import { ConfirmationAlertOptions, InputAlertProps } from "@types";
 import { findByProps } from "@metro/filters";
+import type { ConfirmationAlertOptions, InputAlertProps } from "@types";
 import InputAlert from "@ui/components/InputAlert";
 
 const Alerts = findByProps("openLazy", "close");
 
-interface InternalConfirmationAlertOptions extends Omit<ConfirmationAlertOptions, "content"> {
-    content?: ConfirmationAlertOptions["content"];
-    body?: ConfirmationAlertOptions["content"];
-};
+interface InternalConfirmationAlertOptions
+  extends Omit<ConfirmationAlertOptions, "content"> {
+  content?: ConfirmationAlertOptions["content"];
+  body?: ConfirmationAlertOptions["content"];
+}
 
 export function showConfirmationAlert(options: ConfirmationAlertOptions) {
-    const internalOptions = options as InternalConfirmationAlertOptions;
+  const internalOptions = options as InternalConfirmationAlertOptions;
 
-    internalOptions.body = options.content;
-    delete internalOptions.content;
+  internalOptions.body = options.content;
+  internalOptions.content = undefined;
 
-    internalOptions.isDismissable ??= true;
+  internalOptions.isDismissable ??= true;
 
-    return Alerts.show(internalOptions);
-};
+  return Alerts.show(internalOptions);
+}
 
-export const showCustomAlert = (component: React.ComponentType<any>, props: any) => Alerts.openLazy({
-    importer: async () => () => React.createElement(component, props),
-});
+export const showCustomAlert = (
+  component: React.ComponentType<any>,
+  props: any
+) =>
+  Alerts.openLazy({
+    importer: async () => () => React.createElement(component, props)
+  });
 
-export const showInputAlert = (options: InputAlertProps) => showCustomAlert(InputAlert, options);
+export const showInputAlert = (options: InputAlertProps) =>
+  showCustomAlert(InputAlert, options);

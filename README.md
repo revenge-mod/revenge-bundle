@@ -12,14 +12,14 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 #### Non-root
 
 1. Install [Vendetta Manager](https://github.com/vendetta-mod/VendettaManager/releases/latest/download/Manager.apk)
-2. Download *(don't install!)* the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
+2. Download _(don't install!)_ the latest [Xposed module](https://github.com/revenge-mod/RevengeXposed/releases/latest/download/app-release.apk)
 3. Go to Vendetta Manager's **Settings > About** and press version number **10 times**
 4. Set **Custom Xposed module location** to:
-    ```
-    /storage/emulated/0/Download/app-release.apk
-    ```
-> [!NOTE]
-> This is default location of downloaded module if you use the default `Downloads` folder **and** you don't have any file with the same name saved. If these two conditions don't match, you will have to change the path respectively.
+   `    /storage/emulated/0/Download/app-release.apk
+   `
+
+   > [!NOTE]
+   > This is default location of downloaded module if you use the default `Downloads` folder **and** you don't have any file with the same name saved. If these two conditions don't match, you will have to change the path respectively.
 
 5. Head back to main screen and install!
 
@@ -42,9 +42,9 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 5. Head to **Settings > Developer** under the **Vendetta** section
 6. Toggle on the **Load Vendetta from custom URL** option
 7. Input the following in the text field that appears
-    ```
-    https://cdn.jsdelivr.net/gh/revenge-mod/builds@main/revenge.js
-    ```
+   ```
+   https://cdn.jsdelivr.net/gh/revenge-mod/builds@main/revenge.js
+   ```
 8. Restart the app again, and that should be it!
 
 ## 💖 Contributing
@@ -52,9 +52,10 @@ A modification for Discord mobile apps. Continuation of [Vendetta](https://githu
 1. Follow the first two steps listed in [**⬇️ Installing**](#%EF%B8%8F-installing) section
 
 2. Clone the repository
-    ```
-    git clone https://github.com/revenge-mod/Revenge
-    ```
+
+   ```
+   git clone https://github.com/revenge-mod/Revenge
+   ```
 
 3. Install dependencies
     ```
