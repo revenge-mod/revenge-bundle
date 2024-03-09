@@ -14,7 +14,7 @@ dependencies:
 
 devDependencies:
   '@biomejs/biome':
-    specifier: 1.6.0
+    specifier: ^1.6.0
     version: 1.6.0
   '@react-native-clipboard/clipboard':
     specifier: 1.10.0
