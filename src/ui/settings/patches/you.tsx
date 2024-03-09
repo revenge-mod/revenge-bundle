@@ -1,4 +1,4 @@
-import { anyFunction } from "@/def";
+import type { anyFunction } from "@/def";
 import { i18n } from "@lib/metro/common";
 import { after, before } from "@lib/patcher";
 import { findByProps } from "@metro/filters";

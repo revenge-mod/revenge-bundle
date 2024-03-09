@@ -1,5 +1,5 @@
 import { findByProps } from "@metro/filters";
-import { ConfirmationAlertOptions, InputAlertProps } from "@types";
+import type { ConfirmationAlertOptions, InputAlertProps } from "@types";
 import InputAlert from "@ui/components/InputAlert";
 
 const Alerts = findByProps("openLazy", "close");

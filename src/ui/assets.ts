@@ -1,6 +1,6 @@
 import { after } from "@lib/patcher";
 import { assets } from "@metro/common";
-import { Asset } from "@types";
+import type { Asset } from "@types";
 
 export const all: Record<string, Asset> = {};
 

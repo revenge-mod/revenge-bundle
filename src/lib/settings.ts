@@ -4,7 +4,7 @@ import {
   createStorage,
   wrapSync
 } from "@lib/storage";
-import { LoaderConfig, Settings } from "@types";
+import type { LoaderConfig, Settings } from "@types";
 
 export default wrapSync(
   createStorage<Settings>(createMMKVBackend("VENDETTA_SETTINGS"))

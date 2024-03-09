@@ -1,5 +1,5 @@
-import { React, ReactNative as RN, stylesheet } from "@metro/common";
-import { ErrorBoundaryProps } from "@types";
+import { ReactNative as RN, React, stylesheet } from "@metro/common";
+import type { ErrorBoundaryProps } from "@types";
 import { Button, Codeblock, Forms } from "@ui/components";
 
 interface ErrorBoundaryState {

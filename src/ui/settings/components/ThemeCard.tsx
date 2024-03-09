@@ -3,10 +3,10 @@ import settings from "@lib/settings";
 import { useProxy } from "@lib/storage";
 import { fetchTheme, removeTheme, selectTheme } from "@lib/themes";
 import { clipboard } from "@metro/common";
-import { ButtonColors, Theme } from "@types";
+import { ButtonColors, type Theme } from "@types";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
-import Card, { CardWrapper } from "@ui/settings/components/Card";
+import Card, { type CardWrapper } from "@ui/settings/components/Card";
 import { showToast } from "@ui/toasts";
 
 async function selectAndReload(value: boolean, id: string) {

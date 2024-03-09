@@ -1,4 +1,4 @@
-import { anyFunction } from "@/def";
+import type { anyFunction } from "@/def";
 import { after } from "@lib/patcher";
 import { findInReactTree } from "@lib/utils";
 import { i18n } from "@metro/common";

@@ -1,7 +1,7 @@
 import { plugins } from "@lib/plugins";
 import settings from "@lib/settings";
 import { useProxy } from "@lib/storage";
-import { Plugin } from "@types";
+import type { Plugin } from "@types";
 import AddonPage from "@ui/settings/components/AddonPage";
 import PluginCard from "@ui/settings/components/PluginCard";
 

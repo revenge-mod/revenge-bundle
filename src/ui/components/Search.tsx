@@ -1,6 +1,6 @@
 import { ReactNative as RN, stylesheet } from "@metro/common";
 import { findByName } from "@metro/filters";
-import { SearchProps } from "@types";
+import type { SearchProps } from "@types";
 
 import { Redesign } from ".";
 import { getAssetIDByName } from "../assets";

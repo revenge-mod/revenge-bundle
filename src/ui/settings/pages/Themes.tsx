@@ -1,7 +1,7 @@
 import settings from "@lib/settings";
 import { useProxy } from "@lib/storage";
 import { themes } from "@lib/themes";
-import { ButtonColors, Theme } from "@types";
+import { ButtonColors, type Theme } from "@types";
 import { Button } from "@ui/components";
 import AddonPage from "@ui/settings/components/AddonPage";
 import ThemeCard from "@ui/settings/components/ThemeCard";

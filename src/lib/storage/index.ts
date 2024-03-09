@@ -1,5 +1,5 @@
 import createEmitter from "@lib/emitter";
-import { Emitter, StorageBackend } from "@types";
+import type { Emitter, StorageBackend } from "@types";
 
 const emitterSymbol = Symbol.for("vendetta.storage.emitter");
 const syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");

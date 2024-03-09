@@ -10,7 +10,7 @@ import * as themes from "@lib/themes";
 import * as utils from "@lib/utils";
 import * as common from "@metro/common";
 import * as metro from "@metro/filters";
-import { VendettaObject } from "@types";
+import type { VendettaObject } from "@types";
 import * as alerts from "@ui/alerts";
 import * as assets from "@ui/assets";
 import * as color from "@ui/color";

@@ -9,8 +9,8 @@ import { semanticColors } from "@ui/color";
 import {
   Button,
   Codeblock,
-  ErrorBoundary as _ErrorBoundary,
-  SafeAreaView
+  SafeAreaView,
+  ErrorBoundary as _ErrorBoundary
 } from "@ui/components";
 
 const ErrorBoundary = findByName("ErrorBoundary");

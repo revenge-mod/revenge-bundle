@@ -9,7 +9,7 @@ import {
   wrapSync
 } from "@lib/storage";
 import { safeFetch } from "@lib/utils";
-import { Plugin, PluginManifest } from "@types";
+import type { Plugin, PluginManifest } from "@types";
 
 type EvaledPlugin = {
   onLoad?(): void;

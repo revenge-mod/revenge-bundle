@@ -1,6 +1,6 @@
 import { after } from "@lib/patcher";
 import { commands as commandsModule } from "@metro/common";
-import { ApplicationCommand, ApplicationCommandType } from "@types";
+import { type ApplicationCommand, ApplicationCommandType } from "@types";
 
 let commands: ApplicationCommand[] = [];
 
@@ -28,13 +28,13 @@ export function registerCommand(command: ApplicationCommand): () => void {
   );
   builtInCommands.sort(
     (a: ApplicationCommand, b: ApplicationCommand) =>
-      parseInt(b.id!) - parseInt(a.id!)
+      Number.parseInt(b.id!) - Number.parseInt(a.id!)
   );
 
   const lastCommand = builtInCommands[builtInCommands.length - 1];
 
   // Override the new command's id to the last command id - 1
-  command.id = (parseInt(lastCommand.id, 10) - 1).toString();
+  command.id = (Number.parseInt(lastCommand.id, 10) - 1).toString();
 
   // Add it to the commands array
   commands.push(command);

@@ -1,6 +1,6 @@
 import { FileManager, MMKVManager } from "@lib/native";
 import { ReactNative as RN } from "@metro/common";
-import { StorageBackend } from "@types";
+import type { StorageBackend } from "@types";
 
 const ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g;
 

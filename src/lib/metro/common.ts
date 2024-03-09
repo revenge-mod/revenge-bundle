@@ -1,6 +1,6 @@
 import { ReactNative as RN } from "@lib/preinit";
 import { find, findByProps, findByStoreName } from "@metro/filters";
-import { DiscordStyleSheet } from "@types";
+import type { DiscordStyleSheet } from "@types";
 import type { StyleSheet } from "react-native";
 
 const ThemeStore = findByStoreName("ThemeStore");

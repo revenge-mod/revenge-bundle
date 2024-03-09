@@ -1,4 +1,4 @@
-import { MetroModules, PropsFinder, PropsFinderAll } from "@types";
+import type { MetroModules, PropsFinder, PropsFinderAll } from "@types";
 
 // Metro require
 declare const __r: (moduleId: number) => any;

@@ -1,5 +1,5 @@
 import { findByProps } from "@metro/filters";
-import { InputAlertProps } from "@types";
+import type { InputAlertProps } from "@types";
 import { Alert, Forms } from "@ui/components";
 
 const { FormInput } = Forms;

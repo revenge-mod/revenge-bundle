@@ -1,4 +1,4 @@
-import { anyFunction } from "@/def";
+import type { anyFunction } from "@/def";
 import patchForumPost from "@ui/quickInstall/forumPost";
 import patchUrl from "@ui/quickInstall/url";
 

@@ -1,6 +1,6 @@
-import { ReactNative as RN } from "@metro/common";
+import type { ReactNative as RN } from "@metro/common";
 import { findByDisplayName, findByName, findByProps } from "@metro/filters";
-import { RedesignObj } from "@types";
+import type { RedesignObj } from "@types";
 
 // Discord
 export const Forms = findByProps("Form", "FormSection");

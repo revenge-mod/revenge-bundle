@@ -1,4 +1,4 @@
-import {
+import type {
   FileManager as _FileManager,
   MMKVManager as _MMKVManager
 } from "@types";

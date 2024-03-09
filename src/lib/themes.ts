@@ -9,7 +9,7 @@ import {
 import { findInReactTree, safeFetch } from "@lib/utils";
 import { ReactNative as RN, chroma } from "@metro/common";
 import { findByName, findByProps } from "@metro/filters";
-import { Theme, ThemeData } from "@types";
+import type { Theme, ThemeData } from "@types";
 
 import logger from "./logger";
 

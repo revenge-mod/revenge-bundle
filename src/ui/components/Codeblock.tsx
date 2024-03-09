@@ -1,5 +1,5 @@
 import { constants, ReactNative as RN, stylesheet } from "@metro/common";
-import { CodeblockProps } from "@types";
+import type { CodeblockProps } from "@types";
 import { semanticColors } from "@ui/color";
 
 const styles = stylesheet.createThemedStyleSheet({

@@ -1,5 +1,5 @@
 import { findInTree } from "@lib/utils";
-import { SearchFilter } from "@types";
+import type { SearchFilter } from "@types";
 
 export default (tree: { [key: string]: any }, filter: SearchFilter): any =>
   findInTree(tree, filter, {

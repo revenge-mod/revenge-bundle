@@ -8,7 +8,7 @@ import { after } from "@lib/patcher";
 import settings from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
-import { RNConstants } from "@types";
+import type { RNConstants } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 export let socket: WebSocket;

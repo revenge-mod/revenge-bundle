@@ -1,5 +1,5 @@
 import { ReactNative as RN, clipboard } from "@metro/common";
-import { Asset } from "@types";
+import type { Asset } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { Forms } from "@ui/components";
 import { showToast } from "@ui/toasts";

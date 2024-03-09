@@ -1,5 +1,5 @@
 import { ReactNative as RN } from "@metro/common";
-import { SummaryProps } from "@types";
+import type { SummaryProps } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { Forms } from "@ui/components";
 

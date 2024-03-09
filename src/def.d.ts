@@ -1,10 +1,10 @@
-import _Clipboard from "@react-native-clipboard/clipboard";
-import _chroma from "chroma-js";
-import _lodash from "lodash";
-import _moment from "moment";
-import _React from "react";
-import _RN from "react-native";
-import * as _spitroast from "spitroast";
+import type _Clipboard from "@react-native-clipboard/clipboard";
+import type _chroma from "chroma-js";
+import type _lodash from "lodash";
+import type _moment from "moment";
+import type _React from "react";
+import type _RN from "react-native";
+import type * as _spitroast from "spitroast";
 
 type MetroModules = { [id: number]: any };
 
