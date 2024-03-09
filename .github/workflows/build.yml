@@ -45,8 +45,8 @@ jobs:
           rm $GITHUB_WORKSPACE/builds/*
           cp -r $GITHUB_WORKSPACE/source/dist/* $GITHUB_WORKSPACE/builds
           cd $GITHUB_WORKSPACE/builds
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add .
           git commit -m "Build $GITHUB_SHA" || exit 0
           git push
