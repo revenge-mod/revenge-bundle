@@ -36,6 +36,7 @@ jobs:
         run: bun run format
 
       - name: Build
+        working-directory: main
         run: bun run build-bun
 
       - name: Push builds
