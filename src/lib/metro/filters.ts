@@ -35,16 +35,30 @@ const filterModules =
       const id = Number(key);
       const module = modules[id]?.publicModule?.exports;
 
-      // HACK: Override the function used to report fatal JavaScript errors (that crash the app) to prevent module-requiring side effects
-      // Credit to @pylixonly (492949202121261067) for the initial version of this fix
       if (!modules[id].isInitialized)
         try {
-          window.ErrorUtils.setGlobalHandler(() => {});
+          // Credit to @pylixonly (492949202121261067) for this fix
+          // https://github.com/pyoncord/Bunny/blob/1d359b663346aa0db12ee844f43a5899291b5fa3/src/lib/metro/filters.ts#L46-L73
+          // Discord has a polyfill for Function.prototype.toString that causes freezing
+          const originalToString = Function.prototype.toString;
+          Object.defineProperty(Function.prototype, "toString", {
+            value: originalToString,
+            configurable: true,
+            writable: false
+          });
+
+          // HACK: Override the function used to report fatal JavaScript errors (that crash the app) to prevent module-requiring side effects
+          // Credit to @pylixonly (492949202121261067) for the initial version of this fix
+          window.ErrorUtils.setGlobalHandler(null);
           __r(id);
           window.ErrorUtils.setGlobalHandler(originalHandler);
-        } catch {
-          // continue
-        }
+
+          Object.defineProperty(Function.prototype, "toString", {
+            value: originalToString,
+            configurable: true,
+            writable: true
+          });
+        } catch {}
 
       if (!module) {
         blacklist(id);
