@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: main
+          path: "source"
 
       - name: Checkout builds
         uses: actions/checkout@v4
@@ -29,22 +29,24 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
-        working-directory: main
+        working-directory: source
         run: bun i
 
       - name: CI
-        working-directory: main
+        working-directory: source
         run: bun run format
 
       - name: Build
-        working-directory: main
+        working-directory: source
         run: bun run build-bun
 
       - name: Push builds
         run: |
-          rm $GITHUB_WORKSPACE/builds/* || true
-          cp -r dist/* $GITHUB_WORKSPACE/builds || true
+          rm $GITHUB_WORKSPACE/builds/*
+          cp -r $GITHUB_WORKSPACE/source/dist/* $GITHUB_WORKSPACE/builds
           cd $GITHUB_WORKSPACE/builds
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
           git add .
           git commit -m "Build $GITHUB_SHA" || exit 0
           git push
