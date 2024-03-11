@@ -21,7 +21,7 @@ try {
   await build({
     entryPoints: ["./src/entry.ts"],
     outfile: "./dist/revenge.js",
-    minify: false,
+    minify: true,
     bundle: true,
     format: "iife",
     target: "esnext",
