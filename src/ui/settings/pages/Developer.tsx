@@ -1,13 +1,20 @@
+import {
+  TableGroup,
+  TableInput,
+  TableRow,
+  TableSwitchRow,
+  useRedesign,
+  useRedesignStyle
+} from "@/ui/components/Table";
 import { connectToDebugger } from "@lib/debug";
 import settings, { loaderConfig } from "@lib/settings";
 import { useProxy } from "@lib/storage";
 import { NavigationNative, ReactNative as RN } from "@metro/common";
 import { findByProps } from "@metro/filters";
 import { getAssetIDByName } from "@ui/assets";
-import { ErrorBoundary, Forms } from "@ui/components";
+import { ErrorBoundary } from "@ui/components";
 import AssetBrowser from "@ui/settings/pages/AssetBrowser";
 
-const { FormSection, FormRow, FormSwitchRow, FormInput, FormDivider } = Forms;
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 const { showSimpleActionSheet } = findByProps("showSimpleActionSheet");
 
@@ -20,30 +27,34 @@ export default function Developer() {
   return (
     <ErrorBoundary>
       <RN.ScrollView
-        style={{ flex: 1 }}
+        style={[
+          { flex: 1 },
+          useRedesignStyle() && {
+            minWidth: 1,
+            minHeight: 1,
+            paddingHorizontal: 16
+          }
+        ]}
         contentContainerStyle={{ paddingBottom: 38 }}
       >
-        <FormSection title="Debug" titleStyleType="no_border">
-          <FormInput
-            value={settings.debuggerUrl}
-            onChange={(v: string) => (settings.debuggerUrl = v)}
-            placeholder="127.0.0.1:9090"
-            title="DEBUGGER URL"
-          />
-          <FormDivider />
-          <FormRow
+        <TableInput
+          value={settings.debuggerUrl}
+          onChange={(v) => (settings.debuggerUrl = v)}
+          placeholder="127.0.0.1:9090"
+          leadingIcon={() => <TableRow.TrailingText text="ws://" />}
+          label="Debugger URL"
+        />
+        <TableGroup title="Debug">
+          <TableRow
             label="Connect to debug websocket"
-            leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
+            icon={getAssetIDByName("HubIcon")}
             onPress={() => connectToDebugger(settings.debuggerUrl)}
           />
           {window.__vendetta_rdc && (
             <>
-              <FormDivider />
-              <FormRow
+              <TableRow
                 label="Connect to React DevTools"
-                leading={
-                  <FormRow.Icon source={getAssetIDByName("ic_badge_staff")} />
-                }
+                icon={getAssetIDByName("SoundboardIcon")}
                 onPress={() =>
                   window.__vendetta_rdc?.connectToDevTools({
                     host: settings.debuggerUrl.split(":")?.[0],
@@ -53,50 +64,47 @@ export default function Developer() {
               />
             </>
           )}
-        </FormSection>
+        </TableGroup>
         {window.__vendetta_loader?.features.loaderConfig && (
-          <FormSection title="Loader config">
-            <FormSwitchRow
+          <TableGroup title="Loader config">
+            <TableSwitchRow
               label="Load from custom url"
               subLabel={"Load Revenge from a custom endpoint."}
-              leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
+              icon={getAssetIDByName("CopyIcon")}
               value={loaderConfig.customLoadUrl.enabled}
               onValueChange={(v: boolean) => {
                 loaderConfig.customLoadUrl.enabled = v;
               }}
             />
-            <FormDivider />
             {loaderConfig.customLoadUrl.enabled && (
               <>
-                <FormInput
+                <TableInput
                   value={loaderConfig.customLoadUrl.url}
-                  onChange={(v: string) => (loaderConfig.customLoadUrl.url = v)}
+                  onChange={(v) => (loaderConfig.customLoadUrl.url = v)}
                   placeholder="http://localhost:4040/revenge.js"
-                  title="REVENGE URL"
+                  label="Revenge URL"
+                  inRow
                 />
-                <FormDivider />
               </>
             )}
             {window.__vendetta_loader.features.devtools && (
-              <FormSwitchRow
+              <TableSwitchRow
                 label="Load React DevTools"
                 subLabel={`Version: ${window.__vendetta_loader.features.devtools.version}`}
-                leading={
-                  <FormRow.Icon source={getAssetIDByName("ic_badge_staff")} />
-                }
+                icon={getAssetIDByName("SoundboardIcon")}
                 value={loaderConfig.loadReactDevTools}
                 onValueChange={(v: boolean) => {
                   loaderConfig.loadReactDevTools = v;
                 }}
               />
             )}
-          </FormSection>
+          </TableGroup>
         )}
-        <FormSection title="Other">
-          <FormRow
+        <TableGroup title="Other">
+          <TableRow
             label="Asset Browser"
-            leading={<FormRow.Icon source={getAssetIDByName("ic_image")} />}
-            trailing={FormRow.Arrow}
+            icon={getAssetIDByName("ImageIcon")}
+            arrow={true}
             onPress={() =>
               navigation.push("VendettaCustomPage", {
                 title: "Asset Browser",
@@ -104,21 +112,17 @@ export default function Developer() {
               })
             }
           />
-          <FormDivider />
-          <FormRow
+          <TableRow
             label="ErrorBoundary Tools"
-            leading={
-              <FormRow.Icon source={getAssetIDByName("ic_warning_24px")} />
-            }
-            trailing={FormRow.Arrow}
+            icon={getAssetIDByName("WarningIcon")}
+            arrow={true}
             onPress={() =>
               showSimpleActionSheet({
                 key: "ErrorBoundaryTools",
                 header: {
                   title: "Which ErrorBoundary do you want to trip?",
                   icon: (
-                    <FormRow.Icon
-                      style={{ marginRight: 8 }}
+                    <TableRow.Icon
                       source={getAssetIDByName("ic_warning_24px")}
                     />
                   ),
@@ -145,7 +149,7 @@ export default function Developer() {
               })
             }
           />
-        </FormSection>
+        </TableGroup>
       </RN.ScrollView>
     </ErrorBoundary>
   );

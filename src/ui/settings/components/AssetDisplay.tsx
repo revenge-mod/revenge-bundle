@@ -1,18 +1,18 @@
+import { TableRow } from "@/ui/components/Table";
 import { ReactNative as RN, clipboard } from "@metro/common";
 import type { Asset } from "@types";
 import { getAssetIDByName } from "@ui/assets";
-import { Forms } from "@ui/components";
 import { showToast } from "@ui/toasts";
 
 interface AssetDisplayProps {
   asset: Asset;
+  start: boolean;
+  end: boolean;
 }
 
-const { FormRow } = Forms;
-
-export default function AssetDisplay({ asset }: AssetDisplayProps) {
+export default function AssetDisplay({ asset, start, end }: AssetDisplayProps) {
   return (
-    <FormRow
+    <TableRow
       label={`${asset.name} - ${asset.id}`}
       trailing={
         <RN.Image source={asset.id} style={{ width: 32, height: 32 }} />
@@ -24,6 +24,8 @@ export default function AssetDisplay({ asset }: AssetDisplayProps) {
           getAssetIDByName("toast_copy_link")
         );
       }}
+      start={start}
+      end={end}
     />
   );
 }

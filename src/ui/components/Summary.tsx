@@ -1,7 +1,7 @@
 import { ReactNative as RN } from "@metro/common";
 import type { SummaryProps } from "@types";
 import { getAssetIDByName } from "@ui/assets";
-import { Forms } from "@ui/components";
+import { TableRow } from "./Table";
 
 export default function Summary({
   label,
@@ -10,19 +10,14 @@ export default function Summary({
   noAnimation = false,
   children
 }: SummaryProps) {
-  const { FormRow, FormDivider } = Forms;
   const [hidden, setHidden] = React.useState(true);
 
   return (
     <>
-      <FormRow
+      <TableRow
         label={label}
-        leading={icon && <FormRow.Icon source={getAssetIDByName(icon)} />}
-        trailing={
-          <FormRow.Arrow
-            style={{ transform: [{ rotate: `${hidden ? 180 : 90}deg` }] }}
-          />
-        }
+        icon={icon ? getAssetIDByName(icon) : undefined}
+        trailing={<TableRow.Arrow />}
         onPress={() => {
           setHidden(!hidden);
           if (!noAnimation)
@@ -33,7 +28,6 @@ export default function Summary({
       />
       {!hidden && (
         <>
-          <FormDivider />
           <RN.View style={!noPadding && { paddingHorizontal: 15 }}>
             {children}
           </RN.View>

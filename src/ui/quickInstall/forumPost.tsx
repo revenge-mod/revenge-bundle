@@ -13,12 +13,12 @@ import { findByName, findByProps } from "@metro/filters";
 import { getAssetIDByName } from "@ui/assets";
 import { Forms } from "@ui/components";
 import { showToast } from "@ui/toasts";
+import { TableRow } from "../components/Table";
 
 const ForumPostLongPressActionSheet = findByName(
   "ForumPostLongPressActionSheet",
   false
 );
-const { FormRow, FormIcon } = Forms;
 
 const { useFirstForumPostMessage } = findByProps("useFirstForumPostMessage");
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
@@ -59,14 +59,9 @@ export default () =>
 
     actions.unshift(
       <ActionsSection key="install">
-        <FormRow
-          leading={
-            <FormIcon
-              style={{ opacity: 1 }}
-              source={getAssetIDByName("ic_download_24px")}
-            />
-          }
+        <TableRow
           label={`Install ${postType}`}
+          icon={getAssetIDByName("ic_download_24px")}
           onPress={() =>
             (postType === "Plugin" ? installPlugin : installTheme)(url)
               .then(() => {

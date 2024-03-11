@@ -60,13 +60,13 @@ export const getScreens = (youKeys = false): Screen[] => [
   {
     key: formatKey("RevengeSettings", youKeys),
     title: "General",
-    icon: "settings",
+    icon: "SettingsIcon",
     render: General
   },
   {
     key: formatKey("RevengePlugins", youKeys),
     title: "Plugins",
-    icon: "debug",
+    icon: "WrenchIcon",
     options: {
       headerRight: () => (
         <InstallButton
@@ -109,7 +109,7 @@ export const getScreens = (youKeys = false): Screen[] => [
   {
     key: formatKey("RevengeThemes", youKeys),
     title: "Themes",
-    icon: "ic_theme_24px",
+    icon: "PaintPaletteIcon",
     // TODO: bad
     shouldRender: () =>
       Object.prototype.hasOwnProperty.call(
@@ -130,7 +130,7 @@ export const getScreens = (youKeys = false): Screen[] => [
   {
     key: formatKey("RevengeDeveloper", youKeys),
     title: "Developer",
-    icon: "ic_progress_wrench_24px",
+    icon: "WrenchIcon",
     shouldRender: () => settings.developerSettings ?? false,
     render: Developer
   },

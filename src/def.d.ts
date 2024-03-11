@@ -35,6 +35,20 @@ interface SearchProps {
   style?: _RN.TextStyle;
 }
 
+export type RowVariant = "danger";
+
+type RowProps = {
+  label: React.ReactNode;
+  subLabel?: React.ReactNode;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  variant?: RowVariant;
+  trailing?: React.ReactNode;
+  start?: boolean;
+  end?: boolean;
+  style?: _RN.ViewStyle;
+};
+
 interface RedesignObj {
   TextInput: React.FC<{
     style?: any;
@@ -60,10 +74,53 @@ interface RedesignObj {
     errorMessage?: string;
     spellCheck?: boolean;
     isCentered?: boolean;
-    returnKeyType?: "search";
+    returnKeyType?: "search" | "done";
     grow?: boolean;
+    autoFocus?: boolean;
     onChange?: (value: string) => void;
+    onSubmitEditing?: () => void;
   }>;
+  TableRow: React.FC<
+    RowProps & {
+      arrow?: boolean;
+      onPress?: () => void;
+    }
+  > & {
+    Icon: React.FC<
+      _RN.ViewProps & {
+        source: _RN.ImageSourcePropType;
+        IconComponent?: React.FC<any>;
+        variant?: string;
+      }
+    >;
+    Arrow: React.FC<object>;
+    TrailingText: React.FC<{ text: React.ReactNode }>;
+  };
+  TableSwitchRow: React.FC<
+    RowProps & {
+      value?: boolean;
+      onValueChange: (value: boolean) => void;
+    }
+  >;
+  TableCheckboxRow: React.FC<
+    RowProps & {
+      checked?: boolean;
+      onPress?: (checked: boolean) => void;
+    }
+  >;
+  TableRadioRow: React.FC<
+    RowProps & {
+      value?: string;
+      selected?: boolean;
+      onPress?: () => void;
+    }
+  >;
+  TableRowGroup: React.FC<
+    React.PropsWithChildren<{
+      title?: string;
+      hasIcons?: boolean;
+    }>
+  >;
 }
 
 // Helper types for API functions

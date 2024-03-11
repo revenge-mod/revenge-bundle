@@ -1,6 +1,7 @@
 import { findByProps } from "@metro/filters";
 import type { InputAlertProps } from "@types";
 import { Alert, Forms } from "@ui/components";
+import { TableInput } from "./Table";
 
 const { FormInput } = Forms;
 const Alerts = findByProps("openLazy", "close");
@@ -40,7 +41,7 @@ export default function InputAlert({
       cancelText={cancelText}
       onCancel={() => Alerts.close()}
     >
-      <FormInput
+      <TableInput
         placeholder={placeholder}
         value={value}
         onChange={(v: string | { text: string }) => {
@@ -52,12 +53,6 @@ export default function InputAlert({
         error={error || undefined}
         secureTextEntry={secureTextEntry}
         autoFocus={true}
-        showBorder={true}
-        style={{
-          paddingVertical: 5,
-          alignSelf: "stretch",
-          paddingHorizontal: 0
-        }}
       />
     </Alert>
   );

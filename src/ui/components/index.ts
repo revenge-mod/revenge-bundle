@@ -15,7 +15,7 @@ export const HelpMessage = findByName("HelpMessage");
 // React Native's included SafeAreaView only adds padding on iOS.
 export const SafeAreaView = findByProps("useSafeAreaInsets")
   .SafeAreaView as typeof RN.SafeAreaView;
-export const Redesign = (findByProps("Button", "ContextMenu", "TextInput") ??
+export const Redesign = (findByProps("TextInput", "TableRow") ??
   {}) as RedesignObj;
 
 // Vendetta

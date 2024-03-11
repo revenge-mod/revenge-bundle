@@ -1,6 +1,6 @@
+import { TableRow } from "@/ui/components/Table";
 import { clipboard } from "@metro/common";
 import { getAssetIDByName } from "@ui/assets";
-import { Forms } from "@ui/components";
 import { showToast } from "@ui/toasts";
 
 interface VersionProps {
@@ -9,14 +9,12 @@ interface VersionProps {
   icon: string;
 }
 
-const { FormRow, FormText } = Forms;
-
 export default function Version({ label, version, icon }: VersionProps) {
   return (
-    <FormRow
+    <TableRow
       label={label}
-      leading={<FormRow.Icon source={getAssetIDByName(icon)} />}
-      trailing={<FormText>{version}</FormText>}
+      icon={getAssetIDByName(icon)}
+      trailing={<TableRow.TrailingText text={version} />}
       onPress={() => {
         clipboard.setString(`${label} - ${version}`);
         showToast(

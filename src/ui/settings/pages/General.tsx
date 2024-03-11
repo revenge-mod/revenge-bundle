@@ -1,3 +1,9 @@
+import {
+  TableGroup,
+  TableRow,
+  TableSwitchRow,
+  useRedesignStyle
+} from "@/ui/components/Table";
 import { DISCORD_SERVER, GITHUB } from "@lib/constants";
 import { getDebugInfo, toggleSafeMode } from "@lib/debug";
 import { BundleUpdaterManager } from "@lib/native";
@@ -7,10 +13,9 @@ import { url, ReactNative as RN } from "@metro/common";
 import { ButtonColors } from "@types";
 import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
-import { ErrorBoundary, Forms, Summary } from "@ui/components";
+import { ErrorBoundary, Summary } from "@ui/components";
 import Version from "@ui/settings/components/Version";
 
-const { FormRow, FormSwitchRow, FormSection, FormDivider } = Forms;
 const debugInfo = getDebugInfo();
 
 export default function General() {
@@ -20,7 +25,7 @@ export default function General() {
     {
       label: "Revenge",
       version: debugInfo.vendetta.version,
-      icon: "ic_progress_wrench_24px"
+      icon: "WrenchIcon"
     },
     {
       label: "Discord",
@@ -30,17 +35,17 @@ export default function General() {
     {
       label: "React",
       version: debugInfo.react.version,
-      icon: "ic_category_16px"
+      icon: "ThreadIcon"
     },
     {
       label: "React Native",
       version: debugInfo.react.nativeVersion,
-      icon: "mobile"
+      icon: "MobilePhoneIcon"
     },
     {
       label: "Bytecode",
       version: debugInfo.hermes.bytecodeVersion,
-      icon: "ic_server_security_24px"
+      icon: "HomeIcon"
     }
   ];
 
@@ -48,79 +53,78 @@ export default function General() {
     {
       label: "Loader",
       version: debugInfo.vendetta.loader,
-      icon: "ic_download_24px"
+      icon: "DownloadIcon"
     },
     {
       label: "Operating System",
       version: `${debugInfo.os.name} ${debugInfo.os.version}`,
-      icon: "ic_cog_24px"
+      icon: "SettingsIcon"
     },
     ...(debugInfo.os.sdk
       ? [
           {
             label: "SDK",
             version: debugInfo.os.sdk,
-            icon: "ic_profile_badge_verified_developer_color"
+            icon: "PaperIcon"
           }
         ]
       : []),
     {
       label: "Manufacturer",
       version: debugInfo.device.manufacturer,
-      icon: "ic_badge_staff"
+      icon: "StaffBadgeIcon"
     },
     {
       label: "Brand",
       version: debugInfo.device.brand,
-      icon: "ic_settings_boost_24px"
+      icon: "BoostTier2Icon"
     },
     {
       label: "Model",
       version: debugInfo.device.model,
-      icon: "ic_phonelink_24px"
+      icon: "LaptopPhoneIcon"
     },
     {
       label: RN.Platform.select({ android: "Codename", ios: "Machine ID" })!,
       version: debugInfo.device.codename,
-      icon: "ic_compose_24px"
+      icon: "WindowLaunchIcon"
     }
   ];
 
   return (
     <ErrorBoundary>
       <RN.ScrollView
-        style={{ flex: 1 }}
+        style={[
+          { flex: 1 },
+          useRedesignStyle() && {
+            minWidth: 1,
+            minHeight: 1,
+            paddingHorizontal: 16
+          }
+        ]}
         contentContainerStyle={{ paddingBottom: 38 }}
       >
-        <FormSection title="Links" titleStyleType="no_border">
-          <FormRow
+        <TableGroup title="Links">
+          <TableRow
             label="Discord Server"
-            leading={<FormRow.Icon source={getAssetIDByName("Discord")} />}
-            trailing={FormRow.Arrow}
+            icon={getAssetIDByName("ClydeIcon")}
+            arrow={true}
             onPress={() => url.openDeeplink(DISCORD_SERVER)}
           />
-          <FormDivider />
-          <FormRow
+          <TableRow
             label="GitHub"
-            leading={
-              <FormRow.Icon
-                source={getAssetIDByName("img_account_sync_github_white")}
-              />
-            }
-            trailing={FormRow.Arrow}
+            icon={getAssetIDByName("img_account_sync_github_white")}
+            arrow={true}
             onPress={() => url.openURL(GITHUB)}
           />
-        </FormSection>
-        <FormSection title="Actions">
-          <FormRow
+        </TableGroup>
+        <TableGroup title="Actions">
+          <TableRow
             label="Reload Discord"
-            leading={
-              <FormRow.Icon source={getAssetIDByName("ic_message_retry")} />
-            }
+            icon={getAssetIDByName("RetryIcon")}
             onPress={() => BundleUpdaterManager.reload()}
           />
-          <FormDivider />
-          <FormRow
+          <TableRow
             label={
               settings.safeMode?.enabled
                 ? "Return to Normal Mode"
@@ -131,50 +135,32 @@ export default function General() {
                 ? "normally."
                 : "without loading plugins."
             }`}
-            leading={
-              <FormRow.Icon source={getAssetIDByName("ic_privacy_24px")} />
-            }
+            icon={getAssetIDByName("ShieldIcon")}
             onPress={toggleSafeMode}
           />
-          <FormDivider />
-          <FormSwitchRow
+          <TableSwitchRow
             label="Developer Settings"
-            leading={
-              <FormRow.Icon
-                source={getAssetIDByName("ic_progress_wrench_24px")}
-              />
-            }
+            icon={getAssetIDByName("WrenchIcon")}
             value={settings.developerSettings}
-            onValueChange={(v: boolean) => {
-              settings.developerSettings = v;
-            }}
+            onValueChange={(v) => (settings.developerSettings = v)}
           />
-        </FormSection>
-        <FormSection title="Info">
-          <Summary label="Versions" icon="ic_information_filled_24px">
-            {versions.map((v, i) => (
-              <>
-                <Version label={v.label} version={v.version} icon={v.icon} />
-                {i !== versions.length - 1 && <FormDivider />}
-              </>
+        </TableGroup>
+        <TableGroup title="Info">
+          <Summary label="Versions" icon="CircleInformationIcon">
+            {versions.map((v) => (
+              <Version label={v.label} version={v.version} icon={v.icon} />
             ))}
           </Summary>
-          <FormDivider />
-          <Summary label="Platform" icon="ic_mobile_device">
-            {platformInfo.map((p, i) => (
-              <>
-                <Version label={p.label} version={p.version} icon={p.icon} />
-                {i !== platformInfo.length - 1 && <FormDivider />}
-              </>
+          <Summary label="Platform" icon="MobilePhoneIcon">
+            {platformInfo.map((p) => (
+              <Version label={p.label} version={p.version} icon={p.icon} />
             ))}
           </Summary>
-        </FormSection>
-        <FormSection title="Advanced">
-          <FormRow
+        </TableGroup>
+        <TableGroup title="Advanced">
+          <TableRow
             label="Clear plugin storage"
-            leading={
-              <FormRow.Icon source={getAssetIDByName("ic_message_delete")} />
-            }
+            icon={getAssetIDByName("TrashIcon")}
             onPress={() =>
               showConfirmationAlert({
                 title: "Clear plugin storage?",
@@ -190,12 +176,9 @@ export default function General() {
               })
             }
           />
-          <FormDivider />
-          <FormRow
+          <TableRow
             label="Clear theme storage"
-            leading={
-              <FormRow.Icon source={getAssetIDByName("ic_message_delete")} />
-            }
+            icon={getAssetIDByName("TrashIcon")}
             onPress={() =>
               showConfirmationAlert({
                 title: "Clear theme storage?",
@@ -211,7 +194,7 @@ export default function General() {
               })
             }
           />
-        </FormSection>
+        </TableGroup>
       </RN.ScrollView>
     </ErrorBoundary>
   );
