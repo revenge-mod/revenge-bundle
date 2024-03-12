@@ -1,7 +1,7 @@
 name: Build (debug)
 on:
   push:
-    branches: [main, dev]
+    branches-ignore: [main, dev]
     paths-ignore:
       - "**/*.md"
       - ".github/**"
