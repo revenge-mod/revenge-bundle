@@ -68,8 +68,8 @@ export default function Developer() {
         {window.__vendetta_loader?.features.loaderConfig && (
           <TableGroup title="Loader config">
             <TableSwitchRow
-              label="Load from custom url"
-              subLabel={"Load Revenge from a custom endpoint."}
+              label="Load from custom URL"
+              subLabel="Load Revenge from a custom endpoint"
               icon={getAssetIDByName("CopyIcon")}
               value={loaderConfig.customLoadUrl.enabled}
               onValueChange={(v: boolean) => {
@@ -90,7 +90,7 @@ export default function Developer() {
             {window.__vendetta_loader.features.devtools && (
               <TableSwitchRow
                 label="Load React DevTools"
-                subLabel={`Version: ${window.__vendetta_loader.features.devtools.version}`}
+                subLabel={`Version ${window.__vendetta_loader.features.devtools.version}`}
                 icon={getAssetIDByName("SoundboardIcon")}
                 value={loaderConfig.loadReactDevTools}
                 onValueChange={(v: boolean) => {
@@ -100,7 +100,7 @@ export default function Developer() {
             )}
           </TableGroup>
         )}
-        <TableGroup title="Other">
+        <TableGroup title="Tools">
           <TableRow
             label="Asset Browser"
             icon={getAssetIDByName("ImageIcon")}
