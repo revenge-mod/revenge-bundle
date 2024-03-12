@@ -217,7 +217,7 @@ export function TableRadioRow(
 // Misc
 
 export function TableInput(props: {
-  label: string;
+  label?: string;
   /** Description will only appear in Redesign components */
   description?: string;
   placeholder?: string;
@@ -270,7 +270,7 @@ export function TableInput(props: {
         "trailingIcon",
         "label"
       )}
-      title={props.label.toUpperCase()}
+      title={props.label?.toUpperCase()}
     />
   );
 }
