@@ -124,20 +124,21 @@ export default function General() {
             icon={getAssetIDByName("RetryIcon")}
             onPress={() => BundleUpdaterManager.reload()}
           />
-          <TableRow
-            label={
-              settings.safeMode?.enabled
-                ? "Return to Normal Mode"
-                : "Reload in Safe Mode"
-            }
-            subLabel={`This will reload Discord ${
-              settings.safeMode?.enabled
-                ? "normally."
-                : "without loading plugins."
-            }`}
-            icon={getAssetIDByName("ShieldIcon")}
-            onPress={toggleSafeMode}
-          />
+          <TableSwitchRow
+              label="Safe Mode"
+              subLabel={"Turning this on will disable all plugins and themes, reload required."}
+              icon={getAssetIDByName("ShieldIcon")}
+              value={settings.safeMode?.enabled}
+              onValueChange={() =>
+                showConfirmationAlert({
+                  title: "Reload required",
+                  content: "Toggling Safe Mode requires a reload, as changes will only take effect after you reload the app.",
+                  onConfirm: toggleSafeMode,
+                  confirmText: "Reload",
+                  cancelText: "Cancel",
+                })
+              }
+            />
           <TableSwitchRow
             label="Developer Settings"
             icon={getAssetIDByName("WrenchIcon")}
@@ -165,8 +166,8 @@ export default function General() {
               showConfirmationAlert({
                 title: "Clear plugin storage?",
                 content:
-                  "All installed plugins will be removed and the app will be reloaded. Plugin settings will still be retained. This is only neccessary if you have a corrupted storage.",
-                confirmText: "Yes, I have a corrupted storage",
+                  "All installed plugins will be removed and the app will be reloaded. Plugin settings will still be retained. This is only necessary if you have a corrupted storage.",
+                confirmText: "Clear and reload",
                 cancelText: "Cancel",
                 confirmColor: ButtonColors.RED,
                 onConfirm: () => {
@@ -183,8 +184,8 @@ export default function General() {
               showConfirmationAlert({
                 title: "Clear theme storage?",
                 content:
-                  "All installed themes will be removed and the app will be reloaded. This is only neccessary if you have a corrupted storage.",
-                confirmText: "Yes, I have a corrupted storage",
+                  "All installed themes will be removed and the app will be reloaded. This is only necessary if you have a corrupted storage.",
+                confirmText: "Clear and reload",
                 cancelText: "Cancel",
                 confirmColor: ButtonColors.RED,
                 onConfirm: () => {
