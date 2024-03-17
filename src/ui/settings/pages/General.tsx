@@ -189,6 +189,7 @@ export default function General() {
                 confirmColor: ButtonColors.RED,
                 onConfirm: () => setDevelopmentBuildEnabled(v)
               })
+              else setDevelopmentBuildEnabled(v)
             }}
           />
           <FormDivider />
