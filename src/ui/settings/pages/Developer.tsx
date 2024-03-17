@@ -71,7 +71,7 @@ export default function Developer() {
                       "You will revert back to using a stable build of Revenge after next app launch or reload.",
                     confirmText: "Revert",
                     cancelText: "Cancel",
-                    confirmColor: ButtonColors.RED,
+                    confirmColor: ButtonColors.PRIMARY,
                     onConfirm: () => setDevelopmentBuildEnabled(false)
                   })
                 }
