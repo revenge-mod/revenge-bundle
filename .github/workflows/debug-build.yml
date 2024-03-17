@@ -15,33 +15,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: "source"
-
-      - name: Checkout builds
-        uses: actions/checkout@v4
-        with:
-          repository: "revenge-mod/builds"
-          path: "builds"
-          token: ${{ secrets.BUILDS_PUSH_TOKEN }}
-          ref: ${{ github.ref_name }}
 
       - uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
-        working-directory: source
         run: bun i
 
       - name: CI
-        working-directory: source
         run: bun run format
 
       - name: Build
-        working-directory: source
         run: bun run build-bun
 
       - uses: actions/upload-artifact@v4
         with:
           name: revenge-build-debug
-          path: source/dist/*.js
+          path: dist/*.js
           if-no-files-found: error
