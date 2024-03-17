@@ -171,7 +171,7 @@ export default function General() {
         </FormSection>
         <FormSection title="Advanced">
           <FormRow
-            label="Clear plugin storage"
+            label="Clear Plugin Storage"
             leading={
               <FormRow.Icon source={getAssetIDByName("ic_message_delete")} />
             }
@@ -192,7 +192,7 @@ export default function General() {
           />
           <FormDivider />
           <FormRow
-            label="Clear theme storage"
+            label="Clear Theme Storage"
             leading={
               <FormRow.Icon source={getAssetIDByName("ic_message_delete")} />
             }
