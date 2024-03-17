@@ -195,6 +195,10 @@ interface Settings {
   };
 }
 
+interface ExtendedVeryPrivateSoonToBeMovedSettings extends Settings {
+  developmentBuildEnabled: boolean;
+}
+
 interface ApplicationCommand {
   description: string;
   name: string;
@@ -391,6 +395,13 @@ interface LoaderConfig {
     url: string;
   };
   loadReactDevTools: boolean;
+}
+
+interface ExtendedVeryPrivateSoonToBeMovedLoaderConfig extends LoaderConfig {
+  __previousCustomLoadUrlConfig?: {
+    enabled: boolean;
+    url: string;
+  }
 }
 
 interface LoaderIdentity {

@@ -4,8 +4,9 @@ import {
   ClientInfoManager,
   DeviceManager
 } from "@lib/native";
+import { DEVELOPMENT_DISTRIBUTION_URL } from '@lib/constants'
 import { after } from "@lib/patcher";
-import settings from "@lib/settings";
+import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
 import type { RNConstants } from "@types";
@@ -140,4 +141,21 @@ export function getDebugInfo() {
       }
     })!
   };
+}
+
+export function setDevelopmentBuildEnabled(enabled: boolean) {
+  if (enabled) {
+    loaderConfig.__previousCustomLoadUrlConfig = loaderConfig.customLoadUrl;
+    loaderConfig.customLoadUrl = {
+      enabled: true,
+      url: DEVELOPMENT_DISTRIBUTION_URL
+    };
+  } else {
+    const previousConfig = loaderConfig.__previousCustomLoadUrlConfig
+    if (previousConfig) loaderConfig.customLoadUrl = previousConfig;
+    else loaderConfig.customLoadUrl = { enabled: false, url: "" };
+    loaderConfig.__previousCustomLoadUrlConfig = undefined
+  }
+
+  settings.developmentBuildEnabled = enabled;
 }

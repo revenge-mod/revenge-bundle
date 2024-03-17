@@ -1,7 +1,10 @@
-import { connectToDebugger } from "@lib/debug";
+import { BundleUpdaterManager } from '@lib/native'
+import { showConfirmationAlert } from '@ui/alerts'
+import { connectToDebugger, setDevelopmentBuildEnabled } from "@lib/debug";
 import settings, { loaderConfig } from "@lib/settings";
 import { useProxy } from "@lib/storage";
 import { NavigationNative, ReactNative as RN } from "@metro/common";
+import { ButtonColors } from '@types'
 import { findByProps } from "@metro/filters";
 import { getAssetIDByName } from "@ui/assets";
 import { ErrorBoundary, Forms } from "@ui/components";
@@ -56,25 +59,49 @@ export default function Developer() {
         </FormSection>
         {window.__vendetta_loader?.features.loaderConfig && (
           <FormSection title="Loader config">
-            <FormSwitchRow
-              label="Load from custom url"
-              subLabel={"Load Revenge from a custom endpoint."}
-              leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
-              value={loaderConfig.customLoadUrl.enabled}
-              onValueChange={(v: boolean) => {
-                loaderConfig.customLoadUrl.enabled = v;
-              }}
-            />
-            <FormDivider />
-            {loaderConfig.customLoadUrl.enabled && (
+            {settings.developmentBuildEnabled ? (
+              <FormRow
+                label="Load from custom URL"
+                subLabel="Using development builds overrides this setting, tap to disable."
+                leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
+                onPress={() =>
+                  showConfirmationAlert({
+                    title: "Stop using development builds?",
+                    content:
+                      "You will revert back to using a stable build of Revenge, and the app will be reloaded to apply this change.",
+                    confirmText: "Revert and reload",
+                    cancelText: "Cancel",
+                    confirmColor: ButtonColors.RED,
+                    onConfirm: () => {
+                      setDevelopmentBuildEnabled(false)
+                      BundleUpdaterManager.reload();
+                    }
+                  })
+                }
+              />
+            ) : (
               <>
-                <FormInput
-                  value={loaderConfig.customLoadUrl.url}
-                  onChange={(v: string) => (loaderConfig.customLoadUrl.url = v)}
-                  placeholder="http://localhost:4040/revenge.js"
-                  title="REVENGE URL"
+                <FormSwitchRow
+                  label="Load from custom URL"
+                  subLabel="Load Revenge from a custom endpoint."
+                  leading={<FormRow.Icon source={getAssetIDByName("copy")} />}
+                  value={loaderConfig.customLoadUrl.enabled}
+                  onValueChange={(v: boolean) => {
+                    loaderConfig.customLoadUrl.enabled = v;
+                  }}
                 />
                 <FormDivider />
+                {loaderConfig.customLoadUrl.enabled && (
+                  <>
+                    <FormInput
+                      value={loaderConfig.customLoadUrl.url}
+                      onChange={(v: string) => (loaderConfig.customLoadUrl.url = v)}
+                      placeholder="http://localhost:4040/revenge.js"
+                      title="REVENGE URL"
+                    />
+                    <FormDivider />
+                  </>
+                )}
               </>
             )}
             {window.__vendetta_loader.features.devtools && (

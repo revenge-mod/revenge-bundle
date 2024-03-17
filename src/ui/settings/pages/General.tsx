@@ -1,7 +1,7 @@
 import { DISCORD_SERVER, GITHUB } from "@lib/constants";
-import { getDebugInfo, toggleSafeMode } from "@lib/debug";
+import { getDebugInfo, setDevelopmentBuildEnabled, toggleSafeMode } from "@lib/debug";
 import { BundleUpdaterManager } from "@lib/native";
-import settings from "@lib/settings";
+import settings, { loaderConfig } from "@lib/settings";
 import { removeMMKVBackend, useProxy } from "@lib/storage";
 import { url, ReactNative as RN } from "@metro/common";
 import { ButtonColors } from "@types";
@@ -15,6 +15,7 @@ const debugInfo = getDebugInfo();
 
 export default function General() {
   useProxy(settings);
+  useProxy(loaderConfig);
 
   const versions = [
     {
@@ -170,6 +171,17 @@ export default function General() {
           </Summary>
         </FormSection>
         <FormSection title="Advanced">
+          <FormSwitchRow
+            label="Use Development Builds"
+            leading={
+              <FormRow.Icon
+              source={getAssetIDByName("ic_progress_wrench_24px")}
+              />
+            }
+            value={settings.developmentBuildEnabled}
+            onValueChange={setDevelopmentBuildEnabled}
+          />
+          <FormDivider />
           <FormRow
             label="Clear plugin storage"
             leading={
