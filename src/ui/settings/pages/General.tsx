@@ -179,7 +179,17 @@ export default function General() {
               />
             }
             value={settings.developmentBuildEnabled}
-            onValueChange={setDevelopmentBuildEnabled}
+            onValueChange={(v: boolean) => {
+              if (v) showConfirmationAlert({
+                title: "Use development builds?",
+                content:
+                  "Development builds can be unstable and may contain bugs. Are you sure you want to continue?",
+                confirmText: "Continue",
+                cancelText: "Nevermind",
+                confirmColor: ButtonColors.RED,
+                onConfirm: () => setDevelopmentBuildEnabled(v)
+              })
+            }}
           />
           <FormDivider />
           <FormRow
