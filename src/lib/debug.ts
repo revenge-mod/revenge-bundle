@@ -153,7 +153,7 @@ export function setDevelopmentBuildEnabled(enabled: boolean) {
   } else {
     const previousConfig = loaderConfig.__previousCustomLoadUrlConfig
     if (previousConfig) loaderConfig.customLoadUrl = previousConfig;
-    else loaderConfig.customLoadUrl = { enabled: false, url: "" };
+    else loaderConfig.customLoadUrl = { enabled: false, url: "http://localhost:4040/revenge.js" };
     loaderConfig.__previousCustomLoadUrlConfig = undefined
   }
 
