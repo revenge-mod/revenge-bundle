@@ -183,7 +183,7 @@ export default function General() {
               if (v) showConfirmationAlert({
                 title: "Use development builds?",
                 content:
-                  "Development builds can be unstable and may contain bugs. Are you sure you want to continue?",
+                  "Development builds can be unstable and may contain bugs. Changes will apply next time the app launches or reloads.",
                 confirmText: "Continue",
                 cancelText: "Nevermind",
                 confirmColor: ButtonColors.RED,
