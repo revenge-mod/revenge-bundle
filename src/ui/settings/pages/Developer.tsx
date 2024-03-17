@@ -68,14 +68,11 @@ export default function Developer() {
                   showConfirmationAlert({
                     title: "Stop using development builds?",
                     content:
-                      "You will revert back to using a stable build of Revenge, and the app will be reloaded to apply this change.",
-                    confirmText: "Revert and reload",
+                      "You will revert back to using a stable build of Revenge after next app launch or reload.",
+                    confirmText: "Revert",
                     cancelText: "Cancel",
                     confirmColor: ButtonColors.RED,
-                    onConfirm: () => {
-                      setDevelopmentBuildEnabled(false)
-                      BundleUpdaterManager.reload();
-                    }
+                    onConfirm: () => setDevelopmentBuildEnabled(false)
                   })
                 }
               />
