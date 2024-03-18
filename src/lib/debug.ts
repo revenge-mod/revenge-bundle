@@ -1,10 +1,10 @@
+import { DEVELOPMENT_DISTRIBUTION_URL } from "@lib/constants";
 import logger from "@lib/logger";
 import {
   BundleUpdaterManager,
   ClientInfoManager,
   DeviceManager
 } from "@lib/native";
-import { DEVELOPMENT_DISTRIBUTION_URL } from '@lib/constants'
 import { after } from "@lib/patcher";
 import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
@@ -12,6 +12,7 @@ import { ReactNative as RN } from "@metro/common";
 import type { RNConstants } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
+import { removeCachedScript } from "./storage";
 export let socket: WebSocket;
 
 export async function toggleSafeMode() {
@@ -151,11 +152,17 @@ export function setDevelopmentBuildEnabled(enabled: boolean) {
       url: DEVELOPMENT_DISTRIBUTION_URL
     };
   } else {
-    const previousConfig = loaderConfig.__previousCustomLoadUrlConfig
+    const previousConfig = loaderConfig.__previousCustomLoadUrlConfig;
     if (previousConfig) loaderConfig.customLoadUrl = previousConfig;
-    else loaderConfig.customLoadUrl = { enabled: false, url: "http://localhost:4040/revenge.js" };
-    loaderConfig.__previousCustomLoadUrlConfig = undefined
+    else
+      loaderConfig.customLoadUrl = {
+        enabled: false,
+        url: "http://localhost:4040/revenge.js"
+      };
+    loaderConfig.__previousCustomLoadUrlConfig = undefined;
   }
 
   settings.developmentBuildEnabled = enabled;
+
+  return removeCachedScript();
 }

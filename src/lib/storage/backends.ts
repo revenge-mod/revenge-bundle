@@ -19,6 +19,23 @@ const getMMKVPath = (name: string): string => {
   return `vd_mmkv/${name}`;
 };
 
+export const removeCachedScript = async () => {
+  const { CacheDirPath, DocumentsDirPath } = FileManager.getConstants();
+  const scriptDir = RN.Platform.select({
+    default: CacheDirPath,
+    ios: DocumentsDirPath
+  });
+
+  // TODO: Fix this BS
+  const fs = RN.NativeModules.RNFSManager;
+
+  await fs.unlink(
+    (await FileManager.fileExists(`${scriptDir}/revenge.js`))
+      ? `${scriptDir}/revenge.js`
+      : `${scriptDir}/vendetta.js`
+  );
+};
+
 export const purgeStorage = async (store: string) => {
   if (await MMKVManager.getItem(store)) {
     MMKVManager.removeItem(store);
