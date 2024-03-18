@@ -465,8 +465,8 @@ interface VendettaObject {
     PLUGINS_CHANNEL_ID: string;
     THEMES_CHANNEL_ID: string;
     DISCORD_REVENGE_SERVER_ID: string;
-    PLUGINS_CHANNELS_ID: string[];
-    THEMES_CHANNELS_ID: string[];
+    PLUGINS_REVENGE_CHANNEL_ID: string;
+    THEMES_REVENGE_CHANNEL_ID: string;
     GITHUB: string;
     PROXY_PREFIX: string;
     PROXY_PREFIXES: string[];

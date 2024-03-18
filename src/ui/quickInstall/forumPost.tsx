@@ -1,6 +1,8 @@
 import {
   DISCORD_SERVER_ID,
   DISCORD_REVENGE_SERVER_ID,
+  THEMES_REVENGE_CHANNEL_ID,
+  PLUGINS_REVENGE_CHANNEL_ID,
   HTTP_REGEX_MULTI,
   PLUGINS_CHANNELS_ID,
   PROXY_PREFIXES,
@@ -31,10 +33,17 @@ export default () =>
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
-    if (thread.parent_id === PLUGINS_CHANNELS_ID) {
+    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
+      postType = "Plugin";
+    } else if (thread.parent_id === PLUGINS_REVENGE_CHANNEL_ID) {
       postType = "Plugin";
     } else if (
       thread.parent_id === THEMES_CHANNELS_ID &&
+      window.__vendetta_loader?.features.themes
+    ) {
+      postType = "Theme";
+    } else if (
+      thread.parent_id === THEMES_REVENGE_CHANNEL_ID &&
       window.__vendetta_loader?.features.themes
     ) {
       postType = "Theme";
