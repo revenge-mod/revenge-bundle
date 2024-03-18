@@ -184,6 +184,9 @@ export default function General() {
             }
             value={settings.developmentBuildEnabled}
             onValueChange={(v: boolean) => {
+              const callback = () =>
+                setDevelopmentBuildEnabled(v).then(showReloadRequiredAlert);
+
               if (v)
                 showConfirmationAlert({
                   title: "Use development builds?",
@@ -192,19 +195,9 @@ export default function General() {
                   confirmText: "Continue",
                   cancelText: "Nevermind",
                   confirmColor: ButtonColors.RED,
-                  onConfirm: () => setDevelopmentBuildEnabled(v)
+                  onConfirm: callback
                 });
-              else setDevelopmentBuildEnabled(v);
-
-              showConfirmationAlert({
-                title: "Reload required",
-                content:
-                  "Changes will only apply next time the app launches or reloads.",
-                confirmText: "Reload now",
-                cancelText: "Later",
-                confirmColor: ButtonColors.PRIMARY,
-                onConfirm: BundleUpdaterManager.reload
-              });
+              else callback()
             }}
           />
           <FormDivider />
@@ -254,3 +247,14 @@ export default function General() {
     </ErrorBoundary>
   );
 }
+
+const showReloadRequiredAlert = () =>
+  showConfirmationAlert({
+    title: "Reload required",
+    content:
+      "Changes will only apply next time the app launches or reloads.",
+    confirmText: "Reload now",
+    cancelText: "Later",
+    confirmColor: ButtonColors.PRIMARY,
+    onConfirm: BundleUpdaterManager.reload
+  });
