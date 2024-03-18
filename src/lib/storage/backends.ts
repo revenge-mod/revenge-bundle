@@ -29,11 +29,13 @@ export const removeCachedScript = async () => {
   // TODO: Fix this BS
   const fs = RN.NativeModules.RNFSManager;
 
-  await fs.unlink(
-    (await FileManager.fileExists(`${scriptDir}/revenge.js`))
-      ? `${scriptDir}/revenge.js`
-      : `${scriptDir}/vendetta.js`
-  );
+  try {
+    await fs.unlink(
+      (await FileManager.fileExists(`${scriptDir}/revenge.js`))
+        ? `${scriptDir}/revenge.js`
+        : `${scriptDir}/vendetta.js`
+    );
+  } catch {}
 };
 
 export const purgeStorage = async (store: string) => {
