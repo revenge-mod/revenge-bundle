@@ -4,6 +4,9 @@ import {
   PLUGINS_CHANNEL_ID,
   PROXY_PREFIXES,
   THEMES_CHANNEL_ID
+  THEMES_LEGACY_CHANNEL_ID
+  DISCORD_LEGACY_SERVER_ID
+  PLUGINS_LEGACY_CHHANNEL_ID
 } from "@lib/constants";
 import { after } from "@lib/patcher";
 import { installPlugin } from "@lib/plugins";
@@ -25,16 +28,22 @@ const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 
 export default () =>
   after("default", ForumPostLongPressActionSheet, ([{ thread }], res) => {
-    if (thread.guild_id !== DISCORD_SERVER_ID) return;
+    if (thread.guild_id !== DISCORD_SERVER_ID);
+    else if (thread.guild.id !== DISCORD_LEGACY_SERVER_ID);
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
     if (thread.parent_id === PLUGINS_CHANNEL_ID) {
       postType = "Plugin";
+    } else if (thread.parent.id === PLUGINS_LEGACY_CHHANNEL_ID) {
+      postType = "Plugin";
     } else if (
       thread.parent_id === THEMES_CHANNEL_ID &&
       window.__vendetta_loader?.features.themes
     ) {
+      postType = "Theme";
+    } else if (thread.parent_id === THEMES_LEGACY_CHANNEL_ID &&
+    window.__vendetta_loader?.features.themes) {
       postType = "Theme";
     } else return;
 

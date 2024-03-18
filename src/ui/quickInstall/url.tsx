@@ -1,5 +1,5 @@
 import type { anyFunction } from "@/def";
-import { PROXY_PREFIXES, THEMES_CHANNEL_ID } from "@lib/constants";
+import { PROXY_PREFIXES, THEMES_CHANNEL_ID, THEMES_LEGACY_CHANNEL_ID } from "@lib/constants";
 import { after, instead } from "@lib/patcher";
 import { installPlugin } from "@lib/plugins";
 import { installTheme } from "@lib/themes";
@@ -73,6 +73,10 @@ export default () => {
       if (
         urlType === "Theme" &&
         getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID
+      )
+      else if (
+        urlType === "Theme" &&
+        getChannel(getChannelId())?.parent_id !== THEMES_LEGACY_CHANNEL_ID
       )
         return orig.apply(this, args);
 
