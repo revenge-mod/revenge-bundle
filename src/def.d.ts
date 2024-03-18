@@ -461,9 +461,12 @@ interface VendettaObject {
   };
   constants: {
     DISCORD_SERVER: string;
-    DISCORD_SERVER_ID: string[];
-    PLUGINS_CHANNEL_ID: string[];
-    THEMES_CHANNEL_ID: string[];
+    DISCORD_SERVER_ID: string;
+    PLUGINS_CHANNEL_ID: string;
+    THEMES_CHANNEL_ID: string;
+    DISCORD_SERVERS_ID: string[];
+    PLUGINS_CHANNELS_ID: string[];
+    THEMES_CHANNELS_ID: string[];
     GITHUB: string;
     PROXY_PREFIX: string;
     PROXY_PREFIXES: string[];

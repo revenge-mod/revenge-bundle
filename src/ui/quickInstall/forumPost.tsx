@@ -1,9 +1,9 @@
 import {
-  DISCORD_SERVER_ID,
+  DISCORD_SERVERS_ID,
   HTTP_REGEX_MULTI,
-  PLUGINS_CHANNEL_ID,
+  PLUGINS_CHANNELS_ID,
   PROXY_PREFIXES,
-  THEMES_CHANNEL_ID
+  THEMES_CHANNELS_ID
 } from "@lib/constants";
 import { after } from "@lib/patcher";
 import { installPlugin } from "@lib/plugins";
@@ -25,18 +25,18 @@ const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 
 export default () =>
   after("default", ForumPostLongPressActionSheet, ([{ thread }], res) => {
-    if (thread.guild_id !== DISCORD_SERVER_ID) return;
+    if (thread.guild_id !== DISCORD_SERVERS_ID) return;
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
-    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
+    if (thread.parent_id === PLUGINS_CHANNELS_ID) {
       postType = "Plugin";
-    }; else if (
-      thread.parent_id === THEMES_CHANNEL_ID &&
+    } else if (
+      thread.parent_id === THEMES_CHANNELS_ID &&
       window.__vendetta_loader?.features.themes
     ) {
       postType = "Theme";
-    }; else return;
+    } else return;
 
     const { firstMessage } = useFirstForumPostMessage(thread);
 
