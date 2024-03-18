@@ -21,7 +21,7 @@ jobs:
       - name: Checkout builds
         uses: actions/checkout@v4
         with:
-          repository: "puhbu/builds"
+          repository: "revenge-mod/builds"
           path: "builds"
           token: ${{ secrets.BUILDS_PUSH_TOKEN }}
           ref: ${{ github.ref_name }}
@@ -50,3 +50,9 @@ jobs:
           git add .
           git commit -m "Build $GITHUB_SHA" || exit 0
           git push
+
+      # NOTE: Temporarily disabled, enable if needed
+      - name: Purge CDN cache
+        if: ${{ false }}
+        run: |
+          curl https://purge.jsdelivr.net/gh/revenge-mod/builds
