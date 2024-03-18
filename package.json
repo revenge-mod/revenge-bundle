@@ -7,12 +7,7 @@
     "build-bun": "bun run build.mjs",
     "format": "biome check --apply-unsafe src"
   },
-  "keywords": [
-    "discord",
-    "android",
-    "ios",
-    "react native"
-  ],
+  "keywords": ["discord", "android", "ios", "react native"],
   "author": "maisymoe",
   "license": "BSD-3-Clause",
   "devDependencies": {
@@ -34,10 +29,7 @@
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": [
-        "react",
-        "react-native"
-      ]
+      "ignoreMissing": ["react", "react-native"]
     }
   }
 }
