@@ -17,7 +17,9 @@ export default function SettingsSection() {
     <ErrorBoundary>
       <FormSection
         key="Revenge"
-        title={`Revenge${settings.safeMode?.enabled ? " (Safe Mode)" : ""}`}
+        title={`Revenge${
+          __revengeDevBuild ? ` (${__revengeBranch.split("/").at(-1)})` : ""
+        }${settings.safeMode?.enabled ? " (Safe Mode)" : ""}`}
       >
         {screens.map((s, i) => (
           <>
