@@ -1,16 +1,11 @@
 import { DEVELOPMENT_DISTRIBUTION_URL } from "@lib/constants";
 import logger from "@lib/logger";
-import {
-  BundleUpdaterManager,
-  ClientInfoManager,
-  DeviceManager
-} from "@lib/native";
+import { ClientInfoManager, DeviceManager } from "@lib/native";
 import { after } from "@lib/patcher";
 import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
-import { ButtonColors, type RNConstants } from "@types";
-import { showConfirmationAlert } from "@ui/alerts";
+import { type RNConstants } from "@types";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 import { removeCachedScript } from "./storage";
@@ -167,13 +162,4 @@ export async function setDevelopmentBuildEnabled(enabled: boolean) {
   settings.developmentBuildEnabled = enabled;
 
   await removeCachedScript();
-
-  showConfirmationAlert({
-    title: "Reload required",
-    content: "Changes will only apply next time the app launches or reloads.",
-    confirmText: "Reload now",
-    cancelText: "Later",
-    confirmColor: ButtonColors.PRIMARY,
-    onConfirm: BundleUpdaterManager.reload
-  });
 }
