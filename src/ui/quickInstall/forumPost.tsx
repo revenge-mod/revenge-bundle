@@ -32,17 +32,10 @@ export default () =>
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
-    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
-      postType = "Plugin";
-    } else if (thread.parent_id === PLUGINS_REVENGE_CHANNEL_ID) {
+    if (thread.parent_id === PLUGINS_REVENGE_CHANNEL_ID && thread.parent_id === PLUGINS_CHANNEL_ID) {
       postType = "Plugin";
     } else if (
-      thread.parent_id === THEMES_CHANNEL_ID &&
-      window.__vendetta_loader?.features.themes
-    ) {
-      postType = "Theme";
-    } else if (
-      thread.parent_id === THEMES_REVENGE_CHANNEL_ID &&
+      thread.parent_id === THEMES_CHANNEL_ID && thread.parent_id === THEMES_REVENGE_CHANNEL_ID &&
       window.__vendetta_loader?.features.themes
     ) {
       postType = "Theme";
