@@ -1,5 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+  "files": {
+    "ignore": ["dist/**"]
+  },
   "javascript": {
     "formatter": {
       "bracketSpacing": true,
@@ -36,6 +39,14 @@
       "security": {
         "noGlobalEval": "off"
       }
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "lineEnding": "lf",
+      "lineWidth": 80
     }
   },
   "organizeImports": {
