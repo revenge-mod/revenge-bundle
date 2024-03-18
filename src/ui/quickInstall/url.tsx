@@ -77,7 +77,7 @@ export default () => {
         urlType === "Theme" &&
         getChannel(getChannelId())?.parent_id !== THEMES_LEGACY_CHANNEL_ID
       );
-        return orig.apply(this, args);
+        orig.apply(this, args);
 
       showConfirmationAlert({
         title: "Hold Up",
