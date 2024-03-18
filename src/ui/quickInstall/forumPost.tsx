@@ -23,7 +23,7 @@ const { FormRow, FormIcon } = Forms;
 const { useFirstForumPostMessage } = findByProps("useFirstForumPostMessage");
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 
-eexport default () =>
+export default () =>
   after("default", ForumPostLongPressActionSheet, ([{ thread }], res) => {
     if (thread.guild_id !== DISCORD_SERVERS_ID) return;
 
