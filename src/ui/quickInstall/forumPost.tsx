@@ -23,9 +23,9 @@ const { FormRow, FormIcon } = Forms;
 const { useFirstForumPostMessage } = findByProps("useFirstForumPostMessage");
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 
-export default () =>
+eexport default () =>
   after("default", ForumPostLongPressActionSheet, ([{ thread }], res) => {
-    if (thread.guild_id !== DISCORD_SERVERS_ID);
+    if (thread.guild_id !== DISCORD_SERVERS_ID) return;
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
