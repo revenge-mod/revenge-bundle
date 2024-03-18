@@ -73,11 +73,10 @@ export default () => {
       if (
         urlType === "Theme" &&
         getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID
-      )
-      else if (
+      ); else if (
         urlType === "Theme" &&
         getChannel(getChannelId())?.parent_id !== THEMES_LEGACY_CHANNEL_ID
-      )
+      );
         return orig.apply(this, args);
 
       showConfirmationAlert({
