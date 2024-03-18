@@ -1,44 +1,47 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
-  "javascript": {
-    "formatter": {
-      "bracketSpacing": true,
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2,
-      "lineEnding": "lf",
-      "lineWidth": 80,
-      "quoteStyle": "double",
-      "trailingComma": "none"
-    }
-  },
-  "linter": {
-    "rules": {
-      "complexity": {
-        "noForEach": "off"
-      },
-      "correctness": {
-        "noChildrenProp": "off"
-      },
-      "performance": {
-        "noDelete": "off"
-      },
-      "recommended": true,
-      "style": {
-        "noCommaOperator": "off",
-        "noNonNullAssertion": "off",
-        "noParameterAssign": "off"
-      },
-      "suspicious": {
-        "noAssignInExpressions": "off",
-        "noExplicitAny": "off"
-      },
-      "security": {
-        "noGlobalEval": "off"
-      }
-    }
-  },
-  "organizeImports": {
-    "enabled": true
-  }
+	"$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+	"files": {
+		"ignore": ["dist/**"]
+	},
+	"javascript": {
+		"formatter": {
+			"bracketSpacing": true,
+			"enabled": true,
+			"indentStyle": "space",
+			"indentWidth": 2,
+			"lineEnding": "lf",
+			"lineWidth": 80,
+			"quoteStyle": "double",
+			"trailingComma": "none"
+		}
+	},
+	"linter": {
+		"rules": {
+			"complexity": {
+				"noForEach": "off"
+			},
+			"correctness": {
+				"noChildrenProp": "off"
+			},
+			"performance": {
+				"noDelete": "off"
+			},
+			"recommended": true,
+			"style": {
+				"noCommaOperator": "off",
+				"noNonNullAssertion": "off",
+				"noParameterAssign": "off"
+			},
+			"suspicious": {
+				"noAssignInExpressions": "off",
+				"noExplicitAny": "off"
+			},
+			"security": {
+				"noGlobalEval": "off"
+			}
+		}
+	},
+	"organizeImports": {
+		"enabled": true
+	}
 }
