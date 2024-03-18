@@ -9,12 +9,24 @@ on:
 
 jobs:
   build:
-    name: Build and upload
+    name: Build and push
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: "source"
+
+
+        - name: Checkout builds
+          uses: actions/checkout@v4
+          with:
+            repository: "puhbu/builds"
+            path: "builds"
+            token: ${{ secrets.BUILDS_PUSH_TOKEN }}
+            ref: ${{ github.ref_name }}
+
 
       - uses: oven-sh/setup-bun@v1
 
@@ -27,8 +39,13 @@ jobs:
       - name: Build
         run: bun run build-bun
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: revenge-build-debug
-          path: dist/*.js
-          if-no-files-found: error
+      - name: Push builds
+          run: |
+            rm $GITHUB_WORKSPACE/builds/*
+            cp -r $GITHUB_WORKSPACE/source/dist/* $GITHUB_WORKSPACE/builds
+            cd $GITHUB_WORKSPACE/builds
+            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add .
+            git commit -m "Build $GITHUB_SHA" || exit 0
+            git push
