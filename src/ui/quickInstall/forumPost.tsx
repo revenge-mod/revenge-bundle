@@ -28,8 +28,7 @@ const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 
 export default () =>
   after("default", ForumPostLongPressActionSheet, ([{ thread }], res) => {
-    if (thread.guild_id !== DISCORD_SERVER_ID);
-    else if (thread.guild_id !== DISCORD_REVENGE_SERVER_ID);
+    if (thread.guild_id !== DISCORD_SERVER_ID ) && (thread.guild_id !== DISCORD_REVENGE_SERVER_ID) return;
 
     // Determine what type of addon this is.
     let postType: "Plugin" | "Theme";
