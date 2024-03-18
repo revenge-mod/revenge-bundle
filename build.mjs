@@ -20,7 +20,7 @@ const commit =
 try {
   await build({
     entryPoints: ["./src/entry.ts"],
-    outfile: "./dist/revengetest.js",
+    outfile: "./dist/revengedev.js",
     minify: true,
     bundle: true,
     format: "iife",
