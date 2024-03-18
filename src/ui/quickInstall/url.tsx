@@ -72,10 +72,9 @@ export default () => {
       // Make clicking on theme links only work in #themes, should there be a theme proxy in the future, this can be removed.
      if (
        urlType === "Theme" &&
-       getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID
-     ) else if (urlType === "Theme" &&
-     getChannel(getChannelId())?.parent_id !== THEMES_REVENGE_CHANNEL_ID)
-       return orig.apply(this, args);
+       getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID &&
+       getChannel(getChannelId())?.parent_id !== THEMES_REVENGE_CHANNEL_ID
+     ) return orig.apply(this, args);
 
       showConfirmationAlert({
         title: "Hold Up",
