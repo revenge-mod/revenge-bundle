@@ -1,5 +1,9 @@
 import { DISCORD_SERVER, GITHUB } from "@lib/constants";
-import { getDebugInfo, setDevelopmentBuildEnabled, toggleSafeMode } from "@lib/debug";
+import {
+  getDebugInfo,
+  setDevelopmentBuildEnabled,
+  toggleSafeMode
+} from "@lib/debug";
 import { BundleUpdaterManager } from "@lib/native";
 import settings, { loaderConfig } from "@lib/settings";
 import { removeMMKVBackend, useProxy } from "@lib/storage";
@@ -175,21 +179,32 @@ export default function General() {
             label="Use Development Builds"
             leading={
               <FormRow.Icon
-              source={getAssetIDByName("ic_progress_wrench_24px")}
+                source={getAssetIDByName("ic_progress_wrench_24px")}
               />
             }
             value={settings.developmentBuildEnabled}
             onValueChange={(v: boolean) => {
-              if (v) showConfirmationAlert({
-                title: "Use development builds?",
+              if (v)
+                showConfirmationAlert({
+                  title: "Use development builds?",
+                  content:
+                    "Development builds can be unstable and may contain bugs. Changes will apply next time the app launches or reloads.",
+                  confirmText: "Continue",
+                  cancelText: "Nevermind",
+                  confirmColor: ButtonColors.RED,
+                  onConfirm: () => setDevelopmentBuildEnabled(v)
+                });
+              else setDevelopmentBuildEnabled(v);
+
+              showConfirmationAlert({
+                title: "Reload required",
                 content:
-                  "Development builds can be unstable and may contain bugs. Changes will apply next time the app launches or reloads.",
-                confirmText: "Continue",
-                cancelText: "Nevermind",
-                confirmColor: ButtonColors.RED,
-                onConfirm: () => setDevelopmentBuildEnabled(v)
-              })
-              else setDevelopmentBuildEnabled(v)
+                  "Changes will only apply next time the app launches or reloads.",
+                confirmText: "Reload now",
+                cancelText: "Later",
+                confirmColor: ButtonColors.PRIMARY,
+                onConfirm: BundleUpdaterManager.reload
+              });
             }}
           />
           <FormDivider />

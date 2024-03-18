@@ -1,11 +1,11 @@
-import { BundleUpdaterManager } from '@lib/native'
-import { showConfirmationAlert } from '@ui/alerts'
 import { connectToDebugger, setDevelopmentBuildEnabled } from "@lib/debug";
+import { BundleUpdaterManager } from "@lib/native";
 import settings, { loaderConfig } from "@lib/settings";
 import { useProxy } from "@lib/storage";
 import { NavigationNative, ReactNative as RN } from "@metro/common";
-import { ButtonColors } from '@types'
 import { findByProps } from "@metro/filters";
+import { ButtonColors } from "@types";
+import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
 import { ErrorBoundary, Forms } from "@ui/components";
 import AssetBrowser from "@ui/settings/pages/AssetBrowser";
@@ -92,7 +92,9 @@ export default function Developer() {
                   <>
                     <FormInput
                       value={loaderConfig.customLoadUrl.url}
-                      onChange={(v: string) => (loaderConfig.customLoadUrl.url = v)}
+                      onChange={(v: string) =>
+                        (loaderConfig.customLoadUrl.url = v)
+                      }
                       placeholder="http://localhost:4040/revenge.js"
                       title="REVENGE URL"
                     />

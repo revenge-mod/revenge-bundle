@@ -9,10 +9,12 @@ import { after } from "@lib/patcher";
 import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
-import type { RNConstants } from "@types";
+import { ButtonColors, type RNConstants } from "@types";
+import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 import { removeCachedScript } from "./storage";
+
 export let socket: WebSocket;
 
 export async function toggleSafeMode() {
@@ -144,7 +146,7 @@ export function getDebugInfo() {
   };
 }
 
-export function setDevelopmentBuildEnabled(enabled: boolean) {
+export async function setDevelopmentBuildEnabled(enabled: boolean) {
   if (enabled) {
     loaderConfig.__previousCustomLoadUrlConfig = loaderConfig.customLoadUrl;
     loaderConfig.customLoadUrl = {
@@ -164,5 +166,14 @@ export function setDevelopmentBuildEnabled(enabled: boolean) {
 
   settings.developmentBuildEnabled = enabled;
 
-  return removeCachedScript();
+  await removeCachedScript();
+
+  showConfirmationAlert({
+    title: "Reload required",
+    content: "Changes will only apply next time the app launches or reloads.",
+    confirmText: "Reload now",
+    cancelText: "Later",
+    confirmColor: ButtonColors.PRIMARY,
+    onConfirm: BundleUpdaterManager.reload
+  });
 }
