@@ -21,7 +21,7 @@ jobs:
       - name: Checkout builds
         uses: actions/checkout@v4
         with:
-          repository: "revenge-mod/builds"
+          repository: "puhbu/builds"
           path: "builds"
           token: ${{ secrets.BUILDS_PUSH_TOKEN }}
           ref: ${{ github.ref_name }}
