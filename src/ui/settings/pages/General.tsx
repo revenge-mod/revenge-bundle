@@ -148,7 +148,9 @@ export default function General() {
             leading={
               <FormRow.Icon source={getAssetIDByName("ic_message_retry")} />
             }
-            onPress={() => setDevelopmentBuildEnabled(settings.developmentBuildEnabled)}
+            onPress={() =>
+              setDevelopmentBuildEnabled(settings.developmentBuildEnabled)
+            }
           />
           <FormDivider />
           <FormSwitchRow
@@ -204,7 +206,7 @@ export default function General() {
                   confirmColor: ButtonColors.RED,
                   onConfirm: () => setDevelopmentBuildEnabled(v)
                 });
-              else setDevelopmentBuildEnabled(v)
+              else setDevelopmentBuildEnabled(v);
             }}
           />
           <FormDivider />
@@ -221,10 +223,10 @@ export default function General() {
                 confirmText: "Yes, I have a corrupted storage",
                 cancelText: "Cancel",
                 confirmColor: ButtonColors.RED,
-                onConfirm: () => {
-                  removeMMKVBackend("VENDETTA_PLUGINS");
-                  BundleUpdaterManager.reload();
-                }
+                onConfirm: () =>
+                  removeMMKVBackend("VENDETTA_PLUGINS").finally(
+                    BundleUpdaterManager.reload
+                  )
               })
             }
           />
@@ -242,10 +244,10 @@ export default function General() {
                 confirmText: "Yes, I have a corrupted storage",
                 cancelText: "Cancel",
                 confirmColor: ButtonColors.RED,
-                onConfirm: () => {
-                  removeMMKVBackend("VENDETTA_THEMES");
-                  BundleUpdaterManager.reload();
-                }
+                onConfirm: () =>
+                  removeMMKVBackend("VENDETTA_THEMES").finally(
+                    BundleUpdaterManager.reload
+                  )
               })
             }
           />
@@ -253,4 +255,4 @@ export default function General() {
       </RN.ScrollView>
     </ErrorBoundary>
   );
-};
+}
