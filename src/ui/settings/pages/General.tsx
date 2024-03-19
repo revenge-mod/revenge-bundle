@@ -91,6 +91,9 @@ export default function General() {
     }
   ];
 
+  // Workaround so it restores the config correctly even when the dev build option is turned off
+  settings.__previousCustomLoadUrlConfig ??= loaderConfig.customLoadUrl;
+
   return (
     <ErrorBoundary>
       <RN.ScrollView

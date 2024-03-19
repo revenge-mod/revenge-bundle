@@ -1,12 +1,16 @@
 import { DEVELOPMENT_DISTRIBUTION_URL } from "@lib/constants";
 import logger from "@lib/logger";
-import { BundleUpdaterManager, ClientInfoManager, DeviceManager } from "@lib/native";
+import {
+  BundleUpdaterManager,
+  ClientInfoManager,
+  DeviceManager
+} from "@lib/native";
 import { after } from "@lib/patcher";
 import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
 import { ButtonColors, type RNConstants } from "@types";
-import { showConfirmationAlert } from '@ui/alerts'
+import { showConfirmationAlert } from "@ui/alerts";
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 import { removeCachedScript } from "./storage";
@@ -91,7 +95,7 @@ export function getDebugInfo() {
     vendetta: {
       version: versionHash,
       loader: window.__vendetta_loader?.name ?? "Unknown",
-      branch,
+      branch
     },
     discord: {
       version: ClientInfoManager.Version,
@@ -144,7 +148,10 @@ export function getDebugInfo() {
   };
 }
 
-export async function setDevelopmentBuildEnabled(enabled: boolean, showReloadPopup = true) {
+export async function setDevelopmentBuildEnabled(
+  enabled: boolean,
+  showReloadPopup = true
+) {
   if (enabled) {
     settings.__previousCustomLoadUrlConfig = loaderConfig.customLoadUrl;
     loaderConfig.customLoadUrl = {
@@ -166,13 +173,13 @@ export async function setDevelopmentBuildEnabled(enabled: boolean, showReloadPop
 
   await removeCachedScript();
 
-  if (showReloadPopup) showConfirmationAlert({
-    title: "Reload required",
-    content:
-      "Changes will only apply next time the app launches or reloads.",
-    confirmText: "Reload now",
-    cancelText: "Later",
-    confirmColor: ButtonColors.PRIMARY,
-    onConfirm: BundleUpdaterManager.reload
-  });
+  if (showReloadPopup)
+    showConfirmationAlert({
+      title: "Reload required",
+      content: "Changes will only apply next time the app launches or reloads.",
+      confirmText: "Reload now",
+      cancelText: "Later",
+      confirmColor: ButtonColors.PRIMARY,
+      onConfirm: BundleUpdaterManager.reload
+    });
 }
