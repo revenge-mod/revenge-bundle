@@ -13,6 +13,7 @@ import AssetBrowser from "@ui/settings/pages/AssetBrowser";
 const { FormSection, FormRow, FormSwitchRow, FormInput, FormDivider } = Forms;
 const { hideActionSheet } = findByProps("openLazy", "hideActionSheet");
 const { showSimpleActionSheet } = findByProps("showSimpleActionSheet");
+const { TextStyleSheet } = findByProps("TextStyleSheet");
 
 export default function Developer() {
   const navigation = NavigationNative.useNavigation();
@@ -67,8 +68,13 @@ export default function Developer() {
                 onPress={() =>
                   showConfirmationAlert({
                     title: "Stop using development builds?",
-                    content:
-                      "You will revert back to using a stable build of Revenge after next app launch or reload.",
+                    content: [
+                      "To use the ",
+                      <RN.Text style={TextStyleSheet["text-md/semibold"]}>
+                        Load from custom URL
+                      </RN.Text>,
+                      " option, you will have to stop using development builds as it overrides this setting."
+                    ],
                     confirmText: "Revert",
                     cancelText: "Cancel",
                     confirmColor: ButtonColors.PRIMARY,

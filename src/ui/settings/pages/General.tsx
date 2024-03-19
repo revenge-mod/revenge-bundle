@@ -177,6 +177,7 @@ export default function General() {
         <FormSection title="Advanced">
           <FormSwitchRow
             label="Use Development Builds"
+            sublabel="Use development builds for testing new features or bug fixes, may be unstable."
             leading={
               <FormRow.Icon
                 source={getAssetIDByName("ic_progress_wrench_24px")}
@@ -184,9 +185,6 @@ export default function General() {
             }
             value={settings.developmentBuildEnabled}
             onValueChange={(v: boolean) => {
-              const callback = () =>
-                setDevelopmentBuildEnabled(v).then(showReloadRequiredAlert);
-
               if (v)
                 showConfirmationAlert({
                   title: "Use development builds?",
@@ -195,9 +193,9 @@ export default function General() {
                   confirmText: "Continue",
                   cancelText: "Nevermind",
                   confirmColor: ButtonColors.RED,
-                  onConfirm: callback
+                  onConfirm: () => setDevelopmentBuildEnabled(v)
                 });
-              else callback()
+              else setDevelopmentBuildEnabled(v)
             }}
           />
           <FormDivider />
@@ -246,15 +244,4 @@ export default function General() {
       </RN.ScrollView>
     </ErrorBoundary>
   );
-}
-
-const showReloadRequiredAlert = () =>
-  showConfirmationAlert({
-    title: "Reload required",
-    content:
-      "Changes will only apply next time the app launches or reloads.",
-    confirmText: "Reload now",
-    cancelText: "Later",
-    confirmColor: ButtonColors.PRIMARY,
-    onConfirm: BundleUpdaterManager.reload
-  });
+};

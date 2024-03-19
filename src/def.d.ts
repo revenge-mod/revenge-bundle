@@ -197,6 +197,7 @@ interface Settings {
 
 interface ExtendedVeryPrivateSoonToBeMovedSettings extends Settings {
   developmentBuildEnabled: boolean;
+  __previousCustomLoadUrlConfig?: LoaderConfig['customLoadUrl']
 }
 
 interface ApplicationCommand {
@@ -395,13 +396,6 @@ interface LoaderConfig {
     url: string;
   };
   loadReactDevTools: boolean;
-}
-
-interface ExtendedVeryPrivateSoonToBeMovedLoaderConfig extends LoaderConfig {
-  __previousCustomLoadUrlConfig?: {
-    enabled: boolean;
-    url: string;
-  }
 }
 
 interface LoaderIdentity {

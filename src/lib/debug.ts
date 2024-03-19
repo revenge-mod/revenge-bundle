@@ -1,11 +1,12 @@
 import { DEVELOPMENT_DISTRIBUTION_URL } from "@lib/constants";
 import logger from "@lib/logger";
-import { ClientInfoManager, DeviceManager } from "@lib/native";
+import { BundleUpdaterManager, ClientInfoManager, DeviceManager } from "@lib/native";
 import { after } from "@lib/patcher";
 import settings, { loaderConfig } from "@lib/settings";
 import { getCurrentTheme, selectTheme } from "@lib/themes";
 import { ReactNative as RN } from "@metro/common";
-import { type RNConstants } from "@types";
+import { ButtonColors, type RNConstants } from "@types";
+import { showConfirmationAlert } from '@ui/alerts'
 import { getAssetIDByName } from "@ui/assets";
 import { showToast } from "@ui/toasts";
 import { removeCachedScript } from "./storage";
@@ -141,25 +142,35 @@ export function getDebugInfo() {
   };
 }
 
-export async function setDevelopmentBuildEnabled(enabled: boolean) {
+export async function setDevelopmentBuildEnabled(enabled: boolean, showReloadPopup = true) {
   if (enabled) {
-    loaderConfig.__previousCustomLoadUrlConfig = loaderConfig.customLoadUrl;
+    settings.__previousCustomLoadUrlConfig = loaderConfig.customLoadUrl;
     loaderConfig.customLoadUrl = {
       enabled: true,
       url: DEVELOPMENT_DISTRIBUTION_URL
     };
   } else {
-    const previousConfig = loaderConfig.__previousCustomLoadUrlConfig;
+    const previousConfig = settings.__previousCustomLoadUrlConfig;
     if (previousConfig) loaderConfig.customLoadUrl = previousConfig;
     else
       loaderConfig.customLoadUrl = {
         enabled: false,
         url: "http://localhost:4040/revenge.js"
       };
-    loaderConfig.__previousCustomLoadUrlConfig = undefined;
+    settings.__previousCustomLoadUrlConfig = undefined;
   }
 
   settings.developmentBuildEnabled = enabled;
 
   await removeCachedScript();
+
+  showConfirmationAlert({
+    title: "Reload required",
+    content:
+      "Changes will only apply next time the app launches or reloads.",
+    confirmText: "Reload now",
+    cancelText: "Later",
+    confirmColor: ButtonColors.PRIMARY,
+    onConfirm: BundleUpdaterManager.reload
+  });
 }
