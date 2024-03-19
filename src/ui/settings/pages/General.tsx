@@ -6,7 +6,7 @@ import {
 } from "@lib/debug";
 import { BundleUpdaterManager } from "@lib/native";
 import settings, { loaderConfig } from "@lib/settings";
-import { removeMMKVBackend, useProxy } from "@lib/storage";
+import { removeCachedScript, removeMMKVBackend, useProxy } from "@lib/storage";
 import { url, ReactNative as RN } from "@metro/common";
 import { ButtonColors } from "@types";
 import { showConfirmationAlert } from "@ui/alerts";
@@ -142,6 +142,15 @@ export default function General() {
             onPress={toggleSafeMode}
           />
           <FormDivider />
+          <FormRow
+            label="Update Revenge"
+            subLabel="This process usually happens automatically. If it doesn't, you can force it here."
+            leading={
+              <FormRow.Icon source={getAssetIDByName("ic_message_retry")} />
+            }
+            onPress={() => setDevelopmentBuildEnabled(settings.developmentBuildEnabled)}
+          />
+          <FormDivider />
           <FormSwitchRow
             label="Developer Settings"
             leading={
@@ -177,7 +186,7 @@ export default function General() {
         <FormSection title="Advanced">
           <FormSwitchRow
             label="Use Development Builds"
-            sublabel="Use development builds for testing new features or bug fixes, may be unstable."
+            subLabel="Use development builds for testing new features or bug fixes, may be unstable."
             leading={
               <FormRow.Icon
                 source={getAssetIDByName("ic_progress_wrench_24px")}
