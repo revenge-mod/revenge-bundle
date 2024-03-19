@@ -19,7 +19,7 @@ export default function General() {
   const versions = [
     {
       label: "Revenge",
-      version: debugInfo.vendetta.version,
+      version: `${debugInfo.vendetta.version} (${debugInfo.vendetta.branch})`,
       icon: "ic_progress_wrench_24px"
     },
     {
