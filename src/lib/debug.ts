@@ -75,6 +75,7 @@ export function patchLogHook() {
 }
 
 export const versionHash: string = __revengeVersion;
+export const branch: string = __revengeBranch;
 
 export function getDebugInfo() {
   // Hermes
@@ -89,7 +90,8 @@ export function getDebugInfo() {
   return {
     vendetta: {
       version: versionHash,
-      loader: window.__vendetta_loader?.name ?? "Unknown"
+      loader: window.__vendetta_loader?.name ?? "Unknown",
+      branch,
     },
     discord: {
       version: ClientInfoManager.Version,

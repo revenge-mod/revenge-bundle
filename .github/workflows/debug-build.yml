@@ -5,11 +5,16 @@ on:
     paths-ignore:
       - "**/*.md"
       - ".github/**"
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths-ignore:
+      - "**/*.md"
+      - ".github/**"
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and push
+    name: Build and upload
     runs-on: ubuntu-latest
 
     steps:

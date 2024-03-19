@@ -586,6 +586,8 @@ interface VendettaPluginObject {
 declare global {
   type React = typeof _React;
   const __revengeVersion: string;
+  const __revengeDevBuild: boolean;
+  const __revengeBranch: string;
 
   interface Window {
     [key: Exclude<PropertyKey, number>]: any;
