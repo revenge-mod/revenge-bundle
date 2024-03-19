@@ -164,7 +164,7 @@ export async function setDevelopmentBuildEnabled(enabled: boolean, showReloadPop
 
   await removeCachedScript();
 
-  showConfirmationAlert({
+  if (showReloadPopup) showConfirmationAlert({
     title: "Reload required",
     content:
       "Changes will only apply next time the app launches or reloads.",
