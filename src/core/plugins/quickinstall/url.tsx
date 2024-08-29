@@ -1,9 +1,9 @@
 import { formatString, Strings } from "@core/i18n";
 import { VdPluginManager } from "@core/vendetta/plugins";
+import { installTheme } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
 import { after, instead } from "@lib/api/patcher";
-import { installTheme } from "@lib/themes";
 import { THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { channels, url } from "@metro/common";

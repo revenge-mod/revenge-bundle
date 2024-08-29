@@ -1,3 +1,4 @@
+import * as themes from "@lib/addons/themes";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
@@ -6,7 +7,6 @@ import patcher from "@lib/api/patcher";
 import { loaderConfig, settings } from "@lib/api/settings";
 import * as storage from "@lib/api/storage";
 import { createStorage } from "@lib/api/storage";
-import * as themes from "@lib/themes";
 import * as utils from "@lib/utils";
 import { cyrb64Hash } from "@lib/utils/cyrb64";
 import { DiscordLogger } from "@lib/utils/logger";

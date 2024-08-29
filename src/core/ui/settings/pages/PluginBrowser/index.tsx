@@ -1,6 +1,6 @@
+import { installPlugin, isPluginInstalled, uninstallPlugin } from "@lib/addons/plugins";
+import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { findAssetId } from "@lib/api/assets";
-import { installPlugin, isPluginInstalled, uninstallPlugin } from "@lib/plugins";
-import { BunnyPluginManifest } from "@lib/plugins/types";
 import { showToast } from "@lib/ui/toasts";
 import { safeFetch } from "@lib/utils";
 import { OFFICIAL_PLUGINS_REPO_URL } from "@lib/utils/constants";

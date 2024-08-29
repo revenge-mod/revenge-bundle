@@ -4,7 +4,6 @@ import { DeviceManager } from "@lib/api/native/modules";
 import { after } from "@lib/api/patcher";
 import { settings } from "@lib/api/settings";
 import { lazyDestructure } from "@lib/utils/lazy";
-import { ButtonColors } from "@lib/utils/types";
 import { Button, CompatButton, SafeAreaView } from "@metro/common/components";
 import { _lazyContextSymbol } from "@metro/lazy";
 import { LazyModuleContext } from "@metro/types";
@@ -49,6 +48,18 @@ const styles = createThemedStyleSheet({
         marginVertical: 8,
     },
 });
+
+enum ButtonColors {
+    BRAND = "brand",
+    RED = "red",
+    GREEN = "green",
+    PRIMARY = "primary",
+    TRANSPARENT = "transparent",
+    GREY = "grey",
+    LIGHTGREY = "lightgrey",
+    WHITE = "white",
+    LINK = "link"
+}
 
 interface Tab {
     id: string;
