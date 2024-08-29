@@ -8,6 +8,7 @@ import { findByProps } from "@metro";
 import { clipboard } from "@metro/common";
 import { Button, FlashList, FloatingActionButton, HelpMessage, IconButton, Stack, Text, TextInput } from "@metro/common/components";
 import { ErrorBoundary, Search } from "@ui/components";
+import { isNotNil } from "es-toolkit";
 import fuzzysort from "fuzzysort";
 import { ComponentType, ReactNode, useCallback, useMemo } from "react";
 import { Image, ScrollView, View } from "react-native";
@@ -16,13 +17,13 @@ const { showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByP
 const { openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
 const { AlertModal, AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions"));
 
-type SearchKeywords = Array<string | ((obj: any & {}) => string)>;
+type SearchKeywords<T> = Array<string | ((obj: T & {}) => string)>;
 
 interface AddonPageProps<T extends object, I = any> {
     title: string;
     items: I[];
-    searchKeywords: SearchKeywords;
-    sortOptions?: Record<string, (a: I, b: I) => number>;
+    searchKeywords: SearchKeywords<T>;
+    sortOptions?: Record<string, (a: T, b: T) => number>;
     resolveItem?: (value: I) => T | undefined;
     safeModeHint?: {
         message?: string;
@@ -110,12 +111,12 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
     useProxy(settings);
 
     const [search, setSearch] = React.useState("");
-    const [sortFn, setSortFn] = React.useState<((a: unknown, b: unknown) => number) | null>(() => null);
+    const [sortFn, setSortFn] = React.useState<((a: T, b: T) => number) | null>(() => null);
 
     const results = useMemo(() => {
         let values = props.items;
-        if (props.resolveItem) values = values.map(props.resolveItem);
-        const items = values.filter(i => i && typeof i === "object");
+        if (props.resolveItem) values = values.map(props.resolveItem).filter(isNotNil);
+        const items = values.filter(i => isNotNil(i) && typeof i === "object");
         if (!search && sortFn) items.sort(sortFn);
 
         return fuzzysort.go(search, items, { keys: props.searchKeywords, all: true });

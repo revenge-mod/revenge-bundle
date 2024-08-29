@@ -57,7 +57,7 @@ function PluginPage(props: PluginPageProps) {
             "description",
             p => p.authors?.map(
                 (a: Author | string) => typeof a === "string" ? a : a.name
-            ).join()
+            ).join() ?? "unknown"
         ]}
         sortOptions={{
             "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),

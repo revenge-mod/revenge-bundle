@@ -17,11 +17,11 @@ export default function Themes() {
             searchKeywords={[
                 "data.name",
                 "data.description",
-                p => p.data.authors?.map((a: Author) => a.name).join(", ")
+                p => p.data.authors?.map((a: Author) => a.name).join(", ") ?? "unknown"
             ]}
             sortOptions={{
-                "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-                "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+                "Name (A-Z)": (a, b) => a.data.name.localeCompare(b.data.name),
+                "Name (Z-A)": (a, b) => b.data.name.localeCompare(a.data.name)
             }}
             installAction={{
                 label: "Install a theme",
