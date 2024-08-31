@@ -1,5 +1,5 @@
-import { byDisplayName, byFilePath,byName, byProps, byStoreName, byTypeName } from "./filters";
-import { findAllExports,findExports } from "./finders";
+import { byDisplayName, byFilePath, byName, byProps, byStoreName, byTypeName } from "./filters";
+import { findAllExports, findExports } from "./finders";
 import { createLazyModule } from "./lazy";
 
 export const findByProps = (...props: string[]) => findExports(byProps(...props));

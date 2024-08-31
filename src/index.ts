@@ -5,13 +5,11 @@ import { initVendettaObject } from "@core/vendetta/api";
 import { VdPluginManager } from "@core/vendetta/plugins";
 import { updateFonts } from "@lib/addons/fonts";
 import { checkAndRegisterUpdates, initPlugins } from "@lib/addons/plugins";
-import { initThemes, patchChatBackground } from "@lib/addons/themes";
+import { patchChatBackground } from "@lib/addons/themes";
+import initColors from "@lib/addons/themes/colors";
 import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
-import { removeFile, writeFile } from "@lib/api/native/fs";
-import { isPyonLoader, isThemeSupported } from "@lib/api/native/loader";
-import { FileManager } from "@lib/api/native/modules";
 import { logger } from "@lib/utils/logger";
 import initSafeMode from "@ui/safeMode";
 import { patchSettings } from "@ui/settings";
@@ -19,21 +17,23 @@ import { patchSettings } from "@ui/settings";
 import * as lib from "./lib";
 
 export default async () => {
-    // Themes
-    if (isThemeSupported()) {
-        try {
-            if (isPyonLoader()) {
-                if (FileManager.removeFile != null) {
-                    removeFile("vendetta_theme.json", "");
-                } else {
-                    writeFile("vendetta_theme.json", "null", "");
-                }
-            }
-            initThemes();
-        } catch (e) {
-            console.error("[Bunny] Failed to initialize themes...", e);
-        }
-    }
+    // // Themes
+    // if (isThemeSupported()) {
+    //     try {
+    //         if (isPyonLoader()) {
+    //             if (FileManager.removeFile != null) {
+    //                 removeFile("vendetta_theme.json", "");
+    //             } else {
+    //                 writeFile("vendetta_theme.json", "null", "");
+    //             }
+    //         }
+    //         initThemes();
+    //     } catch (e) {
+    //         console.error("[Bunny] Failed to initialize themes...", e);
+    //     }
+    // }
+
+    initColors();
 
     // Load everything in parallel
     await Promise.all([

@@ -7,9 +7,9 @@ export interface BunnyManifest {
     display: {
         name: string;
         description: string;
-        authors: Author[];
+        authors?: Author[];
     };
-    extras: {
+    extras?: {
         [key: string]: JsonValue;
     }
 }
