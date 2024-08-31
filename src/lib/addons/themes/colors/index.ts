@@ -1,10 +1,10 @@
-import { convertToInternalDef, setThemeRef } from "./internalRef";
 import patchChatBackground from "./patches/background";
 import patchDefinitionAndResolver from "./patches/resolver";
 import patchStorage from "./patches/storage";
 import { BunnyColorManifest } from "./types";
+import { updateBunnyColor } from "./updater";
 
-function generateRandomBunnyTheme(): BunnyColorManifest {
+function generateRandomBunnyColors(): BunnyColorManifest {
     return {
         "type": "dark",
         "id": `${Math.random()}`,
@@ -26,8 +26,7 @@ export default function initColors() {
         patchChatBackground()
     ];
 
-    const int = convertToInternalDef(generateRandomBunnyTheme());
-    setThemeRef(int, { update: false });
+    updateBunnyColor(generateRandomBunnyColors(), { update: false });
 
     return () => patches.forEach(p => p?.());
 }

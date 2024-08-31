@@ -1,4 +1,4 @@
-import { _themeRef } from "@lib/addons/themes/colors/internalRef";
+import { _colorRef } from "@lib/addons/themes/colors/updater";
 import { ThemeManager } from "@lib/api/native/modules";
 import { before, instead } from "@lib/api/patcher";
 import { findByProps } from "@metro";
@@ -10,15 +10,15 @@ const tokenReference = findByProps("SemanticColor");
 const isThemeModule = createLazyModule(byMutableProp("isThemeDark"));
 
 export default function patchDefinitionAndResolver() {
-    const callback = ([theme]: any[]) => theme === _themeRef.key ? [_themeRef.context!.reference] : void 0;
+    const callback = ([theme]: any[]) => theme === _colorRef.key ? [_colorRef.current!.reference] : void 0;
 
     Object.keys(tokenReference.RawColor).forEach(keys => {
         Object.defineProperty(tokenReference.RawColor, keys, {
             configurable: true,
             enumerable: true,
             get: () => {
-                const ret = _themeRef.context?.raw?.[keys];
-                return ret || _themeRef.origRaw[keys];
+                const ret = _colorRef.current?.raw?.[keys];
+                return ret || _colorRef.origRaw[keys];
             }
         });
     });
@@ -28,22 +28,22 @@ export default function patchDefinitionAndResolver() {
         before("isThemeLight", isThemeModule, callback),
         before("updateTheme", ThemeManager, callback),
         instead("resolveSemanticColor", tokenReference.default.meta ?? tokenReference.default.internal, (args: any[], orig: any) => {
-            if (!_themeRef.context) return orig(...args);
+            if (!_colorRef.current) return orig(...args);
 
-            if (args[0] !== _themeRef.key) return orig(...args);
+            if (args[0] !== _colorRef.key) return orig(...args);
 
-            args[0] = _themeRef.context.reference;
+            args[0] = _colorRef.current.reference;
 
-            const [name, colorDef] = extractInfo(_themeRef.context!.reference, args[1]);
+            const [name, colorDef] = extractInfo(_colorRef.current!.reference, args[1]);
 
-            const themeIndex = _themeRef.context!.reference === "light" ? 1 : 0;
+            const themeIndex = _colorRef.current!.reference === "light" ? 1 : 0;
 
-            const semanticDef = _themeRef.context.semantic[name];
+            const semanticDef = _colorRef.current.semantic[name];
             if (semanticDef.value[themeIndex]) {
                 return chroma(semanticDef.value[themeIndex]).alpha(semanticDef.opacity).hex();
             }
 
-            const rawValue = _themeRef.context.raw[colorDef.raw];
+            const rawValue = _colorRef.current.raw[colorDef.raw];
             if (rawValue) {
                 // Set opacity if needed
                 return colorDef.opacity === 1 ? rawValue : chroma(rawValue).alpha(colorDef.opacity).hex();
@@ -57,7 +57,7 @@ export default function patchDefinitionAndResolver() {
             Object.defineProperty(tokenReference, "RawColor", {
                 configurable: true,
                 writable: true,
-                value: _themeRef.origRaw
+                value: _colorRef.origRaw
             });
         }
     ];

@@ -1,4 +1,4 @@
-import { _themeRef } from "@lib/addons/themes/colors/internalRef";
+import { _colorRef } from "@lib/addons/themes/colors/updater";
 import { after, before } from "@lib/api/patcher";
 import { findInTree } from "@lib/utils";
 import { proxyLazy } from "@lib/utils/lazy";
@@ -16,16 +16,16 @@ export default function patchStorage() {
     const patches = [
 
         after("get", mmkvStorage, ([key], ret) => {
-            if (!_themeRef.context || !patchedKeys.has(key)) return;
+            if (!_colorRef.current || !patchedKeys.has(key)) return;
 
             const state = findInTree(ret._state, s => typeof s.theme === "string");
-            if (state) state.theme = _themeRef.key;
+            if (state) state.theme = _colorRef.key;
         }),
         before("set", mmkvStorage, ([key, value]) => {
             if (!patchedKeys.has(key)) return;
 
             const json = JSON.stringify(value);
-            const lastSetDiscordTheme = _themeRef.lastSetDiscordTheme ?? "darker";
+            const lastSetDiscordTheme = _colorRef.lastSetDiscordTheme ?? "darker";
             const replaced = json.replace(
                 /"theme":"bn-theme-\d+"/,
                 `"theme":${JSON.stringify(lastSetDiscordTheme)}`

@@ -1,4 +1,4 @@
-import { _themeRef } from "@lib/addons/themes/colors/internalRef";
+import { _colorRef } from "@lib/addons/themes/colors/updater";
 import { after } from "@lib/api/patcher";
 import { findInReactTree } from "@lib/utils";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -12,34 +12,34 @@ const { MessagesWrapper } = lazyDestructure(() => findByProps("MessagesWrapper")
 
 export default function patchChatBackground() {
     const patches = [
-        after("default", MessagesWrapperConnected, (_, ret) => _themeRef.context
+        after("default", MessagesWrapperConnected, (_, ret) => _colorRef.current
             ? <ImageBackground
                 style={{ flex: 1, height: "100%" }}
-                source={_themeRef.context.background?.url && { uri: _themeRef.context.background.url } || 0}
-                blurRadius={typeof _themeRef.context.background?.blur === "number" ? _themeRef.context.background?.blur : 0}
+                source={_colorRef.current.background?.url && { uri: _colorRef.current.background.url } || 0}
+                blurRadius={typeof _colorRef.current.background?.blur === "number" ? _colorRef.current.background?.blur : 0}
             >
                 {ret}
             </ImageBackground>
             : ret
         ),
         after("render", MessagesWrapper.prototype, (_, ret) => {
-            if (!_themeRef.context || !_themeRef.context.background?.url) return;
-
-            const Messages = findInReactTree(
+            if (!_colorRef.current || !_colorRef.current.background?.url) return;
+            const messagesComponent = findInReactTree(
                 ret,
                 x => x && "HACK_fixModalInteraction" in x.props && x?.props?.style
             );
 
-            if (Messages) {
-                Messages.props.style = [
-                    Messages.props.style,
-                    {
-                        backgroundColor: chroma(Messages.props.style.backgroundColor || "black")
-                            .alpha(1 - (_themeRef.context.background?.opacity ?? 1)).hex()
-                    },
+            if (messagesComponent) {
+                const backgroundColor = chroma(
+                    messagesComponent.props.style.backgroundColor || "black"
+                ).alpha(
+                    1 - (_colorRef.current.background?.opacity ?? 1)
+                );
+
+                messagesComponent.props.style = [
+                    messagesComponent.props.style,
+                    { backgroundColor }
                 ];
-            } else {
-                console.error("Didn't find Messages when patching MessagesWrapper!");
             }
         })
     ];

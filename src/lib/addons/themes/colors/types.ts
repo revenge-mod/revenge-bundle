@@ -47,12 +47,4 @@ export interface InternalColorDefinition {
     background?: BackgroundDefinition;
 }
 
-export type ThemeManifest = BunnyColorManifest | VendettaThemeManifest;
-
-/** @internal */
-export interface InternalThemeRef {
-    key: `bn-theme-${string}`;
-    context: InternalColorDefinition | null;
-    readonly origRaw: Record<string, string>;
-    lastSetDiscordTheme: string;
-}
+export type ColorManifest = BunnyColorManifest | VendettaThemeManifest;
