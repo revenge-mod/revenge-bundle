@@ -1,4 +1,3 @@
-import { VendettaPlugin } from "@core/vendetta/plugins";
 import AddonManager from "@lib/addons/AddonManager";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { createMMKVBackend, createStorage as createOldStorage } from "@lib/api/storage";
@@ -8,9 +7,10 @@ import { DiscordLogger } from "@lib/utils/logger";
 import { safeFetch } from "@lib/utils/safeFetch";
 import { omit } from "lodash";
 
-import { corePluginInstances } from ".";
 import { createBunnyPluginAPI } from "./api";
 import { BunnyPluginManifest, BunnyPluginObject, PluginInformationStorage, PluginInstance, PluginInstanceInternal, PluginSettingsStorage } from "./types";
+
+type VendettaPlugin = any;
 
 const _fetch = (repoUrl: string, path: string) => safeFetch(new URL(path, repoUrl), { cache: "no-store" });
 const fetchJS = (repoUrl: string, path: string) => _fetch(repoUrl, path).then(r => r.text());
@@ -37,6 +37,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
     async prepare(): Promise<void> {
         await awaitStorage(this.settings, this.infos);
         await this.migrate("VENDETTA_PLUGINS");
+        await Promise.all(this.getAllIds().map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
     }
 
     migrate(oldKey: string): Promise<void> {
@@ -107,7 +108,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
     }
 
     isCore(id: string) {
-        return true; // TODO
+        return false; // TODO
     }
 
     getAllIds(): string[] {
@@ -118,6 +119,10 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         if ("display" in manifest) return "bunny";
         if (["name", "description"].every(p => p in manifest)) return "vendetta";
         throw new Error("Invalid plugin manifest");
+    }
+
+    getSettingsComponent(id: string): (() => JSX.Element) | undefined {
+        return this.#instances.get(id)?.SettingsComponent;
     }
 
     async fetch(url: string, { id = "" } = {}): Promise<BunnyPluginManifest> {
@@ -225,12 +230,12 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                         logger: new DiscordLogger(`Vendetta » ${manifest.display.name}`),
                     };
 
-                    const pluginString = globalEvalWithSourceUrl(
+                    const instantiator = globalEvalWithSourceUrl(
                         `vendetta=>{return ${iife}}`,
                         `vd-plugin/${id}-${manifest.hash}`
                     );
 
-                    const raw = (0, eval)(pluginString)(vendettaForPlugins);
+                    const raw = instantiator(vendettaForPlugins);
                     const ret = typeof raw === "function" ? raw() : raw;
                     const rawInstance = ret?.default ?? ret ?? {};
                     pluginInstance = {
@@ -245,8 +250,8 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 }
             }
         } else {
-            pluginInstance = corePluginInstances.get(id)!;
-            assert(pluginInstance, id, "start a non-existent core plugin");
+            // pluginInstance = corePluginInstances.get(id)!;
+            assert(false, id, "start a non-existent core plugin");
             this.#instances.set(id, pluginInstance);
         }
 

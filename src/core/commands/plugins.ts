@@ -1,5 +1,5 @@
 import { Strings } from "@core/i18n";
-import { VdPluginManager, VendettaPlugin } from "@core/vendetta/plugins";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { ApplicationCommand, ApplicationCommandOptionType } from "@lib/api/commands/types";
 import { messageUtil } from "@metro/common";
 
@@ -15,11 +15,11 @@ export default () => <ApplicationCommand>{
         }
     ],
     execute([ephemeral], ctx) {
-        const plugins = Object.values(VdPluginManager.plugins).filter(Boolean) as unknown as VendettaPlugin[];
-        plugins.sort((a, b) => a.manifest.name.localeCompare(b.manifest.name));
+        const plugins = PluginManager.getAllIds().map(id => PluginManager.getManifest(id)).filter(Boolean);
+        plugins.sort((a, b) => a.display.name.localeCompare(b.display.name));
 
-        const enabled = plugins.filter(p => p.enabled).map(p => p.manifest.name);
-        const disabled = plugins.filter(p => !p.enabled).map(p => p.manifest.name);
+        const enabled = plugins.filter(p => PluginManager.settings[p.id].enabled).map(p => p.display.name);
+        const disabled = plugins.filter(p => !PluginManager.settings[p.id].enabled).map(p => p.display.name);
 
         const content = [
             `**Installed Plugins (${plugins.length}):**`,

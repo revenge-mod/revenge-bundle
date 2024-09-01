@@ -16,23 +16,8 @@ import { patchSettings } from "@ui/settings";
 import * as lib from "./lib";
 
 export default async () => {
-    // // Themes
-    // if (isThemeSupported()) {
-    //     try {
-    //         if (isPyonLoader()) {
-    //             if (FileManager.removeFile != null) {
-    //                 removeFile("vendetta_theme.json", "");
-    //             } else {
-    //                 writeFile("vendetta_theme.json", "null", "");
-    //             }
-    //         }
-    //         initThemes();
-    //     } catch (e) {
-    //         console.error("[Bunny] Failed to initialize themes...", e);
-    //     }
-    // }
-
     initColors();
+    await PluginManager.prepare();
 
     // Load everything in parallel
     await Promise.all([
@@ -54,7 +39,6 @@ export default async () => {
     // Assign window object
     window.bunny = lib;
 
-    await PluginManager.prepare();
     await PluginManager.initialize();
 
     // Update the fonts

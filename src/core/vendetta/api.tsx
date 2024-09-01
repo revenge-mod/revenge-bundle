@@ -1,3 +1,4 @@
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import * as themes from "@lib/addons/themes";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
@@ -20,12 +21,11 @@ import * as components from "@ui/components";
 import { createThemedStyleSheet } from "@ui/styles";
 import * as toasts from "@ui/toasts";
 import { omit } from "es-toolkit";
+import { memoize } from "lodash";
 import { createElement, useEffect } from "react";
 import { View } from "react-native";
 
-import { VdPluginManager, VendettaPlugin } from "./plugins";
-
-export async function createVdPluginObject(plugin: VendettaPlugin) {
+export async function createVdPluginObject(plugin: any) {
     return {
         ...window.vendetta,
         plugin: {
@@ -35,6 +35,43 @@ export async function createVdPluginObject(plugin: VendettaPlugin) {
             storage: await createStorage<Record<string, any>>(storage.createMMKVBackend(plugin.id)),
         },
         logger: new DiscordLogger(`Bunny » ${plugin.manifest.name}`),
+    };
+}
+
+// cursed code here we come
+function createPluginsObject() {
+    // Making it mutating-compatible requires too much effort, so the need for it has to be looked into before implementing (ehem CloudSync)
+    const makeObject = memoize(
+        () => PluginManager.getAllIds()
+            .reduce((obj, id) => Object.assign(obj, {
+                [PluginManager.infos[id].sourceUrl]: {
+                    id: PluginManager.infos[id].sourceUrl,
+                    manifest: PluginManager.convertToVd(PluginManager.getManifest(id)),
+                    get enabled() { return PluginManager.settings[id].enabled; },
+                    get update() { return PluginManager.settings[id].autoUpdate; },
+                    // TODO: can something be done about this?
+                    get js() { return "()=>{}"; },
+                }
+            }), {}),
+        () => PluginManager.getAllIds().length
+    );
+
+    return {
+        plugins: new Proxy(makeObject(), {
+            ...Object.fromEntries(
+                Object.getOwnPropertyNames(Reflect)
+                    // @ts-expect-error
+                    .map(k => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)])
+            ),
+        }),
+        fetchPlugin: (source: string) => PluginManager.fetch(source),
+        installPlugin: (source: string, enabled = true) => PluginManager.install(source, { enable: enabled }),
+        startPlugin: (id: string) => PluginManager.start(id),
+        stopPlugin: (id: string, disable = true) => {
+            disable ? PluginManager.stop(id) : PluginManager.disable(id);
+        },
+        removePlugin: (id: string) => PluginManager.uninstall(id, { keepData: false }),
+        getSettings: (id: string) => PluginManager.getSettingsComponent(id)
     };
 }
 
@@ -177,15 +214,7 @@ export const initVendettaObject = (): any => {
             semanticColors: color.semanticColors,
             rawColors: color.rawColors
         },
-        plugins: {
-            plugins: VdPluginManager.plugins,
-            fetchPlugin: (source: string) => VdPluginManager.fetchPlugin(source),
-            installPlugin: (source: string, enabled = true) => VdPluginManager.installPlugin(source, enabled),
-            startPlugin: (id: string) => VdPluginManager.startPlugin(id),
-            stopPlugin: (id: string, disable = true) => VdPluginManager.stopPlugin(id, disable),
-            removePlugin: (id: string) => VdPluginManager.removePlugin(id),
-            getSettings: (id: string) => VdPluginManager.getSettings(id)
-        },
+        plugins: createPluginsObject(),
         themes: {
             themes: themes.themes,
             fetchTheme: (id: string, selected?: boolean) => themes.fetchTheme(id, selected),

@@ -1,5 +1,5 @@
 import { formatString, Strings } from "@core/i18n";
-import { VdPluginManager } from "@core/vendetta/plugins";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { findAssetId } from "@lib/api/assets";
 import { purgeStorage } from "@lib/api/storage";
 import { clipboard } from "@metro/common";
@@ -14,7 +14,7 @@ import { PluginInfoActionSheetProps } from "./common";
 export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfoActionSheetProps) {
     plugin.usePluginState();
 
-    const vdPlugin = VdPluginManager.plugins[plugin.id];
+    const pluginSettings = PluginManager.settings[plugin.id];
     const SettingsComponent = plugin.getPluginSettingsComponent();
 
     return <ActionSheet>
@@ -44,16 +44,17 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                     label={Strings.REFETCH}
                     icon={<TableRow.Icon source={findAssetId("RetryIcon")} />}
                     onPress={async () => {
-                        if (vdPlugin.enabled) VdPluginManager.stopPlugin(plugin.id, false);
+                        const isEnabled = pluginSettings.enabled;
+                        if (isEnabled) PluginManager.stop(plugin.id);
 
                         try {
-                            await VdPluginManager.fetchPlugin(plugin.id);
+                            await PluginManager.fetch(plugin.id);
                             showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
                         } catch {
                             showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
                         }
 
-                        if (vdPlugin.enabled) await VdPluginManager.startPlugin(plugin.id);
+                        if (isEnabled) await PluginManager.start(plugin.id);
                         hideSheet("PluginInfoActionSheet");
                     }}
                 />
@@ -61,17 +62,17 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                     label={Strings.COPY_URL}
                     icon={<TableRow.Icon source={findAssetId("copy")} />}
                     onPress={() => {
-                        clipboard.setString(plugin.id);
+                        clipboard.setString(PluginManager.infos[plugin.id].sourceUrl);
                         showToast.showCopyToClipboard();
                     }}
                 />
                 <ActionSheetRow
-                    label={vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES}
+                    label={pluginSettings.autoUpdate ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES}
                     icon={<TableRow.Icon source={findAssetId("ic_download_24px")} />}
                     onPress={() => {
-                        vdPlugin.update = !vdPlugin.update;
+                        pluginSettings.autoUpdate = !pluginSettings.autoUpdate;
                         showToast(formatString("TOASTS_PLUGIN_UPDATE", {
-                            update: vdPlugin.update,
+                            update: pluginSettings.autoUpdate,
                             name: plugin.name
                         }), findAssetId("toast_image_saved"));
                     }}
@@ -86,10 +87,10 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         cancelText: Strings.CANCEL,
                         confirmColor: "red",
                         onConfirm: async () => {
-                            if (vdPlugin.enabled) VdPluginManager.stopPlugin(plugin.id, false);
+                            if (pluginSettings.enabled) PluginManager.stop(plugin.id);
 
                             try {
-                                await VdPluginManager.fetchPlugin(plugin.id);
+                                await PluginManager.fetch(plugin.id);
                                 showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
                             } catch {
                                 showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
@@ -108,7 +109,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                                 findAssetId(message[1])
                             );
 
-                            if (vdPlugin.enabled) await VdPluginManager.startPlugin(plugin.id);
+                            if (pluginSettings.enabled) await PluginManager.start(plugin.id);
                             hideSheet("PluginInfoActionSheet");
                         }
                     })}
@@ -122,9 +123,9 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         confirmText: Strings.DELETE,
                         cancelText: Strings.CANCEL,
                         confirmColor: "red",
-                        onConfirm: () => {
+                        onConfirm: async () => {
                             try {
-                                VdPluginManager.removePlugin(plugin.id);
+                                await PluginManager.uninstall(plugin.id);
                             } catch (e) {
                                 showToast(String(e), findAssetId("Small"));
                             }

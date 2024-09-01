@@ -1,5 +1,3 @@
-import { JsonValue } from "type-fest";
-
 export type Author = { name: string, id: `${bigint}` };
 
 export interface BunnyManifest {
@@ -10,6 +8,6 @@ export interface BunnyManifest {
         authors?: Author[];
     };
     extras?: {
-        [key: string]: JsonValue;
+        [key: string]: any;
     }
 }

@@ -1,10 +1,11 @@
 import { Strings } from "@core/i18n";
-import { VdPluginManager } from "@core/vendetta/plugins";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { installTheme, removeTheme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
 import { after } from "@lib/api/patcher";
 import { useProxy } from "@lib/api/storage";
+import { useProxy as useNewProxy } from "@lib/api/storage/new";
 import { DISCORD_SERVER_ID, HTTP_REGEX_MULTI, PLUGINS_CHANNEL_ID, THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button } from "@metro/common/components";
@@ -21,11 +22,11 @@ const forumReactions = findByPropsLazy("MostCommonForumPostReaction");
 
 const postMap = {
     Plugin: {
-        storage: VdPluginManager.plugins,
+        storage: PluginManager.settings,
         urlsFilter: (url: string) => url.startsWith(VD_PROXY_PREFIX),
         installOrRemove: (url: string) => {
-            const isInstalled = postMap.Plugin.storage[url];
-            return isInstalled ? VdPluginManager.removePlugin(url) : VdPluginManager.installPlugin(url);
+            const isInstalled = !!postMap.Plugin.storage[url];
+            return isInstalled ? PluginManager.uninstall(url) : PluginManager.install(url);
         }
     },
     Theme: {
@@ -63,7 +64,7 @@ function useExtractThreadContent(thread: any, _firstMessage = null, actionSheet 
 function useInstaller(thread: any, firstMessage = null, actionSheet = false): [true] | [false, PostType, boolean, boolean, () => Promise<void>] {
     const [postType, url] = useExtractThreadContent(thread, firstMessage, actionSheet) ?? [];
 
-    useProxy(VdPluginManager.plugins);
+    useNewProxy(PluginManager.settings);
     useProxy(themes);
 
     const [isInstalling, setIsInstalling] = React.useState(false);

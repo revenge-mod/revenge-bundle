@@ -3,7 +3,7 @@ import { registerCommand } from "@lib/api/commands";
 import { createStorage } from "@lib/api/storage/new";
 import { logger } from "@lib/utils/logger";
 
-import { registeredPlugins } from ".";
+import PluginManager from "./PluginManager";
 import { BunnyPluginObject } from "./types";
 
 type DisposableFn = (...props: any[]) => () => unknown;
@@ -40,7 +40,7 @@ export function createBunnyPluginAPI(id: string) {
         // Added something in here? Make sure to also update BunnyPluginProperty in ./types
         plugin: {
             createStorage: () => createStorage(`plugins/storage/${id}.json`),
-            manifest: registeredPlugins.get(id),
+            manifest: PluginManager.getManifest(id),
             logger
         }
     } as unknown as BunnyPluginObject;

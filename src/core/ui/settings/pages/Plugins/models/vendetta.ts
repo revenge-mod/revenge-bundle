@@ -1,31 +1,33 @@
-import { VdPluginManager, VendettaPlugin } from "@core/vendetta/plugins";
-import { useProxy } from "@lib/api/storage";
+import PluginManager from "@lib/addons/plugins/PluginManager";
+import { BunnyPluginManifest } from "@lib/addons/plugins/types";
+import { useProxy } from "@lib/api/storage/new";
 
 import { UnifiedPluginModel } from "..";
 
-export default function unifyVdPlugin(vdPlugin: VendettaPlugin): UnifiedPluginModel {
+export default function unifyVdPlugin(manifest: BunnyPluginManifest): UnifiedPluginModel {
     return {
-        id: vdPlugin.id,
-        name: vdPlugin.manifest.name,
-        description: vdPlugin.manifest.description,
-        authors: vdPlugin.manifest.authors,
-        icon: vdPlugin.manifest.vendetta?.icon,
+        id: manifest.id,
+        name: manifest.display.name,
+        description: manifest.display.description,
+        authors: manifest.display.authors,
+        icon: manifest.extras?.vendetta?.icon,
 
-        isEnabled: () => vdPlugin.enabled,
-        isInstalled: () => Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
+        isEnabled: () => PluginManager.settings[manifest.id].enabled,
+        isInstalled: () => Boolean(PluginManager.settings[manifest.id]),
         usePluginState() {
-            useProxy(VdPluginManager.plugins[vdPlugin.id]);
+            useProxy(PluginManager.settings[manifest.id]);
+            useProxy(PluginManager.infos[manifest.id]);
         },
         toggle(start: boolean) {
             start
-                ? VdPluginManager.startPlugin(vdPlugin.id)
-                : VdPluginManager.stopPlugin(vdPlugin.id);
+                ? PluginManager.enable(manifest.id)
+                : PluginManager.disable(manifest.id);
         },
         resolveSheetComponent() {
             return import("../sheets/VdPluginInfoActionSheet");
         },
         getPluginSettingsComponent() {
-            return VdPluginManager.getSettings(vdPlugin.id);
+            return PluginManager.getSettingsComponent(manifest.id);
         },
     };
 }
