@@ -1,6 +1,6 @@
-import { createStorage } from "@lib/api/storage";
+import { BunnyManifest } from "@lib/addons/types";
+import { createStorage } from "@lib/api/storage/new";
 import { Logger } from "@lib/utils/logger";
-import { Author } from "@lib/utils/types";
 
 export interface PluginRepo {
     [id: string]: {
@@ -18,15 +18,21 @@ export interface PluginRepoStorage {
 export interface PluginSettingsStorage {
     [pluginId: string]: {
         enabled: boolean;
+        autoUpdate: boolean;
     };
 }
 
-export interface BunnyPluginManifest {
-    readonly id: string;
-    readonly name: string;
-    readonly description: string;
-    readonly version: string;
-    readonly authors: (Author | string)[];
+export interface PluginInformationStorage {
+    [pluginId: string]: {
+        sourceUrl: string;
+        installTime: string | null;
+        isVendetta?: boolean;
+    }
+}
+
+export interface BunnyPluginManifest extends BunnyManifest {
+    main: string;
+    hash: string;
 }
 
 export interface BunnyPluginManifestInternal extends BunnyPluginManifest {
@@ -45,8 +51,8 @@ export interface PluginInstanceInternal extends PluginInstance {
 }
 
 export interface BunnyPluginProperty {
-    readonly manifest: BunnyPluginManifestInternal;
     readonly logger: Logger;
+    readonly manifest: BunnyPluginManifestInternal;
     createStorage<T>(): ReturnType<typeof createStorage<T>>;
 }
 

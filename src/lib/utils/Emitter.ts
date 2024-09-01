@@ -9,7 +9,7 @@ export type EmitterEvent = "SET" | "GET" | "DEL";
 export interface EmitterListenerData {
     path: string[];
     value: any;
-    parent: any;
+    parent?: any;
 }
 
 export type EmitterListener = (

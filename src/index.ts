@@ -2,9 +2,8 @@ import initFixes from "@core/fixes";
 import { initFetchI18nStrings } from "@core/i18n";
 import initSettings from "@core/ui/settings";
 import { initVendettaObject } from "@core/vendetta/api";
-import { VdPluginManager } from "@core/vendetta/plugins";
 import { updateFonts } from "@lib/addons/fonts";
-import { checkAndRegisterUpdates, initPlugins } from "@lib/addons/plugins";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { patchChatBackground } from "@lib/addons/themes";
 import initColors from "@lib/addons/themes/colors";
 import { patchCommands } from "@lib/api/commands";
@@ -46,8 +45,7 @@ export default async () => {
         initFetchI18nStrings(),
         initSettings(),
         initFixes(),
-        initSafeMode(),
-        checkAndRegisterUpdates()
+        initSafeMode()
     ]).then(
         // Push them all to unloader
         u => u.forEach(f => f && lib.unload.push(f))
@@ -56,12 +54,8 @@ export default async () => {
     // Assign window object
     window.bunny = lib;
 
-    // Once done, load Vendetta plugins
-    VdPluginManager.initPlugins()
-        .then(u => lib.unload.push(u))
-        .catch(() => alert("Failed to initialize Vendetta plugins"));
-
-    initPlugins();
+    await PluginManager.prepare();
+    await PluginManager.initialize();
 
     // Update the fonts
     updateFonts();

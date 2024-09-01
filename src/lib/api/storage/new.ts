@@ -1,5 +1,6 @@
 // New iteration of storage API, mostly yoinked from unreleased pyoncord (and sunrise?)
-import { fileExists, readFile, writeFile } from "@lib/api/native/fs";
+import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
+import { MMKVManager } from "@lib/api/native/modules";
 import { Emitter } from "@lib/utils/Emitter";
 
 interface StorageBackend<T = unknown> {
@@ -75,13 +76,49 @@ function _createProxy(target: any, path: string[], emitter: Emitter): any {
         },
 
         deleteProperty(target, prop: string) {
+            const value = target[prop];
             const success = delete target[prop];
             if (success)
                 emitter.emit("DEL", {
+                    value,
                     path: [...path, prop],
                 });
             return success;
         },
+    });
+}
+
+/**
+ * @internal
+ */
+export async function migrateToNewStorage(
+    oldKey: string,
+    callback: (data: any) => void | Promise<void>
+): Promise<void> {
+    const promise = new Promise<void>(r => resolvePromise = r);
+    let resolvePromise: () => void;
+
+    // @ts-expect-error - assigning to migrateToNewStorage._migrated
+    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".storage-v1-migrated", []);
+
+    if (migratedKeys.includes(oldKey)) return;
+
+    let fromMmkv: string | null;
+    const sanitizedOldKey = oldKey.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
+    if (await fileExists(`../vd_mmkv/${sanitizedOldKey}`)) {
+        createStorageAndCallback(`../vd_mmkv/${sanitizedOldKey}`, {}, proxy => {
+            Promise.resolve(callback(proxy)).then(() => resolvePromise());
+        });
+    // eslint-disable-next-line no-cond-assign
+    } else if (fromMmkv = await MMKVManager.getItem(oldKey)) {
+        await callback(JSON.parse(fromMmkv));
+        migratedKeys.push(oldKey);
+        return Promise.resolve();
+    }
+
+    return promise.then(v => {
+        migratedKeys.push(oldKey);
+        return v;
     });
 }
 
@@ -193,13 +230,17 @@ export async function preloadStorageIfExists(path: string) {
     if (await backend.exists()) {
         return _loadedPath[path] = await backend.get();
     }
-
-    console.log("no " + path);
 }
 
 export function getPreloadedStorage<T>(path: string): T {
     return _loadedPath[path];
 }
+
+export async function purgeStorage(path: string) {
+    await removeFile(path);
+    delete _loadedPath[path];
+}
+
 export function awaitStorage(...proxies: any[]) {
     return Promise.all(proxies.map(proxy => proxy[storagePromiseSymbol]));
 }
