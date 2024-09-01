@@ -33,7 +33,7 @@ if (typeof globalThis.__r !== "undefined") {
     function onceIndexRequired(originalRequire: any) {
         const batchedBridge = window.__fbBatchedBridge;
 
-        const callQueue = new Array<any>;
+        const callQueue = [] as Array<any>;
         const unpatchHook = instead("callFunctionReturnFlushedQueue", batchedBridge, (args: any, orig: any) => {
             if (args[0] === "AppRegistry" || !batchedBridge.getCallableModule(args[0])) {
                 callQueue.push(args);

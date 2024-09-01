@@ -12,13 +12,13 @@ const isThemeModule = createLazyModule(byMutableProp("isThemeDark"));
 export default function patchDefinitionAndResolver() {
     const callback = ([theme]: any[]) => theme === _colorRef.key ? [_colorRef.current!.reference] : void 0;
 
-    Object.keys(tokenReference.RawColor).forEach(keys => {
-        Object.defineProperty(tokenReference.RawColor, keys, {
+    Object.keys(tokenReference.RawColor).forEach(key => {
+        Object.defineProperty(tokenReference.RawColor, key, {
             configurable: true,
             enumerable: true,
             get: () => {
-                const ret = _colorRef.current?.raw?.[keys];
-                return ret || _colorRef.origRaw[keys];
+                const ret = _colorRef.current?.raw[key];
+                return ret || _colorRef.origRaw[key];
             }
         });
     });
@@ -29,7 +29,6 @@ export default function patchDefinitionAndResolver() {
         before("updateTheme", ThemeManager, callback),
         instead("resolveSemanticColor", tokenReference.default.meta ?? tokenReference.default.internal, (args: any[], orig: any) => {
             if (!_colorRef.current) return orig(...args);
-
             if (args[0] !== _colorRef.key) return orig(...args);
 
             args[0] = _colorRef.current.reference;
@@ -39,7 +38,7 @@ export default function patchDefinitionAndResolver() {
             const themeIndex = _colorRef.current!.reference === "light" ? 1 : 0;
 
             const semanticDef = _colorRef.current.semantic[name];
-            if (semanticDef.value[themeIndex]) {
+            if (semanticDef?.value[themeIndex]) {
                 return chroma(semanticDef.value[themeIndex]).alpha(semanticDef.opacity).hex();
             }
 

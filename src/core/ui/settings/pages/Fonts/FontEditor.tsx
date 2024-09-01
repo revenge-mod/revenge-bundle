@@ -1,6 +1,6 @@
 import { formatString, Strings } from "@core/i18n";
 import { FontDefinition, fonts, removeFont, saveFont, validateFont } from "@lib/addons/fonts";
-import { getCurrentTheme } from "@lib/addons/themes";
+import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
 import { createProxy, useProxy } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";
@@ -31,7 +31,7 @@ function RevengeFontsExtractor({ fonts, setName }: {
     fonts: Record<string, string>;
     setName: (name: string) => void;
 }) {
-    const currentTheme = getCurrentTheme()!.data;
+    const currentTheme = ColorManager.getCurrentManifest();
     // @ts-ignore
     const themeFonts = currentTheme!.fonts as Record<string, string>;
 

@@ -26,32 +26,32 @@ export const _colorRef: InternalColorRef = {
     lastSetDiscordTheme: "darker"
 };
 
-export function updateBunnyColor(colorManifest: ColorManifest, { update = true }) {
-    const colorDef = parseColorManifest(colorManifest);
+export function updateBunnyColor(colorManifest: ColorManifest | null, { update = true }) {
+    const internalDef = colorManifest ? parseColorManifest(colorManifest) : null;
     const ref = Object.assign(_colorRef, {
-        current: colorDef,
+        current: internalDef,
         key: `bn-theme-${++_inc}`,
-        lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-") ? ThemeStore.theme : _colorRef.lastSetDiscordTheme
+        lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-")
+            ? ThemeStore.theme
+            : _colorRef.lastSetDiscordTheme
     });
 
-    if (colorDef != null) {
+    if (internalDef != null) {
         tokenRef.Theme[ref.key.toUpperCase()] = ref.key;
         FormDivider.DIVIDER_COLORS[ref.key] = FormDivider.DIVIDER_COLORS[ref.current!.reference];
 
-        for (const k in tokenRef.Shadow) {
-            tokenRef.Shadow[k][ref.key] = tokenRef.Shadow[k][ref.current!.reference];
-        }
-
-        for (const k in tokenRef.SemanticColor) {
+        Object.keys(tokenRef.Shadow).forEach(k => tokenRef.Shadow[k][ref.key] = tokenRef.Shadow[k][ref.current!.reference]);
+        Object.keys(tokenRef.SemanticColor).forEach(k => {
             tokenRef.SemanticColor[k][ref.key] = {
-                ...tokenRef.SemanticColor[k][ref.current!.reference]
+                ...tokenRef.SemanticColor[k][ref.current!.reference],
+                // override: appliedTheme?.data?.semanticColors?.[k]?.[0]
             };
-        }
+        });
     }
 
     if (update) {
         AppearanceManager.setShouldSyncAppearanceSettings(false);
-        AppearanceManager.updateTheme(colorDef != null ? ref.key : ref.lastSetDiscordTheme);
+        AppearanceManager.updateTheme(internalDef != null ? ref.key : ref.lastSetDiscordTheme);
     }
 }
 

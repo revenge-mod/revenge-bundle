@@ -14,7 +14,6 @@ export default function patchStorage() {
     const patchedKeys = new Set(["ThemeStore", "SelectivelySyncedUserSettingsStore"]);
 
     const patches = [
-
         after("get", mmkvStorage, ([key], ret) => {
             if (!_colorRef.current || !patchedKeys.has(key)) return;
 
@@ -31,11 +30,9 @@ export default function patchStorage() {
                 `"theme":${JSON.stringify(lastSetDiscordTheme)}`
             );
 
-            console.log({ replaced });
-
             return [key, JSON.parse(replaced)];
         })
     ];
 
-    return patches.forEach(p => p());
+    return () => patches.forEach(p => p());
 }

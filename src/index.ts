@@ -5,7 +5,7 @@ import { initVendettaObject } from "@core/vendetta/api";
 import { updateFonts } from "@lib/addons/fonts";
 import PluginManager from "@lib/addons/plugins/PluginManager";
 import { patchChatBackground } from "@lib/addons/themes";
-import initColors from "@lib/addons/themes/colors";
+import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
@@ -16,7 +16,7 @@ import { patchSettings } from "@ui/settings";
 import * as lib from "./lib";
 
 export default async () => {
-    initColors();
+    await ColorManager.prepare();
     await PluginManager.prepare();
 
     // Load everything in parallel

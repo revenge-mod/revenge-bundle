@@ -1,7 +1,7 @@
 import patchChatBackground from "./patches/background";
 import patchDefinitionAndResolver from "./patches/resolver";
 import patchStorage from "./patches/storage";
-import { BunnyColorManifest } from "./types";
+import { BunnyColorManifest, ColorManifest } from "./types";
 import { updateBunnyColor } from "./updater";
 
 function generateRandomBunnyColors(): BunnyColorManifest {
@@ -19,14 +19,14 @@ function generateRandomBunnyColors(): BunnyColorManifest {
     };
 }
 
-export default function initColors() {
+export default function initColors(manifest: ColorManifest | null) {
     const patches = [
         patchStorage(),
         patchDefinitionAndResolver(),
         patchChatBackground()
     ];
 
-    updateBunnyColor(generateRandomBunnyColors(), { update: false });
+    if (manifest) updateBunnyColor(manifest, { update: false });
 
-    return () => patches.forEach(p => p?.());
+    return () => patches.forEach(p => p());
 }

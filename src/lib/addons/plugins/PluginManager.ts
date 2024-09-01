@@ -25,8 +25,10 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
     infos = createStorage<PluginInformationStorage>("infos.json");
     #instances = new Map<string, PluginInstance>();
     #bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
+    #updateAllPromise: Promise<void> = null!;
 
     async initialize() {
+        await this.#updateAllPromise;
         for (const id of this.getAllIds()) {
             if (this.settings[id].enabled) {
                 this.start(id);
@@ -38,6 +40,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         await awaitStorage(this.settings, this.infos);
         await this.migrate("VENDETTA_PLUGINS");
         await Promise.all(this.getAllIds().map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
+        this.#updateAllPromise = this.updateAll();
     }
 
     migrate(oldKey: string): Promise<void> {
