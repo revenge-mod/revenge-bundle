@@ -1,6 +1,6 @@
 import AddonManager from "@lib/addons/AddonManager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
-import { removeFile } from "@lib/api/native/fs";
+import { removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage/new";
 import { invariant } from "@lib/utils";
 import { safeFetch } from "@lib/utils/safeFetch";
@@ -8,8 +8,8 @@ import chroma from "chroma-js";
 import { omit } from "lodash";
 
 import initColors from ".";
-import { parseColorManifest } from "./parser";
-import { BunnyColorManifest, ColorManifest, VendettaThemeManifest } from "./types";
+import { applyAndroidAlphaKeys, parseColorManifest } from "./parser";
+import { ColorManifest, VendettaThemeManifest } from "./types";
 import { updateBunnyColor } from "./updater";
 
 interface BunnyColorPreferencesStorage {
@@ -74,27 +74,34 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
     }
 
-    convertToVd(manifest: BunnyColorManifest | VendettaThemeManifest): VendettaThemeManifest {
-        if ("name" in manifest) return manifest;
-        else {
-            const intDef = parseColorManifest(manifest);
-            const semanticColors = {} as VendettaThemeManifest["semanticColors"] & {};
+    convertToVd(manifest: ColorManifest): VendettaThemeManifest {
+        const intDef = parseColorManifest(manifest);
+        const semanticColors = {} as VendettaThemeManifest["semanticColors"] & {};
 
-            for (const key in intDef.semantic) {
-                const applyOpacity = (v: string) => chroma(v).alpha(intDef.semantic[key].opacity).hex();
-                semanticColors[key] = intDef.semantic[key].value.map(applyOpacity);
-            }
+        for (const key in intDef.semantic) {
+            const applyOpacity = (v: string) => chroma(v).alpha(intDef.semantic[key].opacity).hex();
+            semanticColors[key] = intDef.semantic[key].value.map(applyOpacity);
+        }
 
-            return {
-                spec: 2,
-                name: manifest.display.name,
-                description: manifest.display.description,
-                authors: manifest.display.authors,
-                semanticColors,
-                rawColors: manifest.raw,
-                background: manifest.background ? { ...omit(manifest.background, ["opacity"]), alpha: manifest.background.opacity } : undefined,
-                ...manifest.extras
-            };
+        return {
+            spec: 2,
+            name: manifest.spec === 3 ? manifest.display.name : manifest.name,
+            description: manifest.spec === 3 ? manifest.display.description : manifest.description,
+            authors: manifest.spec === 3 ? manifest.display.authors : manifest.authors,
+            semanticColors,
+            rawColors: manifest.spec === 3 ? manifest.raw : applyAndroidAlphaKeys(manifest.rawColors),
+            background: manifest.spec === 2 ? manifest.background : manifest.background ? { ...omit(manifest.background, ["opacity"]), alpha: manifest.background.opacity } : undefined,
+            ...(manifest.spec === 3 && manifest.extras)
+        };
+    }
+
+    checkColor(manifest: ColorManifest) {
+        invariant(manifest.spec === 2 || manifest.spec === 3, "Invalid theme spec");
+        if (manifest.spec === 2) {
+            return this.convertToVd(manifest);
+        } else {
+            parseColorManifest(manifest);
+            return manifest;
         }
     }
 
@@ -112,11 +119,13 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
     }
 
     getManifest(id: string): ColorManifest {
+        id = this.sanitizeId(id);
         if (!this.infos[id]) throw new Error(`${id} is not installed`);
         return createStorage(`themes/colors/data/${id}.json`);
     }
 
     getDisplayInfo(id: string): BunnyPluginManifest["display"] & { id: string } {
+        id = this.sanitizeId(id);
         const manifest = createStorage<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
         if (!manifest) throw new Error(`Theme manifest of '${id}' was not stored`);
 
@@ -132,11 +141,22 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         }
     }
 
+    async writeForNative(manifest: ColorManifest, id: string) {
+        id = this.sanitizeId(id);
+        manifest = this.convertToVd(manifest);
+        await writeFile("current-theme.json", JSON.stringify({
+            id,
+            data: manifest,
+            selected: true
+        }));
+    }
+
     async fetch(url: string) {
         let manifest: ColorManifest;
 
         try {
             manifest = await (await safeFetch(url, { cache: "no-store" })).json();
+            manifest = this.checkColor(manifest);
         } catch {
             throw new Error(`Failed to fetch theme at ${url}`);
         }
@@ -168,6 +188,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             let manifest = await createStorageAsync<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
             manifest ??= await this.fetch(this.infos[id].sourceUrl);
             updateBunnyColor(manifest, { update: true });
+            this.writeForNative(manifest, id);
         } else {
             updateBunnyColor(null, { update: true });
         }

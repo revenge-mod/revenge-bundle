@@ -106,7 +106,9 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
     throw new Error("Invalid theme spec");
 }
 
-function applyAndroidAlphaKeys(rawColors: Record<string, string>) {
+export function applyAndroidAlphaKeys(rawColors?: Record<string, string>) {
+    if (!rawColors) return;
+
     // these are native Discord Android keys
     const alphaMap: Record<string, [string, number]> = {
         "BLACK_ALPHA_60": ["BLACK", 0.6],
@@ -124,6 +126,8 @@ function applyAndroidAlphaKeys(rawColors: Record<string, string>) {
         if (!rawColors[colorKey]) continue;
         rawColors[key] = chroma(rawColors[colorKey]).alpha(alpha).hex();
     }
+
+    return rawColors;
 }
 
 function normalizeToHex(colorString: string | undefined): string | undefined {
