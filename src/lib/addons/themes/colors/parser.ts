@@ -1,54 +1,44 @@
 import { findByProps } from "@metro";
 import chroma from "chroma-js";
-import { isNotNil, omit } from "es-toolkit";
+import { omit } from "es-toolkit";
 import { Platform, processColor } from "react-native";
 
-import { ColorManifest,InternalColorDefinition } from "./types";
+import { ColorManager } from ".";
+import { ColorManifest, InternalColorDefinition } from "./types";
 
 const tokenRef = findByProps("SemanticColor");
 
 export function parseColorManifest(manifest: ColorManifest): InternalColorDefinition {
+    const resolveType = (type = "dark") => (ColorManager.preferences.type ?? type) === "dark" ? "darker" : "light";
+
     if (manifest.spec === 3) {
         const semanticColorDefinitions: InternalColorDefinition["semantic"] = {};
 
         for (const [semanticColorKey, semanticColorValue] of Object.entries(manifest.semantic ?? {})) {
-            if (typeof semanticColorValue === "object" && !Array.isArray(semanticColorValue)) {
+            if (typeof semanticColorValue === "object") {
                 const { type, value, opacity: semanticColorOpacity } = semanticColorValue;
 
                 if (type === "raw") {
                     semanticColorDefinitions[semanticColorKey] = {
-                        value: Array.isArray(value) ? value : [value],
+                        value,
                         opacity: semanticColorOpacity ?? 1,
                     };
                 } else {
-                    if (Array.isArray(value)) {
-                        throw new Error("Value can't be defined as an array when referencing a RawColor definition");
-                    }
-
                     const rawColorValue = tokenRef.RawColor[value];
                     semanticColorDefinitions[semanticColorKey] = {
                         value: rawColorValue,
                         opacity: semanticColorOpacity ?? 1,
                     };
                 }
-            } else if (Array.isArray(semanticColorValue)) {
-                if (semanticColorValue.some(c => !c.startsWith("#"))) {
-                    throw new Error("Array values may only contain raw color definition");
-                }
-
-                semanticColorDefinitions[semanticColorKey] = {
-                    value: semanticColorValue,
-                    opacity: 1,
-                };
             } else if (typeof semanticColorValue === "string") {
                 if (semanticColorValue.startsWith("#")) {
                     semanticColorDefinitions[semanticColorKey] = {
-                        value: [semanticColorValue],
+                        value: chroma.hex(semanticColorValue).hex(),
                         opacity: 1,
                     };
                 } else {
                     semanticColorDefinitions[semanticColorKey] = {
-                        value: [tokenRef.RawColor[semanticColorValue]],
+                        value: tokenRef.RawColor[semanticColorValue],
                         opacity: 1,
                     };
                 }
@@ -58,8 +48,7 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
         }
 
         return {
-            spec: 3,
-            reference: manifest.type === "dark" ? "darker" : "light",
+            reference: resolveType(manifest.type),
             semantic: semanticColorDefinitions,
             raw: manifest.raw ?? {},
             background: manifest.background,
@@ -74,10 +63,10 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
         if (manifest.semanticColors) {
             for (const key in manifest.semanticColors) {
                 const values = manifest.semanticColors[key].map(c => c || undefined).slice(0, 2);
-                if (values.every(e => !e)) continue;
+                if (!values[0]) continue;
 
                 semanticDefinitions[key] = {
-                    value: [values[0]!, values[1]!].map(normalizeToHex).filter(isNotNil),
+                    value: normalizeToHex(values[resolveType() === "light" ? 1 : 0])!,
                     opacity: 1
                 };
             }
@@ -95,8 +84,7 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
 
 
         return {
-            spec: 2,
-            reference: "darker",
+            reference: resolveType(),
             semantic: semanticDefinitions,
             raw: manifest.rawColors ?? {},
             background
@@ -130,7 +118,7 @@ export function applyAndroidAlphaKeys(rawColors?: Record<string, string>) {
     return rawColors;
 }
 
-function normalizeToHex(colorString: string | undefined): string | undefined {
+export function normalizeToHex(colorString: string | undefined): string | undefined {
     if (colorString === undefined) return undefined;
     if (chroma.valid(colorString)) return chroma(colorString).hex();
 

@@ -9,12 +9,13 @@ import chroma from "chroma-js";
 import { omit } from "lodash";
 
 import initColors from ".";
-import { applyAndroidAlphaKeys, parseColorManifest } from "./parser";
+import { applyAndroidAlphaKeys, normalizeToHex, parseColorManifest } from "./parser";
 import { ColorManifest, VendettaThemeManifest } from "./types";
 import { updateBunnyColor } from "./updater";
 
 interface BunnyColorPreferencesStorage {
     selected: string | null;
+    type?: "dark" | "light";
     per: Record<string, { autoUpdate: boolean; }>;
 }
 
@@ -80,12 +81,21 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
     }
 
     convertToVd(manifest: ColorManifest): VendettaThemeManifest {
-        const intDef = parseColorManifest(manifest);
         const semanticColors = {} as VendettaThemeManifest["semanticColors"] & {};
 
-        for (const key in intDef.semantic) {
-            const applyOpacity = (v: string) => chroma(v).alpha(intDef.semantic[key].opacity).hex();
-            semanticColors[key] = intDef.semantic[key].value.map(applyOpacity);
+        if (manifest.spec === 2 && manifest.semanticColors) {
+            for (const key in manifest.semanticColors) {
+                semanticColors[key] &&= semanticColors[key].map(
+                    str => normalizeToHex(str || undefined)
+                ).map(x => x || false);
+            }
+        } else if (manifest.spec === 3) {
+            const intDef = parseColorManifest(manifest);
+            for (const key in intDef.semantic) {
+                const applyOpacity = (v: string) => chroma(v).alpha(intDef.semantic[key].opacity).hex();
+                const value = applyOpacity(intDef.semantic[key].value);
+                semanticColors[key] = manifest.type === "dark" ? [value] : [false, value];
+            }
         }
 
         return {

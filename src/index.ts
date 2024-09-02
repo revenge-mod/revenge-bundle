@@ -8,6 +8,7 @@ import ColorManager from "@lib/addons/themes/colors/manager";
 import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
+import { settings } from "@lib/api/settings";
 import { logger } from "@lib/utils/logger";
 import initSafeMode from "@ui/safeMode";
 import { patchSettings } from "@ui/settings";
@@ -37,7 +38,10 @@ export default async () => {
     // Assign window object
     window.bunny = lib;
 
-    await PluginManager.initialize();
+    if (!settings.safeMode?.enabled) {
+        await ColorManager.initialize();
+        await PluginManager.initialize();
+    }
 
     // Update the fonts
     updateFonts();

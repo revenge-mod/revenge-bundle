@@ -35,11 +35,9 @@ export default function patchDefinitionAndResolver() {
 
             const [name, colorDef] = extractInfo(_colorRef.current!.reference, args[1]);
 
-            const themeIndex = _colorRef.current!.reference === "light" ? 1 : 0;
-
             const semanticDef = _colorRef.current.semantic[name];
-            if (semanticDef?.value[themeIndex]) {
-                return chroma(semanticDef.value[themeIndex]).alpha(semanticDef.opacity).hex();
+            if (semanticDef?.value) {
+                return chroma(semanticDef.value).alpha(semanticDef.opacity).hex();
             }
 
             const rawValue = _colorRef.current.raw[colorDef.raw];

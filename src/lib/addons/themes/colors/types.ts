@@ -2,7 +2,7 @@ import { Author, BunnyManifest } from "@lib/addons/types";
 
 interface SemanticReference {
     type: "color" | "raw";
-    value: string | string[];
+    value: string;
     opacity?: number
 }
 
@@ -14,9 +14,8 @@ interface BackgroundDefinition {
 
 export interface BunnyColorManifest extends BunnyManifest {
     spec: 3;
-    // ignoreThemedProfiles: boolean (to consider)
     type: "dark" | "light";
-    semantic?: Record<string, string | string[] | SemanticReference>;
+    semantic?: Record<string, string | SemanticReference>;
     raw?: Record<string, string>;
     background?: BackgroundDefinition;
 }
@@ -37,10 +36,9 @@ export interface VendettaThemeManifest {
 
 /** @internal */
 export interface InternalColorDefinition {
-    spec: 2 | 3;
     reference: "darker" | "light";
     semantic: Record<string, {
-        value: string[];
+        value: string;
         opacity: number;
     }>;
     raw: Record<string, string>;
