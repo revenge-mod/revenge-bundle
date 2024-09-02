@@ -3,9 +3,8 @@ import { initFetchI18nStrings } from "@core/i18n";
 import initSettings from "@core/ui/settings";
 import { initVendettaObject } from "@core/vendetta/api";
 import { updateFonts } from "@lib/addons/fonts";
-import PluginManager from "@lib/addons/plugins/PluginManager";
-import { patchChatBackground } from "@lib/addons/themes";
-import ColorManager from "@lib/addons/themes/colors/ColorManager";
+import PluginManager from "@lib/addons/plugins/manager";
+import ColorManager from "@lib/addons/themes/colors/manager";
 import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
@@ -25,7 +24,6 @@ export default async () => {
         patchSettings(),
         patchLogHook(),
         patchCommands(),
-        patchChatBackground(),
         initVendettaObject(),
         initFetchI18nStrings(),
         initSettings(),

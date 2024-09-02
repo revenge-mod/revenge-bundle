@@ -1,5 +1,3 @@
-import { Theme } from "@lib/addons/themes";
-
 // @ts-ignore
 const pyonLoaderIdentity = globalThis.__PYON_LOADER__;
 // @ts-ignore
@@ -52,14 +50,21 @@ function polyfillVendettaLoaderIdentity() {
         };
 
         Object.defineProperty(globalThis, "__vendetta_theme", {
-            // get: () => getStoredTheme(),
             get: () => {
                 // PyonXposed only returns keys it parses, making custom keys like Themes+' to gone
                 const id = getStoredTheme()?.id;
                 if (!id) return null;
 
-                const { themes } = require("@lib/addons/themes");
-                return themes[id] ?? getStoredTheme() ?? null;
+                const { default: ColorManager } = require("@lib/addons/themes/colors/manager");
+                const { selected } = ColorManager.preferences;
+                const manifest = ColorManager.getCurrentManifest();
+                if (selected == null || manifest == null) return null;
+
+                return {
+                    id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
+                    data: ColorManager.convertToVd(manifest),
+                    selected: true
+                };
             },
             configurable: true
         });
@@ -124,7 +129,7 @@ export function isThemeSupported() {
     return false;
 }
 
-export function getStoredTheme(): Theme | null {
+export function getStoredTheme(): any {
     if (isPyonLoader()) {
         return pyonLoaderIdentity.storedTheme;
     } else if (isVendettaLoader()) {

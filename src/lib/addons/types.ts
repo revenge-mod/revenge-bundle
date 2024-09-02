@@ -4,7 +4,7 @@ export interface BunnyManifest {
     id: string;
     display: {
         name: string;
-        description: string;
+        description?: string;
         authors?: Author[];
     };
     extras?: {

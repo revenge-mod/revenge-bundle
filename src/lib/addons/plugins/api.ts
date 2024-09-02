@@ -3,7 +3,7 @@ import { registerCommand } from "@lib/api/commands";
 import { createStorage } from "@lib/api/storage/new";
 import { logger } from "@lib/utils/logger";
 
-import PluginManager from "./PluginManager";
+import PluginManager from "./manager";
 import { BunnyPluginObject } from "./types";
 
 type DisposableFn = (...props: any[]) => () => unknown;

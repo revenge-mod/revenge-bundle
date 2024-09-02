@@ -1,5 +1,5 @@
 import { formatString, Strings } from "@core/i18n";
-import PluginManager from "@lib/addons/plugins/PluginManager";
+import PluginManager from "@lib/addons/plugins/manager";
 import { findAssetId } from "@lib/api/assets";
 import { purgeStorage } from "@lib/api/storage";
 import { clipboard } from "@metro/common";

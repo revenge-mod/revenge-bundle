@@ -1,4 +1,4 @@
-import PluginManager from "@lib/addons/plugins/PluginManager";
+import PluginManager from "@lib/addons/plugins/manager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { useProxy } from "@lib/api/storage/new";
 

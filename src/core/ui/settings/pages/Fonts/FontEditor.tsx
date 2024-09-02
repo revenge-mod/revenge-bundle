@@ -1,6 +1,6 @@
 import { formatString, Strings } from "@core/i18n";
 import { FontDefinition, fonts, removeFont, saveFont, validateFont } from "@lib/addons/fonts";
-import ColorManager from "@lib/addons/themes/colors/ColorManager";
+import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
 import { createProxy, useProxy } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";

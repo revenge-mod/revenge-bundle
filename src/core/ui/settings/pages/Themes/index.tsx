@@ -1,33 +1,37 @@
 import { formatString, Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
-import { installTheme, Theme, themes } from "@lib/addons/themes";
+import ColorManager from "@lib/addons/themes/colors/manager";
+import { Author } from "@lib/addons/types";
 import { settings } from "@lib/api/settings";
 import { useProxy } from "@lib/api/storage";
-import { Author } from "@lib/utils/types";
+import { useProxy as useNewProxy } from "@lib/api/storage/new";
 import { Button } from "@metro/common/components";
+
 
 export default function Themes() {
     useProxy(settings);
-    useProxy(themes);
+    useNewProxy(ColorManager.infos);
+    useNewProxy(ColorManager.preferences);
 
     return (
-        <AddonPage<Theme>
+        <AddonPage<ReturnType<typeof ColorManager.getDisplayInfo>>
             title={Strings.THEMES}
             searchKeywords={[
-                "data.name",
-                "data.description",
-                p => p.data.authors?.map((a: Author) => a.name).join(", ") ?? "unknown"
+                "name",
+                "description",
+                p => p.authors?.map((a: Author) => a.name).join(", ") ?? "unknown"
             ]}
             sortOptions={{
-                "Name (A-Z)": (a, b) => a.data.name.localeCompare(b.data.name),
-                "Name (Z-A)": (a, b) => b.data.name.localeCompare(a.data.name)
+                "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
+                "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
             }}
             installAction={{
                 label: "Install a theme",
-                fetchFn: installTheme
+                fetchFn: (url: string) => ColorManager.install(url)
             }}
-            items={Object.values(themes)}
+            items={ColorManager.getAllIds()}
+            resolveItem={id => ColorManager.getDisplayInfo(id)}
             safeModeHint={{
                 message: formatString("SAFE_MODE_NOTICE_THEMES", { enabled: Boolean(settings.safeMode?.currentThemeId) }),
                 footer: settings.safeMode?.currentThemeId && <Button

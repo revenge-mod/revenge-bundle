@@ -1,4 +1,4 @@
-import { getThemeFromLoader, selectTheme, themes } from "@lib/addons/themes";
+import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
 import { getLoaderName, getLoaderVersion, isThemeSupported } from "@lib/api/native/loader";
 import { BundleUpdaterManager, ClientInfoManager, DeviceManager } from "@lib/api/native/modules";
@@ -34,11 +34,13 @@ export interface RNConstants extends PlatformConstants {
 export async function toggleSafeMode() {
     settings.safeMode = { ...settings.safeMode, enabled: !settings.safeMode?.enabled };
     if (isThemeSupported()) {
-        if (getThemeFromLoader()?.id) settings.safeMode!.currentThemeId = getThemeFromLoader()!.id;
+        if (ColorManager.preferences.selected) {
+            settings.safeMode!.currentThemeId = ColorManager.preferences.selected;
+        }
         if (settings.safeMode?.enabled) {
-            await selectTheme(null);
+            await ColorManager.select(null);
         } else if (settings.safeMode?.currentThemeId) {
-            await selectTheme(themes[settings.safeMode?.currentThemeId]);
+            await ColorManager.select(settings.safeMode?.currentThemeId);
         }
     }
     setTimeout(BundleUpdaterManager.reload, 400);

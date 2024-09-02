@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
-import PluginManager from "@lib/addons/plugins/PluginManager";
+import PluginManager from "@lib/addons/plugins/manager";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";

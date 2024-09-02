@@ -1,5 +1,5 @@
 import { formatString, Strings } from "@core/i18n";
-import PluginManager from "@lib/addons/plugins/PluginManager";
+import PluginManager from "@lib/addons/plugins/manager";
 import { installTheme } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";

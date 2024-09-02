@@ -1,48 +1,37 @@
 import { formatString, Strings } from "@core/i18n";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
+import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
+import { useProxy } from "@lib/api/storage/new";
 import { clipboard } from "@metro/common";
 import { showConfirmationAlert } from "@ui/alerts";
 import { showToast } from "@ui/toasts";
 
-function selectAndApply(value: boolean, theme: Theme) {
-    try {
-        selectTheme(value ? theme : null);
-        applyTheme(value ? theme : null);
-    } catch (e: any) {
-        console.error("Error while selectAndApply,", e);
-    }
-}
+type ColorDisplayInfo = ReturnType<typeof ColorManager.getDisplayInfo>;
 
-export default function ThemeCard({ item: theme }: CardWrapper<Theme>) {
-    useProxy(theme);
+export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>) {
+    useProxy(ColorManager.preferences);
 
-    const [removed, setRemoved] = React.useState(false);
-
-    // This is needed because of React™
-    if (removed) return null;
-
-    const { authors } = theme.data;
+    const { authors } = theme;
 
     return (
         <AddonCard
-            headerLabel={theme.data.name}
+            headerLabel={theme.name}
             headerSublabel={authors ? `by ${authors.map(i => i.name).join(", ")}` : ""}
-            descriptionLabel={theme.data.description ?? "No description."}
+            descriptionLabel={theme.description ?? "No description."}
             toggleType={!settings.safeMode?.enabled ? "radio" : undefined}
-            toggleValue={() => themes[theme.id].selected}
+            toggleValue={() => ColorManager.preferences.selected === theme.id}
             onToggleChange={(v: boolean) => {
-                selectAndApply(v, theme);
+                ColorManager.select(v ? theme.id : null);
             }}
-            overflowTitle={theme.data.name}
+            overflowTitle={theme.name}
             overflowActions={[
                 {
                     icon: "ic_sync_24px",
                     label: Strings.REFETCH,
                     onPress: () => {
-                        fetchTheme(theme.id, theme.selected).then(() => {
+                        ColorManager.refresh(theme.id).then(() => {
                             showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
                         }).catch(() => {
                             showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
@@ -53,7 +42,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<Theme>) {
                     icon: "copy",
                     label: Strings.COPY_URL,
                     onPress: () => {
-                        clipboard.setString(theme.id);
+                        clipboard.setString(ColorManager.infos[theme.id].sourceUrl);
                         showToast.showCopyToClipboard();
                     }
                 },
@@ -63,15 +52,12 @@ export default function ThemeCard({ item: theme }: CardWrapper<Theme>) {
                     isDestructive: true,
                     onPress: () => showConfirmationAlert({
                         title: Strings.HOLD_UP,
-                        content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.data.name }),
+                        content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.name }),
                         confirmText: Strings.DELETE,
                         cancelText: Strings.CANCEL,
                         confirmColor: "red",
                         onConfirm: () => {
-                            removeTheme(theme.id).then(wasSelected => {
-                                setRemoved(true);
-                                if (wasSelected) selectAndApply(false, theme);
-                            }).catch((e: Error) => {
+                            ColorManager.uninstall(theme.id).catch((e: Error) => {
                                 showToast(e.message, findAssetId("Small"));
                             });
                         }

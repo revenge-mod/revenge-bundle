@@ -1,11 +1,15 @@
 import AddonManager from "@lib/addons/AddonManager";
+import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { removeFile } from "@lib/api/native/fs";
-import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, updateStorageAsync } from "@lib/api/storage/new";
+import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage/new";
 import { invariant } from "@lib/utils";
 import { safeFetch } from "@lib/utils/safeFetch";
+import chroma from "chroma-js";
+import { omit } from "lodash";
 
 import initColors from ".";
-import { ColorManifest } from "./types";
+import { parseColorManifest } from "./parser";
+import { BunnyColorManifest, ColorManifest, VendettaThemeManifest } from "./types";
 import { updateBunnyColor } from "./updater";
 
 interface BunnyColorPreferencesStorage {
@@ -32,11 +36,12 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         await awaitStorage(this.preferences, this.infos);
         await this.migrate("VENDETTA_THEMES");
 
+        await Promise.allSettled(this.getAllIds().map(id =>
+            preloadStorageIfExists(`themes/colors/data/${id}.json`)
+        ));
+
         if (this.preferences.selected) {
-            initColors(await createStorageAsync<ColorManifest | null>(
-                `themes/colors/data/${this.preferences.selected}.json`,
-                null
-            ));
+            initColors(this.getCurrentManifest());
         } else {
             initColors(null);
         }
@@ -69,6 +74,30 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
     }
 
+    convertToVd(manifest: BunnyColorManifest | VendettaThemeManifest): VendettaThemeManifest {
+        if ("name" in manifest) return manifest;
+        else {
+            const intDef = parseColorManifest(manifest);
+            const semanticColors = {} as VendettaThemeManifest["semanticColors"] & {};
+
+            for (const key in intDef.semantic) {
+                const applyOpacity = (v: string) => chroma(v).alpha(intDef.semantic[key].opacity).hex();
+                semanticColors[key] = intDef.semantic[key].value.map(applyOpacity);
+            }
+
+            return {
+                spec: 2,
+                name: manifest.display.name,
+                description: manifest.display.description,
+                authors: manifest.display.authors,
+                semanticColors,
+                rawColors: manifest.raw,
+                background: manifest.background ? { ...omit(manifest.background, ["opacity"]), alpha: manifest.background.opacity } : undefined,
+                ...manifest.extras
+            };
+        }
+    }
+
     getAllIds(): string[] {
         return Object.keys(this.infos);
     }
@@ -77,8 +106,30 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         return this.sanitizeId("id" in manifest ? manifest.id : url);
     }
 
-    getCurrentManifest(): ColorManifest {
-        return createStorage(`themes/colors/data/${this.preferences.selected}.json`);
+    getCurrentManifest(): ColorManifest | null {
+        if (!this.preferences.selected) return null;
+        return this.getManifest(this.preferences.selected);
+    }
+
+    getManifest(id: string): ColorManifest {
+        if (!this.infos[id]) throw new Error(`${id} is not installed`);
+        return createStorage(`themes/colors/data/${id}.json`);
+    }
+
+    getDisplayInfo(id: string): BunnyPluginManifest["display"] & { id: string } {
+        const manifest = createStorage<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
+        if (!manifest) throw new Error(`Theme manifest of '${id}' was not stored`);
+
+        if (manifest.spec === 3) {
+            return { id, ...manifest.display };
+        } else {
+            return {
+                id,
+                name: manifest.name,
+                description: manifest.description,
+                authors: manifest.authors
+            };
+        }
     }
 
     async fetch(url: string) {
@@ -96,10 +147,21 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         return manifest;
     }
 
-    async select(id: string | null) {
-        invariant(id ? this.infos[id] : true, "Tried to select non-existent theme");
-        id &&= this.sanitizeId(id);
+    async refresh(id: string) {
+        id = this.sanitizeId(id);
+        const { sourceUrl } = this.infos[id];
+        await this.fetch(sourceUrl);
 
+        if (this.preferences.selected === id) {
+            updateBunnyColor(this.getCurrentManifest(), { update: true });
+        }
+    }
+
+    async select(id: string | null) {
+        id &&= this.sanitizeId(id);
+        invariant(id ? this.infos[id] : true, "Tried to select non-existent theme");
+
+        if (this.preferences.selected === id) return;
         this.preferences.selected = id;
 
         if (id) {

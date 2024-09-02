@@ -1,5 +1,5 @@
-import PluginManager from "@lib/addons/plugins/PluginManager";
-import * as themes from "@lib/addons/themes";
+import PluginManager from "@lib/addons/plugins/manager";
+import ColorManager from "@lib/addons/themes/colors/manager";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
@@ -7,10 +7,8 @@ import { getVendettaLoaderIdentity, isPyonLoader } from "@lib/api/native/loader"
 import patcher from "@lib/api/patcher";
 import { loaderConfig, settings } from "@lib/api/settings";
 import * as storage from "@lib/api/storage";
-import { createStorage } from "@lib/api/storage";
 import * as utils from "@lib/utils";
 import { cyrb64Hash } from "@lib/utils/cyrb64";
-import { DiscordLogger } from "@lib/utils/logger";
 import * as metro from "@metro";
 import * as common from "@metro/common";
 import { Forms } from "@metro/common/components";
@@ -24,19 +22,6 @@ import { omit } from "es-toolkit";
 import { memoize } from "lodash";
 import { createElement, useEffect } from "react";
 import { View } from "react-native";
-
-export async function createVdPluginObject(plugin: any) {
-    return {
-        ...window.vendetta,
-        plugin: {
-            id: plugin.id,
-            manifest: plugin.manifest,
-            // Wrapping this with wrapSync is NOT an option.
-            storage: await createStorage<Record<string, any>>(storage.createMMKVBackend(plugin.id)),
-        },
-        logger: new DiscordLogger(`Bunny » ${plugin.manifest.name}`),
-    };
-}
 
 // cursed code here we come
 function createPluginsObject() {
@@ -57,13 +42,13 @@ function createPluginsObject() {
     );
 
     return {
-        plugins: new Proxy(makeObject(), {
+        plugins: storage.createProxy(new Proxy(makeObject(), {
             ...Object.fromEntries(
                 Object.getOwnPropertyNames(Reflect)
                     // @ts-expect-error
                     .map(k => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)])
             ),
-        }),
+        })).proxy,
         fetchPlugin: (source: string) => PluginManager.fetch(source),
         installPlugin: (source: string, enabled = true) => PluginManager.install(source, { enable: enabled }),
         startPlugin: (id: string) => PluginManager.start(id),
@@ -72,6 +57,48 @@ function createPluginsObject() {
         },
         removePlugin: (id: string) => PluginManager.uninstall(id, { keepData: false }),
         getSettings: (id: string) => PluginManager.getSettingsComponent(id)
+    };
+}
+
+function createThemesObject() {
+    const makeObject = memoize(
+        () => ColorManager.getAllIds()
+            .reduce((obj, id) => Object.assign(obj, {
+                [ColorManager.infos[id].sourceUrl]: {
+                    id: ColorManager.infos[id].sourceUrl,
+                    get selected() {
+                        return ColorManager.preferences.selected === id;
+                    },
+                    data: ColorManager.convertToVd(ColorManager.getManifest(id))
+                }
+            }), {}),
+        () => ColorManager.getAllIds().length
+    );
+
+    return {
+        themes: storage.createProxy(new Proxy(makeObject(), {
+            ...Object.fromEntries(
+                Object.getOwnPropertyNames(Reflect)
+                    // @ts-expect-error
+                    .map(k => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)])
+            ),
+        })).proxy,
+        fetchTheme: (id: string, selected?: boolean) => selected ? ColorManager.refresh(id) : ColorManager.fetch(id),
+        installTheme: (id: string) => ColorManager.install(id),
+        selectTheme: (id: string) => ColorManager.select(id === "default" ? null : id),
+        removeTheme: (id: string) => ColorManager.uninstall(id),
+        getCurrentTheme: () => {
+            const { selected } = ColorManager.preferences;
+            const manifest = ColorManager.getCurrentManifest();
+            if (selected == null || manifest == null) return null;
+
+            return {
+                id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
+                data: ColorManager.convertToVd(manifest),
+                selected: true
+            };
+        },
+        updateThemes: () => ColorManager.updateAll()
     };
 }
 
@@ -215,15 +242,7 @@ export const initVendettaObject = (): any => {
             rawColors: color.rawColors
         },
         plugins: createPluginsObject(),
-        themes: {
-            themes: themes.themes,
-            fetchTheme: (id: string, selected?: boolean) => themes.fetchTheme(id, selected),
-            installTheme: (id: string) => themes.installTheme(id),
-            selectTheme: (id: string) => themes.selectTheme(id === "default" ? null : themes.themes[id]),
-            removeTheme: (id: string) => themes.removeTheme(id),
-            getCurrentTheme: () => themes.getThemeFromLoader(),
-            updateThemes: () => themes.updateThemes()
-        },
+        themes: createThemesObject(),
         commands: {
             registerCommand: commands.registerCommand
         },
