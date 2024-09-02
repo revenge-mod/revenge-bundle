@@ -1,3 +1,4 @@
+import BunnySettings from "@core/storage/BunnySettings";
 import { findByProps, findByPropsLazy, findByStoreNameLazy } from "@metro";
 
 import { parseColorManifest } from "./parser";
@@ -27,6 +28,8 @@ export const _colorRef: InternalColorRef = {
 };
 
 export function updateBunnyColor(colorManifest: ColorManifest | null, { update = true }) {
+    if (BunnySettings.isSafeMode()) return;
+
     const internalDef = colorManifest ? parseColorManifest(colorManifest) : null;
     const ref = Object.assign(_colorRef, {
         current: internalDef,
@@ -43,8 +46,7 @@ export function updateBunnyColor(colorManifest: ColorManifest | null, { update =
         Object.keys(tokenRef.Shadow).forEach(k => tokenRef.Shadow[k][ref.key] = tokenRef.Shadow[k][ref.current!.reference]);
         Object.keys(tokenRef.SemanticColor).forEach(k => {
             tokenRef.SemanticColor[k][ref.key] = {
-                ...tokenRef.SemanticColor[k][ref.current!.reference],
-                // override: appliedTheme?.data?.semanticColors?.[k]?.[0]
+                ...tokenRef.SemanticColor[k][ref.current!.reference]
             };
         });
     }

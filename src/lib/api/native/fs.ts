@@ -45,7 +45,7 @@ export async function readFile(path: string, prefix = "pyoncord/"): Promise<stri
     try {
         return await FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
     } catch (err) {
-        throw new Error(`An error occured while writing to '${path}'`, { cause: err });
+        throw new Error(`An error occured while reading '${path}'`, { cause: err });
     }
 }
 

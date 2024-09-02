@@ -1,17 +1,16 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import { PyoncordIcon } from "@core/ui/settings";
 import About from "@core/ui/settings/pages/General/About";
 import { findAssetId } from "@lib/api/assets";
 import { getDebugInfo, toggleSafeMode } from "@lib/api/debug";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
 import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
 import { NavigationNative, url } from "@metro/common";
 import { Stack, TableRow, TableRowGroup, TableSwitchRow } from "@metro/common/components";
 import { NativeModules, ScrollView } from "react-native";
 
 export default function General() {
-    useProxy(settings);
+    BunnySettings.useSettings();
 
     const debugInfo = getDebugInfo();
     const navigation = NavigationNative.useNavigation();
@@ -62,17 +61,17 @@ export default function General() {
                         onPress={() => NativeModules.BundleUpdaterManager.reload()}
                     />
                     <TableRow
-                        label={settings.safeMode?.enabled ? Strings.RELOAD_IN_NORMAL_MODE : Strings.RELOAD_IN_SAFE_MODE}
-                        subLabel={settings.safeMode?.enabled ? Strings.RELOAD_IN_NORMAL_MODE_DESC : Strings.RELOAD_IN_SAFE_MODE_DESC}
+                        label={BunnySettings.isSafeMode() ? Strings.RELOAD_IN_NORMAL_MODE : Strings.RELOAD_IN_SAFE_MODE}
+                        subLabel={BunnySettings.isSafeMode() ? Strings.RELOAD_IN_NORMAL_MODE_DESC : Strings.RELOAD_IN_SAFE_MODE_DESC}
                         icon={<TableRow.Icon source={findAssetId("ic_privacy_24px")} />}
-                        onPress={toggleSafeMode}
+                        onPress={() => toggleSafeMode()}
                     />
                     <TableSwitchRow
                         label={Strings.DEVELOPER_SETTINGS}
                         icon={<TableRow.Icon source={findAssetId("ic_progress_wrench_24px")} />}
-                        value={settings.developerSettings}
+                        value={BunnySettings.developer.enabled = true}
                         onValueChange={(v: boolean) => {
-                            settings.developerSettings = v;
+                            BunnySettings.developer.enabled = v;
                         }}
                     />
                 </TableRowGroup>
@@ -81,9 +80,9 @@ export default function General() {
                         label={Strings.SETTINGS_ACTIVATE_DISCORD_EXPERIMENTS}
                         subLabel={Strings.SETTINGS_ACTIVATE_DISCORD_EXPERIMENTS_DESC}
                         icon={<TableRow.Icon source={findAssetId("ic_progress_wrench_24px")} />}
-                        value={settings.enableDiscordDeveloperSettings}
+                        value={BunnySettings.general.patchIsStaff}
                         onValueChange={(v: boolean) => {
-                            settings.enableDiscordDeveloperSettings = v;
+                            BunnySettings.general.patchIsStaff = v;
                         }}
                     />
                 </TableRowGroup>

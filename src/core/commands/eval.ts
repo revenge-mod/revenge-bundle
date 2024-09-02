@@ -1,6 +1,6 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import { ApplicationCommand, ApplicationCommandOptionType } from "@lib/api/commands/types";
-import { settings } from "@lib/api/settings";
 import { messageUtil } from "@metro/common";
 import { findByPropsLazy } from "@metro/wrappers";
 
@@ -16,7 +16,7 @@ function wrapInJSCodeblock(resString: string) {
 export default () => <ApplicationCommand>{
     name: "eval",
     description: Strings.COMMAND_EVAL_DESC,
-    shouldHide: () => settings.enableEvalCommand === true,
+    shouldHide: () => BunnySettings.developer.evalCommandEnabled === true,
     options: [
         {
             name: "code",

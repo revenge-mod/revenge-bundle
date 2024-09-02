@@ -1,7 +1,6 @@
 import AddonManager from "@lib/addons/AddonManager";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
-import { createMMKVBackend, createStorage as createOldStorage } from "@lib/api/storage";
-import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync } from "@lib/api/storage/new";
+import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync } from "@lib/api/storage";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { DiscordLogger } from "@lib/utils/logger";
 import { safeFetch } from "@lib/utils/safeFetch";
@@ -21,8 +20,9 @@ function assert<T>(condition: T, id: string, attempt: string): asserts condition
 }
 
 export default new class PluginManager extends AddonManager<BunnyPluginManifest> {
-    settings = createStorage<PluginSettingsStorage>("settings.json");
-    infos = createStorage<PluginInformationStorage>("infos.json");
+    settings = createStorage<PluginSettingsStorage>("plugins/settings.json");
+    infos = createStorage<PluginInformationStorage>("plugins/infos.json");
+
     #instances = new Map<string, PluginInstance>();
     #bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
     #updateAllPromise: Promise<void> = null!;
@@ -120,12 +120,18 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
     getType(manifest: BunnyPluginManifest | VendettaPlugin["manifest"]) {
         if ("display" in manifest) return "bunny";
-        if (["name", "description"].every(p => p in manifest)) return "vendetta";
+        if (["name", "main"].every(p => p in manifest)) return "vendetta";
         throw new Error("Invalid plugin manifest");
     }
 
     getSettingsComponent(id: string): (() => JSX.Element) | undefined {
         return this.#instances.get(id)?.SettingsComponent;
+    }
+
+    async refetch(id: string) {
+        id = this.sanitizeId(id);
+        const { sourceUrl } = this.infos[id];
+        await this.fetch(sourceUrl, { id });
     }
 
     async fetch(url: string, { id = "" } = {}): Promise<BunnyPluginManifest> {
@@ -160,7 +166,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
             if (pluginJs) {
                 try {
-                    await writeFile(`plugins/manifests/${pluginManifest.id}.json`, pluginJs);
+                    await writeFile(`plugins/scripts/${pluginManifest.id}.js`, pluginJs);
                     await updateStorageAsync(`plugins/manifests/${pluginManifest.id}.json`, pluginManifest);
                 } catch (err) {
                     throw new Error(`Unable to update file for plugin ${id}`);
@@ -194,7 +200,6 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 ) => PluginInstanceInternal;
 
                 try {
-                    // jsPath should always exists when the plugin is installed, unless the storage is corrupted
                     const iife = await readFile(`plugins/scripts/${id}.js`);
                     instantiator = globalEvalWithSourceUrl(
                         `(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`,
@@ -220,15 +225,13 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             } else {
                 try {
                     const iife = await readFile(`plugins/scripts/${id}.js`);
+
                     const vendettaForPlugins = {
                         ...window.vendetta,
                         plugin: {
                             id: manifest.id,
                             manifest: this.convertToVd(manifest),
-                            // Wrapping this with wrapSync is NOT an option.
-                            storage: await createOldStorage<Record<string, any>>(
-                                createMMKVBackend(id)
-                            ),
+                            storage: await createStorageAsync<Record<string, any>>(`plugins/storage/${this.sanitizeId(id)}.json`)
                         },
                         logger: new DiscordLogger(`Vendetta » ${manifest.display.name}`),
                     };
@@ -249,6 +252,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
                     this.#instances.set(id, pluginInstance);
                 } catch (err) {
+
                     throw new Error("An error occured while instantiating Vendetta plugin", { cause: err });
                 }
             }
@@ -315,13 +319,15 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         this.infos[manifest.id] = {
             sourceUrl: url,
             installTime: new Date().toISOString(),
-            isVendetta: this.getType(manifest) === "vendetta"
+            isVendetta: manifest.id.startsWith("https-")
         };
 
         this.settings[manifest.id] = {
             enabled: enable,
             autoUpdate: true
         };
+
+        if (start) this.start(manifest.id);
     }
 
     async uninstall(id: string, { keepData = false } = {}) {

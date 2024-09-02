@@ -1,14 +1,13 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import Version from "@core/ui/settings/pages/General/Version";
 import { getDebugInfo } from "@lib/api/debug";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
 import { Stack, TableRowGroup } from "@metro/common/components";
 import { Platform, ScrollView } from "react-native";
 
 export default function About() {
+    BunnySettings.useSettings();
     const debugInfo = getDebugInfo();
-    useProxy(settings);
 
     const versions = [
         {

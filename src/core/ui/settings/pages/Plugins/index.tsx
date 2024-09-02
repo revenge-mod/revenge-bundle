@@ -1,12 +1,11 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
 import PluginManager from "@lib/addons/plugins/manager";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
-import { useProxy as useNewProxy } from "@lib/api/storage/new";
+import { useObservable } from "@lib/api/storage";
 import { showToast } from "@lib/ui/toasts";
 import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -64,12 +63,12 @@ function PluginPage(props: PluginPageProps) {
 }
 
 export default function Plugins() {
-    useProxy(settings);
+    BunnySettings.useSettings();
     const navigation = NavigationNative.useNavigation();
 
     return <PluginPage
         useItems={() => {
-            useNewProxy(PluginManager.settings);
+            useObservable(PluginManager.settings);
             return PluginManager.getAllIds().map(id => PluginManager.getManifest(id));
         }}
         resolveItem={unifyVdPlugin}
@@ -113,7 +112,7 @@ export default function Plugins() {
         installAction={{
             label: "Install a plugin",
             fetchFn: async (url: string) => {
-                if (!url.startsWith(VD_PROXY_PREFIX) && !url.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
+                if (!url.startsWith(VD_PROXY_PREFIX) && !url.startsWith(BUNNY_PROXY_PREFIX) && !BunnySettings.developer.enabled) {
                     openAlert("bunny-plugin-unproxied-confirmation", <AlertModal
                         title="Hold On!"
                         content="You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?"

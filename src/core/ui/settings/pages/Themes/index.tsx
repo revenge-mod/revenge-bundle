@@ -1,21 +1,19 @@
 import { formatString, Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import { updateBunnyColor } from "@lib/addons/themes/colors/updater";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
-import { useProxy as useNewProxy } from "@lib/api/storage/new";
+import { useObservable } from "@lib/api/storage";
 import { ActionSheet, BottomSheetTitleHeader, Button, TableRadioGroup, TableRadioRow, TableRowIcon } from "@metro/common/components";
 import { View } from "react-native";
 
 
 export default function Themes() {
-    useProxy(settings);
-    useNewProxy(ColorManager.infos);
-    useNewProxy(ColorManager.preferences);
+    BunnySettings.useSettings();
+    useObservable(ColorManager.infos, ColorManager.preferences);
 
     return (
         <AddonPage<ReturnType<typeof ColorManager.getDisplayInfo>>
@@ -36,17 +34,17 @@ export default function Themes() {
             items={ColorManager.getAllIds()}
             resolveItem={id => ColorManager.getDisplayInfo(id)}
             safeModeHint={{
-                message: formatString("SAFE_MODE_NOTICE_THEMES", { enabled: Boolean(settings.safeMode?.currentThemeId) }),
-                footer: settings.safeMode?.currentThemeId && <Button
+                message: formatString("SAFE_MODE_NOTICE_THEMES", { enabled: Boolean(ColorManager.preferences.selected) }),
+                footer: ColorManager.preferences.selected && <Button
                     size="small"
                     text={Strings.DISABLE_THEME}
-                    onPress={() => delete settings.safeMode?.currentThemeId}
+                    onPress={() => ColorManager.select(null)}
                     style={{ marginTop: 8 }}
                 />
             }}
             CardComponent={ThemeCard}
             OptionsActionSheetComponent={() => {
-                useNewProxy(ColorManager.preferences);
+                useObservable(ColorManager.preferences);
 
                 return <ActionSheet>
                     <BottomSheetTitleHeader title="Options" />

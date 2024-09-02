@@ -23,7 +23,7 @@ export class Emitter {
     listeners = Object.values(Events).reduce<EmitterListeners>(
         (acc, val: string) => ((acc[val] = new Set<EmitterListener>()), acc),
         {}
-    ) as EmitterListeners;
+    );
 
     on(event: EmitterEvent, listener: EmitterListener) {
         if (!this.listeners[event].has(listener)) this.listeners[event].add(listener);

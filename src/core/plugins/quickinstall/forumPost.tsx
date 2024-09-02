@@ -5,7 +5,7 @@ import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
 import { after } from "@lib/api/patcher";
 import { useProxy } from "@lib/api/storage";
-import { useProxy as useNewProxy } from "@lib/api/storage/new";
+import { useProxy as useNewProxy } from "@lib/api/storage";
 import { DISCORD_SERVER_ID, HTTP_REGEX_MULTI, PLUGINS_CHANNEL_ID, THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button } from "@metro/common/components";

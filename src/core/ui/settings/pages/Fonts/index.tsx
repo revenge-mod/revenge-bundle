@@ -1,28 +1,30 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import FontEditor from "@core/ui/settings/pages/Fonts/FontEditor";
-import { FontDefinition, fonts } from "@lib/addons/fonts";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
+import FontManager from "@lib/addons/fonts";
+import { FontManifest } from "@lib/addons/fonts/types";
+import { useObservable } from "@lib/api/storage";
 import { NavigationNative } from "@metro/common";
 
 import FontCard from "./FontCard";
 
 export default function Fonts() {
-    useProxy(settings);
-    useProxy(fonts);
+    BunnySettings.useSettings();
+    useObservable(FontManager.preferences, FontManager.traces);
 
     const navigation = NavigationNative.useNavigation();
 
     return (
-        <AddonPage<FontDefinition>
+        <AddonPage<FontManifest>
             title={Strings.FONTS}
-            searchKeywords={["name", "description"]}
+            searchKeywords={["display.name"]}
             sortOptions={{
-                "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-                "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+                "Name (A-Z)": (a, b) => a.display.name.localeCompare(b.display.name),
+                "Name (Z-A)": (a, b) => b.display.name.localeCompare(a.display.name)
             }}
-            items={Object.values(fonts)}
+            items={FontManager.getAllIds()}
+            resolveItem={id => FontManager.getManifest(id)}
             safeModeHint={{ message: Strings.SAFE_MODE_NOTICE_FONTS }}
             CardComponent={FontCard}
             installAction={{

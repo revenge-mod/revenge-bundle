@@ -1,9 +1,9 @@
-import ColorManager from "@lib/addons/themes/colors/manager";
+import BunnySettings from "@core/storage/BunnySettings";
+import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
-import { getLoaderName, getLoaderVersion, isThemeSupported } from "@lib/api/native/loader";
+import { getLoaderName, getLoaderVersion } from "@lib/api/native/loader";
 import { BundleUpdaterManager, ClientInfoManager, DeviceManager } from "@lib/api/native/modules";
 import { after } from "@lib/api/patcher";
-import { settings } from "@lib/api/settings";
 import { logger } from "@lib/utils/logger";
 import { showToast } from "@ui/toasts";
 import { version } from "bunny-build-info";
@@ -31,19 +31,11 @@ export interface RNConstants extends PlatformConstants {
 /**
  * @internal
  */
-export async function toggleSafeMode() {
-    settings.safeMode = { ...settings.safeMode, enabled: !settings.safeMode?.enabled };
-    if (isThemeSupported()) {
-        if (ColorManager.preferences.selected) {
-            settings.safeMode!.currentThemeId = ColorManager.preferences.selected;
-        }
-        if (settings.safeMode?.enabled) {
-            await ColorManager.select(null);
-        } else if (settings.safeMode?.currentThemeId) {
-            await ColorManager.select(settings.safeMode?.currentThemeId);
-        }
-    }
-    setTimeout(BundleUpdaterManager.reload, 400);
+export async function toggleSafeMode(to?: boolean) {
+    const enabled = BunnySettings.general.safeModeEnabled = (to ?? !BunnySettings.general.safeModeEnabled);
+    const currentColor = ColorManager.getCurrentManifest();
+    await ColorManager.writeForNative(enabled ? null : currentColor);
+    BundleUpdaterManager.reload();
 }
 
 export function connectToDebugger(url: string) {

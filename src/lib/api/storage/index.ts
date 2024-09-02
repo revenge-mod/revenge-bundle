@@ -1,156 +1,199 @@
-import { StorageBackend } from "@lib/api/storage/backends";
-import { Emitter, EmitterEvent, EmitterListener, EmitterListenerData } from "@lib/utils/Emitter";
+// New iteration of storage API, mostly yoinked from unreleased pyoncord (and sunrise?)
+import { Emitter } from "@core/vendetta/Emitter";
+import { Observable } from "@gullerya/object-observer";
+import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
+import { MMKVManager } from "@lib/api/native/modules";
+interface StorageBackend<T = unknown> {
+    get: () => Promise<T>;
+    set: (data: T) => Promise<void>;
+    exists: () => Promise<boolean>;
+}
 
-const emitterSymbol = Symbol.for("vendetta.storage.emitter");
-const syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");
+const storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
+const storagePromiseSymbol = Symbol.for("bunny.storage.promise");
 
-export function createProxy(target: any = {}): { proxy: any; emitter: Emitter; } {
-    const emitter = new Emitter();
-    const parentTarget = target;
+const _loadedPath = {} as Record<string, any>;
 
-    const childrens = new WeakMap<any, any>();
-    const proxiedChildrenSet = new WeakSet<any>();
-
-    function createProxy(target: any, path: string[]): any {
-        return new Proxy(target, {
-            get(target, prop: string) {
-                if ((prop as unknown) === emitterSymbol) return emitter;
-
-                const newPath = [...path, prop];
-                const value: any = target[prop];
-
-                if (value !== undefined && value !== null) {
-                    emitter.emit("GET", {
-                        parent: parentTarget,
-                        path: newPath,
-                        value,
-                    });
-
-                    if (typeof value === "object") {
-                        if (proxiedChildrenSet.has(value)) return value;
-                        if (childrens.has(value)) return childrens.get(value);
-
-                        const childrenProxy = createProxy(value, newPath);
-                        childrens.set(value, childrenProxy);
-                        return childrenProxy;
-                    }
-
-                    return value;
-                }
-
-                return value;
-            },
-
-            set(target, prop: string, value) {
-                if (typeof value === "object") {
-                    if (childrens.has(value)) {
-                        target[prop] = childrens.get(value);
-                    } else {
-                        const childrenProxy = createProxy(value, [...path, prop]);
-                        childrens.set(value, childrenProxy);
-                        proxiedChildrenSet.add(value);
-                        target[prop] = childrenProxy;
-                    }
-                } else {
-                    target[prop] = value;
-                }
-
-                emitter.emit("SET", {
-                    parent: parentTarget,
-                    path: [...path, prop],
-                    value: target[prop],
-                });
-                // we do not care about success, if this actually does fail we have other problems
-                return true;
-            },
-
-            deleteProperty(target, prop: string) {
-                const value = typeof target[prop] === "object" ? childrens.get(target[prop])! : target[prop];
-                const success = delete target[prop];
-                if (success)
-                    emitter.emit("DEL", {
-                        value,
-                        parent: parentTarget,
-                        path: [...path, prop],
-                    });
-                return success;
-            },
-        });
-    }
-
+function createFileBackend<T = any>(filePath: string): StorageBackend<T> {
     return {
-        proxy: createProxy(target, []),
-        emitter,
+        get: async () => {
+            try {
+                return JSON.parse(await readFile(filePath));
+            } catch (e) {
+                throw new Error(`Failed to parse storage from '${filePath}'`, { cause: e });
+            }
+        },
+        set: async data => {
+            if (!data || typeof data !== "object") throw new Error("data needs to be an object");
+            await writeFile(filePath, JSON.stringify(data));
+        },
+        exists: async () => {
+            return await fileExists(filePath);
+        }
     };
 }
 
-export function useProxy<T>(storage: T): T {
-    const emitter = (storage as any)?.[emitterSymbol] as Emitter;
-    if (!emitter) throw new Error("storage?.[emitterSymbol] is undefined");
+/**
+ * @internal
+ */
+export async function migrateToNewStorage(
+    oldKey: string,
+    callback: (data: any) => void | Promise<void>
+): Promise<void> {
+    const promise = new Promise<void>(r => resolvePromise = r);
+    let resolvePromise: () => void;
+
+    // @ts-expect-error - assigning to migrateToNewStorage._migrated
+    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".storage-v1-migrated", []);
+
+    if (migratedKeys.includes(oldKey)) return;
+
+    let fromMmkv: string | null;
+    const sanitizedOldKey = oldKey.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
+    if (await fileExists(`../vd_mmkv/${sanitizedOldKey}`)) {
+        createStorageAndCallback(`../vd_mmkv/${sanitizedOldKey}`, {}, proxy => {
+            Promise.resolve(callback(proxy)).then(() => resolvePromise());
+        });
+    // eslint-disable-next-line no-cond-assign
+    } else if (fromMmkv = await MMKVManager.getItem(oldKey)) {
+        await callback(JSON.parse(fromMmkv));
+        migratedKeys.push(oldKey);
+        return Promise.resolve();
+    }
+
+    return promise.then(v => {
+        migratedKeys.push(oldKey);
+        return v;
+    });
+}
+
+export function useObservable(...observables: Observable[]) {
+    if (observables.some((o: any) => o?.[storageInitErrorSymbol])) throw new Error(
+        "An error occured while initializing the storage",
+        { cause: (observables.find((o: any) => o?.[storageInitErrorSymbol]) as any)[storageInitErrorSymbol] }
+    );
+
+    if (observables.some(o => !Observable.isObservable(o))) {
+        throw new Error("Argument passed isn't an Observable");
+    }
 
     const [, forceUpdate] = React.useReducer(n => ~n, 0);
 
     React.useEffect(() => {
-        const listener: EmitterListener = (event: EmitterEvent, data: EmitterListenerData) => {
-            if (event === "DEL" && data.value === storage) return;
-            forceUpdate();
-        };
+        const listener = () => forceUpdate();
 
-        emitter.on("SET", listener);
-        emitter.on("DEL", listener);
+        observables.forEach(o => Observable.observe(o, listener));
 
         return () => {
-            emitter.off("SET", listener);
-            emitter.off("DEL", listener);
+            observables.forEach(o => Observable.unobserve(o, listener));
         };
     }, []);
-
-    return storage;
 }
 
-export async function createStorage<T>(backend: StorageBackend): Promise<Awaited<T>> {
-    const data = await backend.get();
-    const { proxy, emitter } = createProxy(data);
-
-    const handler = () => backend.set(proxy);
-    emitter.on("SET", handler);
-    emitter.on("DEL", handler);
-
-    return proxy;
+export async function updateStorageAsync<T>(path: string, value: T): Promise<void> {
+    _loadedPath[path] = value;
+    await createFileBackend<T>(path).set(value);
 }
 
-export function wrapSync<T extends Promise<any>>(store: T): Awaited<T> {
-    let awaited: any = undefined;
+export function createStorageAndCallback<T>(path: string, dflt = {} as T, cb: (proxy: T) => void) {
+    let emitter: Emitter;
 
-    const awaitQueue: (() => void)[] = [];
-    const awaitInit = (cb: () => void) => (awaited ? cb() : awaitQueue.push(cb));
+    const callback = (data: any) => {
+        const proxy = new Proxy(Observable.from(data), {
+            get(target, prop, receiver) {
+                if (prop === Symbol.for("vendetta.storage.emitter")) {
+                    if (emitter) return emitter;
+                    emitter = new Emitter();
 
-    store.then(v => {
-        awaited = v;
-        awaitQueue.forEach(cb => cb());
+                    Observable.observe(target, changes => {
+                        for (const change of changes) {
+                            emitter.emit(change.type !== "delete" ? "SET" : "DEL", {
+                                path: change.path,
+                                value: change.value
+                            });
+                        }
+                    });
+
+                    return emitter;
+                }
+
+                return Reflect.get(target, prop, receiver);
+            },
+        });
+
+        const handler = () => backend.set(proxy);
+        Observable.observe(proxy, handler);
+
+        cb(proxy);
+    };
+
+    const backend = createFileBackend<T>(path);
+    if (_loadedPath[path]) callback(_loadedPath[path]);
+    else {
+        backend.exists().then(async exists => {
+            if (!exists) {
+                await backend.set(dflt);
+                callback(dflt);
+            } else {
+                callback(await backend.get());
+            }
+        });
+    }
+}
+
+export async function createStorageAsync<T>(path: string, dflt = {} as T): Promise<T> {
+    return new Promise(r => createStorageAndCallback(path, dflt, r));
+}
+
+export const createStorage = <T>(path: string, dflt = {} as T): T & { [key: symbol]: any; } => {
+    const promise = new Promise(r => resolvePromise = r);
+    let awaited: any, resolved: boolean, error: any, resolvePromise: (val?: unknown) => void;
+
+    createStorageAndCallback(path, dflt, proxy => {
+        awaited = proxy;
+        resolved = true;
+        resolvePromise();
     });
 
-    return new Proxy({} as Awaited<T>, {
+    const check = () => {
+        if (resolved) return true;
+        throw new Error("Attempted to access storage without initializing");
+    };
+
+    return new Proxy({} as any, {
         ...Object.fromEntries(
             Object.getOwnPropertyNames(Reflect)
-                // @ts-expect-error
-                .map(k => [k, (t: T, ...a: any[]) => Reflect[k](awaited ?? t, ...a)])
+                .map(k => [k, (t: T, ...a: any[]) => {
+                    // @ts-expect-error
+                    return check() && Reflect[k](awaited, ...a);
+                }])
         ),
         get(target, prop, recv) {
-            if (prop === syncAwaitSymbol) return awaitInit;
-            return Reflect.get(awaited ?? target, prop, recv);
+            if (prop === storageInitErrorSymbol) return error;
+            if (prop === storagePromiseSymbol) return promise;
+            return check() && Reflect.get(awaited ?? target, prop, recv);
         },
     });
+};
+
+export async function preloadStorageIfExists(path: string) {
+    if (_loadedPath[path]) return _loadedPath[path];
+
+    const backend = createFileBackend(path);
+    if (await backend.exists()) {
+        return _loadedPath[path] = await backend.get();
+    }
 }
 
-export function awaitStorage(...stores: any[]) {
-    return Promise.all(
-        stores.map(store => new Promise<void>(res => store[syncAwaitSymbol](res)))
-    );
+export function getPreloadedStorage<T>(path: string): T {
+    return _loadedPath[path];
 }
 
-export {
-    createFileBackend,
-    createMMKVBackend,
-    purgeStorage
-} from "@lib/api/storage/backends";
+export async function purgeStorage(path: string) {
+    await removeFile(path);
+    delete _loadedPath[path];
+}
+
+export function awaitStorage(...proxies: any[]) {
+    return Promise.all(proxies.map(proxy => proxy[storagePromiseSymbol]));
+}

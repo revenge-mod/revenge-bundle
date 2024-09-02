@@ -1,11 +1,10 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
 import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger } from "@lib/api/debug";
-import { getReactDevToolsProp, getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
-import { loaderConfig, settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
+import { getReactDevToolsProp, isLoaderConfigSupported, isReactDevToolsPreloaded } from "@lib/api/native/loader";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative } from "@metro/common";
 import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
@@ -34,8 +33,7 @@ export default function Developer() {
     const styles = useStyles();
     const navigation = NavigationNative.useNavigation();
 
-    useProxy(settings);
-    useProxy(loaderConfig);
+    BunnySettings.useSettings();
 
     return (
         <ErrorBoundary>
@@ -46,21 +44,21 @@ export default function Developer() {
                         placeholder="127.0.0.1:9090"
                         size="md"
                         leadingIcon={() => <LegacyFormText style={styles.leadingText}>ws://</LegacyFormText>}
-                        defaultValue={settings.debuggerUrl}
-                        onChange={(v: string) => settings.debuggerUrl = v}
+                        defaultValue={BunnySettings.developer.debuggerUrl}
+                        onChange={(v: string) => BunnySettings.developer.debuggerUrl = v}
                     />
                     <TableRowGroup title={Strings.DEBUG}>
                         <TableRow
                             label={Strings.CONNECT_TO_DEBUG_WEBSOCKET}
                             icon={<TableRow.Icon source={findAssetId("copy")} />}
-                            onPress={() => connectToDebugger(settings.debuggerUrl)}
+                            onPress={() => connectToDebugger(BunnySettings.developer.debuggerUrl)}
                         />
                         {isReactDevToolsPreloaded() && <>
                             <TableRow
                                 label={Strings.CONNECT_TO_REACT_DEVTOOLS}
                                 icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
                                 onPress={() => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
-                                    host: settings.debuggerUrl.split(":")?.[0],
+                                    host: BunnySettings.developer.debuggerUrl.split(":")?.[0],
                                     resolveRNStyle: StyleSheet.flatten,
                                 })}
                             />
@@ -72,27 +70,18 @@ export default function Developer() {
                                 label={Strings.LOAD_FROM_CUSTOM_URL}
                                 subLabel={Strings.LOAD_FROM_CUSTOM_URL_DEC}
                                 icon={<TableRow.Icon source={findAssetId("copy")} />}
-                                value={loaderConfig.customLoadUrl.enabled}
+                                value={BunnySettings.loader.customLoadUrl.enabled}
                                 onValueChange={(v: boolean) => {
-                                    loaderConfig.customLoadUrl.enabled = v;
+                                    BunnySettings.loader.customLoadUrl.enabled = v;
                                 }}
                             />
-                            {loaderConfig.customLoadUrl.enabled && <TableRow label={<TextInput
-                                defaultValue={loaderConfig.customLoadUrl.url}
+                            {BunnySettings.loader.customLoadUrl.enabled && <TableRow label={<TextInput
+                                defaultValue={BunnySettings.loader.customLoadUrl.url}
                                 size="md"
-                                onChange={(v: string) => loaderConfig.customLoadUrl.url = v}
+                                onChange={(v: string) => BunnySettings.loader.customLoadUrl.url = v}
                                 placeholder="http://localhost:4040/vendetta.js"
                                 label={Strings.BUNNY_URL}
                             />} />}
-                            {isReactDevToolsPreloaded() && isVendettaLoader() && <TableSwitchRow
-                                label={Strings.LOAD_REACT_DEVTOOLS}
-                                subLabel={`${Strings.VERSION}: ${getReactDevToolsVersion()}`}
-                                icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
-                                value={loaderConfig.loadReactDevTools}
-                                onValueChange={(v: boolean) => {
-                                    loaderConfig.loadReactDevTools = v;
-                                }}
-                            />}
                         </TableRowGroup>
                     </>}
                     <TableRowGroup title="Other">
@@ -152,9 +141,9 @@ export default function Developer() {
                             label={Strings.ENABLE_EVAL_COMMAND}
                             subLabel={Strings.ENABLE_EVAL_COMMAND_DESC}
                             icon={<TableRow.Icon source={findAssetId("PencilIcon")} />}
-                            value={settings.enableEvalCommand}
+                            value={BunnySettings.developer.evalCommandEnabled}
                             onValueChange={(v: boolean) => {
-                                settings.enableEvalCommand = v;
+                                BunnySettings.developer.evalCommandEnabled = v;
                             }}
                         />
                     </TableRowGroup>

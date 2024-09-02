@@ -1,8 +1,8 @@
 import { Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import { toggleSafeMode } from "@lib/api/debug";
 import { DeviceManager } from "@lib/api/native/modules";
 import { after } from "@lib/api/patcher";
-import { settings } from "@lib/api/settings";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button, CompatButton, SafeAreaView } from "@metro/common/components";
 import { _lazyContextSymbol } from "@metro/lazy";
@@ -101,7 +101,7 @@ export default () => after.await("render", getErrorBoundaryContext(), function (
     // This is in the patch and not outside of it so that we can use `this`, e.g. for setting state
     const buttons: Button[] = [
         { text: Strings.RELOAD_DISCORD, onPress: this.handleReload },
-        ...!settings.safeMode?.enabled ? [{ text: Strings.RELOAD_IN_SAFE_MODE, onPress: toggleSafeMode }] : [],
+        ...!BunnySettings.isSafeMode() ? [{ text: Strings.RELOAD_IN_SAFE_MODE, onPress: toggleSafeMode }] : [],
         { text: Strings.RETRY_RENDER, color: ButtonColors.RED, onPress: () => this.setState({ info: null, error: null }) },
     ];
 

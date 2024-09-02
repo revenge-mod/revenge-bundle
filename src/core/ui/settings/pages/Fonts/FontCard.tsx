@@ -1,9 +1,10 @@
 import { Strings } from "@core/i18n";
 import { CardWrapper } from "@core/ui/components/AddonCard";
-import { FontDefinition, fonts, selectFont } from "@lib/addons/fonts";
+import FontManager from "@lib/addons/fonts";
+import { FontManifest } from "@lib/addons/fonts/types";
 import { findAssetId } from "@lib/api/assets";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
-import { useProxy } from "@lib/api/storage";
+import { useObservable } from "@lib/api/storage";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { NavigationNative, tokens } from "@metro/common";
@@ -18,7 +19,7 @@ import FontEditor from "./FontEditor";
 
 const { useToken } = lazyDestructure(() => findByProps("useToken"));
 
-function FontPreview({ font }: { font: FontDefinition; }) {
+function FontPreview({ font }: { font: FontManifest; }) {
     const TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
     const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     const fontFamily = fontFamilyList!.split(/,/g)[0];
@@ -59,11 +60,11 @@ function FontPreview({ font }: { font: FontDefinition; }) {
     );
 }
 
-export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
-    useProxy(fonts);
+export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
+    useObservable(FontManager.preferences, FontManager.traces);
 
     const navigation = NavigationNative.useNavigation();
-    const selected = fonts.__selected === font.name;
+    const selected = FontManager.preferences.selected === font.id;
 
     return (
         <Card>
@@ -71,7 +72,7 @@ export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View>
                         <Text variant="heading-lg/semibold">
-                            {font.name}
+                            {font.display.name}
                         </Text>
                         {/* TODO: Text wrapping doesn't work well */}
                         {/* <Text color="text-muted" variant="text-sm/semibold">
@@ -84,7 +85,7 @@ export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
                                 onPress={() => {
                                     navigation.push("BUNNY_CUSTOM_PAGE", {
                                         title: "Edit Font",
-                                        render: () => <FontEditor name={font.name} />
+                                        render: () => <FontEditor id={font.id} />
                                     });
                                 }}
                                 size="sm"
@@ -97,7 +98,7 @@ export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
                                 variant={selected ? "secondary" : "primary"}
                                 text={selected ? "Unapply" : "Apply"}
                                 onPress={async () => {
-                                    await selectFont(selected ? null : font.name);
+                                    await FontManager.select(selected ? null : font.id);
                                     showConfirmationAlert({
                                         title: Strings.HOLD_UP,
                                         content: "Reload Discord to apply changes?",

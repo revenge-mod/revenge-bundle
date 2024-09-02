@@ -1,8 +1,9 @@
+import BunnySettings from "@core/storage/BunnySettings";
 import AddonManager from "@lib/addons/AddonManager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { fileExists, removeFile, writeFile } from "@lib/api/native/fs";
 import { isPyonLoader } from "@lib/api/native/loader";
-import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage/new";
+import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage";
 import { invariant } from "@lib/utils";
 import { safeFetch } from "@lib/utils/safeFetch";
 import chroma from "chroma-js";
@@ -43,10 +44,12 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             preloadStorageIfExists(`themes/colors/data/${id}.json`)
         ));
 
-        if (this.preferences.selected) {
-            initColors(this.getCurrentManifest());
-        } else {
-            initColors(null);
+        if (!BunnySettings.isSafeMode()) {
+            if (this.preferences.selected) {
+                initColors(this.getCurrentManifest());
+            } else {
+                initColors(null);
+            }
         }
 
         if (isPyonLoader() && await fileExists("../vendetta_theme.json")) {
@@ -157,13 +160,12 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         }
     }
 
-    async writeForNative(manifest: ColorManifest | null, id: string | null) {
-        id = id && this.sanitizeId(id);
+    async writeForNative(manifest: ColorManifest | null) {
         manifest = manifest && this.convertToVd(manifest);
 
         if (manifest) {
             await writeFile("current-theme.json", JSON.stringify({
-                id,
+                id: "native",
                 data: manifest,
                 selected: true
             }));
@@ -209,10 +211,10 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             let manifest = await createStorageAsync<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
             manifest ??= await this.fetch(this.infos[id].sourceUrl);
             updateBunnyColor(manifest, { update: true });
-            this.writeForNative(manifest, id);
+            await this.writeForNative(manifest);
         } else {
             updateBunnyColor(null, { update: true });
-            this.writeForNative(null, null);
+            await this.writeForNative(null);
         }
     }
 

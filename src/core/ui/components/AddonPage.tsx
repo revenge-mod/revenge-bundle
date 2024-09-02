@@ -1,7 +1,6 @@
+import BunnySettings from "@core/storage/BunnySettings";
 import { CardWrapper } from "@core/ui/components/AddonCard";
 import { findAssetId } from "@lib/api/assets";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
 import { showSheet } from "@lib/ui/sheets";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -112,7 +111,7 @@ function InputAlert(props: { label: string, fetchFn: (url: string) => Promise<vo
 }
 
 export default function AddonPage<T extends object>({ CardComponent, ...props }: AddonPageProps<T>) {
-    useProxy(settings);
+    BunnySettings.useSettings();
 
     const [search, setSearch] = React.useState("");
     const [sortFn, setSortFn] = React.useState<((a: T, b: T) => number) | null>(() => null);
@@ -169,7 +168,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
 
     const headerElement = (
         <View style={{ paddingBottom: 8 }}>
-            {settings.safeMode?.enabled && <View style={{ marginBottom: 10 }}>
+            {BunnySettings.isSafeMode() && <View style={{ marginBottom: 10 }}>
                 <HelpMessage messageType={0}>
                     {props.safeModeHint?.message}
                 </HelpMessage>

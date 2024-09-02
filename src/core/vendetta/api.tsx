@@ -1,3 +1,4 @@
+import BunnySettings from "@core/storage/BunnySettings";
 import PluginManager from "@lib/addons/plugins/manager";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import * as assets from "@lib/api/assets";
@@ -5,8 +6,6 @@ import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
 import { getVendettaLoaderIdentity, isPyonLoader } from "@lib/api/native/loader";
 import patcher from "@lib/api/patcher";
-import { loaderConfig, settings } from "@lib/api/settings";
-import * as storage from "@lib/api/storage";
 import * as utils from "@lib/utils";
 import { cyrb64Hash } from "@lib/utils/cyrb64";
 import * as metro from "@metro";
@@ -22,6 +21,8 @@ import { omit } from "es-toolkit";
 import { memoize } from "lodash";
 import { createElement, useEffect } from "react";
 import { View } from "react-native";
+
+import * as storage from "./storage";
 
 // cursed code here we come
 function createPluginsObject() {
@@ -42,7 +43,7 @@ function createPluginsObject() {
     );
 
     return {
-        plugins: storage.createProxy(new Proxy(makeObject(), {
+        plugins: storage.createProxy(new Proxy({}, {
             ...Object.fromEntries(
                 Object.getOwnPropertyNames(Reflect)
                     // @ts-expect-error
@@ -76,7 +77,7 @@ function createThemesObject() {
     );
 
     return {
-        themes: storage.createProxy(new Proxy(makeObject(), {
+        themes: storage.createProxy(new Proxy({}, {
             ...Object.fromEntries(
                 Object.getOwnPropertyNames(Reflect)
                     // @ts-expect-error
@@ -262,10 +263,16 @@ export const initVendettaObject = (): any => {
                 return storage.createFileBackend(file);
             }
         },
-        settings,
+        settings: {
+            get debuggerUrl() { return BunnySettings.developer.debuggerUrl; },
+            get developerSettings() { return BunnySettings.developer.enabled; },
+            get enableDiscordDeveloperSettings() { return BunnySettings.general.patchIsStaff; },
+            get safeMode() { return { enabled: BunnySettings.isSafeMode() }; },
+            get enableEvalCommand() { return BunnySettings.developer.evalCommandEnabled; }
+        },
         loader: {
             identity: getVendettaLoaderIdentity() ?? void 0,
-            config: loaderConfig,
+            config: BunnySettings.loader,
         },
         logger: {
             log: (...message: any) => console.log(...message),

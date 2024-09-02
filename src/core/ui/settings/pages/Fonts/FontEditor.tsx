@@ -1,8 +1,10 @@
 import { formatString, Strings } from "@core/i18n";
-import { FontDefinition, fonts, removeFont, saveFont, validateFont } from "@lib/addons/fonts";
+import { Observable } from "@gullerya/object-observer";
+import FontManager from "@lib/addons/fonts";
+import { FontManifest, OldFontDefinition } from "@lib/addons/fonts/types";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
-import { createProxy, useProxy } from "@lib/api/storage";
+import { useObservable } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";
 import { NavigationNative } from "@metro/common";
 import { ActionSheet, BottomSheetTitleHeader, Button, IconButton, Stack, TableRow, TableRowGroup, Text, TextInput } from "@metro/common/components";
@@ -62,11 +64,12 @@ function RevengeFontsExtractor({ fonts, setName }: {
             onPress={() => {
                 if (!fontName) return;
                 try {
-                    validateFont({
-                        spec: 1,
-                        name: fontName,
+                    FontManager.validate({
+                        spec: 3,
+                        id: fontName.toLowerCase(),
+                        display: { name: fontName },
                         main: themeFonts
-                    });
+                    }, null);
 
                     setName(fontName);
                     Object.assign(fonts, themeFonts);
@@ -79,9 +82,10 @@ function RevengeFontsExtractor({ fonts, setName }: {
     </View>;
 }
 
-function JsonFontImporter({ fonts, setName, setSource }: {
+function JsonFontImporter({ fonts, setName, setId, setSource }: {
     fonts: Record<string, string>;
     setName: (name: string) => void;
+    setId: (id: string) => void;
     setSource: (source: string) => void;
 }) {
     const [fontLink, setFontLink] = useState<string>("");
@@ -110,10 +114,11 @@ function JsonFontImporter({ fonts, setName, setSource }: {
 
                 (async () => {
                     const res = await safeFetch(fontLink, { cache: "no-store" });
-                    const json = await res.json() as FontDefinition;
-                    validateFont(json);
+                    const json = await res.json() as FontManifest | OldFontDefinition;
+                    FontManager.validate(json, fontLink);
 
-                    setName(json.name);
+                    setId(json.spec === 3 ? json.id : json.name.toLowerCase());
+                    setName(json.spec === 3 ? json.display.name : json.name);
                     setSource(fontLink);
 
                     Object.assign(fonts, json.main);
@@ -235,24 +240,23 @@ function NewEntryRow({ fontEntry }: { fontEntry: Record<string, string>; }) {
     </View>;
 }
 
-export default function FontEditor(props: {
-    name?: string;
-}) {
-    const [name, setName] = useState<string | undefined>(props.name);
+export default function FontEditor(props: { id?: string; }) {
+    const [id, setId] = useState<string | undefined>(props.id);
+    const [name, setName] = useState<string | undefined>("");
     const [source, setSource] = useState<string>();
     const [importing, setIsImporting] = useState<boolean>(false);
 
-    const memoEntry = useMemo(() => {
-        return createProxy(props.name ? { ...fonts[props.name].main } : {}).proxy;
-    }, [props.name]);
+    const fontEntries = useMemo(() => {
+        return Observable.from(props.id ? { ...FontManager.getManifest(props.id).main } : {});
+    }, [props.id]);
 
-    const fontEntries: Record<string, string> = useProxy(memoEntry);
+    useObservable(fontEntries);
 
     const navigation = NavigationNative.useNavigation();
 
     return <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
         <Stack style={{ paddingVertical: 24, paddingHorizontal: 12 }} spacing={12}>
-            {!props.name
+            {!props.id
                 ? <TableRowGroup title="Import">
                     {/** @ts-ignore */}
                     {ColorManager.getCurrentManifest()?.fonts && <TableRow
@@ -265,7 +269,7 @@ export default function FontEditor(props: {
                         label={"Import font entries from a link"}
                         subLabel={"Directly import from a link with a pre-configured JSON file"}
                         icon={<TableRow.Icon source={findAssetId("LinkIcon")} />}
-                        onPress={() => promptActionSheet(JsonFontImporter, fontEntries, { setName, setSource })}
+                        onPress={() => promptActionSheet(JsonFontImporter, fontEntries, { setName, setSource, setId })}
                     />
                 </TableRowGroup>
                 : <TableRowGroup title="Actions">
@@ -273,23 +277,32 @@ export default function FontEditor(props: {
                         label={"Refetch fonts from source"}
                         icon={<TableRow.Icon source={findAssetId("RetryIcon")} />}
                         onPress={async () => {
-                            const ftCopy = { ...fonts[props.name!] };
-                            await removeFont(props.name!);
-                            await saveFont(ftCopy);
+                            const { sourceUrl } = FontManager.traces[props.id!];
+                            if (!sourceUrl) return;
+
+                            await FontManager.uninstall(props.id!);
+                            await FontManager.install(sourceUrl);
                             navigation.goBack();
                         }}
                     />
                     <TableRow
-                        label={"Delete font pack"}
+                        label="Delete font pack"
                         icon={<TableRow.Icon source={findAssetId("TrashIcon")} />}
-                        onPress={() => removeFont(props.name!).then(() => navigation.goBack())}
+                        onPress={() => FontManager.uninstall(props.id!).then(() => navigation.goBack())}
                     />
                 </TableRowGroup>}
             <TextInput
                 size="lg"
+                value={id}
+                label="Font ID"
+                placeholder="whitney"
+                onChange={setId}
+            />
+            <TextInput
+                size="lg"
                 value={name}
                 label={Strings.FONT_NAME}
-                placeholder={"Whitney"}
+                placeholder="Whitney"
                 onChange={setName}
             />
             <TableRowGroup title="Font Entries">
@@ -322,34 +335,38 @@ export default function FontEditor(props: {
                 <Button
                     size="lg"
                     loading={importing}
-                    disabled={importing || !name || Object.keys(fontEntries).length === 0}
+                    disabled={importing || !name || !id || Object.keys(fontEntries).length === 0}
                     variant="primary"
-                    text={props.name ? "Save" : "Import"}
+                    text={props.id ? "Save" : "Import"}
                     onPress={async () => {
                         if (!name) return;
 
                         setIsImporting(true);
 
-                        if (!props.name) {
-                            saveFont({
-                                spec: 1,
-                                name: name,
+                        if (!props.id) {
+                            FontManager.saveLocally({
+                                spec: 3,
+                                id: name,
                                 main: fontEntries,
-                                __source: source
-                            })
+                                display: { name }
+                            }, { markAsEdited: false })
                                 .then(() => navigation.goBack())
                                 .finally(() => setIsImporting(false));
                         } else {
-                            Object.assign(fonts[props.name], {
-                                name: name,
+                            FontManager.saveLocally({
+                                ...FontManager.getManifest(props.id),
+                                id: id!,
                                 main: fontEntries,
-                                __edited: true
-                            });
+                                display: { ...FontManager.getManifest(props.id).display, name }
+                            }, { markAsEdited: true })
+                                .then(() => navigation.goBack())
+                                .finally(() => setIsImporting(false));
+
                             setIsImporting(false);
                             navigation.goBack();
                         }
                     }}
-                    icon={findAssetId(props.name ? "toast_image_saved" : "DownloadIcon")}
+                    icon={findAssetId(props.id ? "toast_image_saved" : "DownloadIcon")}
                     style={{ marginLeft: 8 }}
                 />
             </View>

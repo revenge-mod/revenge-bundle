@@ -49,7 +49,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                             if (isEnabled) PluginManager.stop(plugin.id);
 
                             try {
-                                await PluginManager.fetch(plugin.id);
+                                await PluginManager.refetch(plugin.id);
                                 showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
                             } catch {
                                 showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
@@ -102,7 +102,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
 
                                 let message: any[];
                                 try {
-                                    purgeStorage(plugin.id);
+                                    purgeStorage(`plugins/storage/${PluginManager.sanitizeId(plugin.id)}.json`);
                                     message = ["CLEAR_DATA_SUCCESSFUL", "trash"];
                                 } catch {
                                     message = ["CLEAR_DATA_FAILED", "Small"];

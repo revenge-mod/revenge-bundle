@@ -1,9 +1,9 @@
 import { formatString, Strings } from "@core/i18n";
+import BunnySettings from "@core/storage/BunnySettings";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
-import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage/new";
+import { useObservable } from "@lib/api/storage";
 import { clipboard } from "@metro/common";
 import { showConfirmationAlert } from "@ui/alerts";
 import { showToast } from "@ui/toasts";
@@ -11,7 +11,7 @@ import { showToast } from "@ui/toasts";
 type ColorDisplayInfo = ReturnType<typeof ColorManager.getDisplayInfo>;
 
 export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>) {
-    useProxy(ColorManager.preferences);
+    useObservable(ColorManager.preferences);
 
     const { authors } = theme;
 
@@ -20,7 +20,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>
             headerLabel={theme.name}
             headerSublabel={authors ? `by ${authors.map(i => i.name).join(", ")}` : ""}
             descriptionLabel={theme.description ?? "No description."}
-            toggleType={!settings.safeMode?.enabled ? "radio" : undefined}
+            toggleType={!BunnySettings.isSafeMode() ? "radio" : undefined}
             toggleValue={() => ColorManager.preferences.selected === theme.id}
             onToggleChange={(v: boolean) => {
                 ColorManager.select(v ? theme.id : null);

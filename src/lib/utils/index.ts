@@ -1,6 +1,5 @@
 export * as constants from "./constants";
 export { cyrb64 } from "./cyrb64";
-export { Emitter } from "./Emitter";
 export { findInReactTree } from "./findInReactTree";
 export { findInTree } from "./findInTree";
 export { hookDefineProperty } from "./hookDefineProperty";
