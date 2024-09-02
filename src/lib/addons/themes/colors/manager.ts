@@ -141,14 +141,19 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         }
     }
 
-    async writeForNative(manifest: ColorManifest, id: string) {
-        id = this.sanitizeId(id);
-        manifest = this.convertToVd(manifest);
-        await writeFile("current-theme.json", JSON.stringify({
-            id,
-            data: manifest,
-            selected: true
-        }));
+    async writeForNative(manifest: ColorManifest | null, id: string | null) {
+        id = id && this.sanitizeId(id);
+        manifest = manifest && this.convertToVd(manifest);
+
+        if (manifest) {
+            await writeFile("current-theme.json", JSON.stringify({
+                id,
+                data: manifest,
+                selected: true
+            }));
+        } else {
+            await writeFile("current-theme.json", "null");
+        }
     }
 
     async fetch(url: string) {
@@ -191,6 +196,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             this.writeForNative(manifest, id);
         } else {
             updateBunnyColor(null, { update: true });
+            this.writeForNative(null, null);
         }
     }
 
