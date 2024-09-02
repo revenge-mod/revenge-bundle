@@ -2,15 +2,16 @@ import { CardWrapper } from "@core/ui/components/AddonCard";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
 import { useProxy } from "@lib/api/storage";
+import { showSheet } from "@lib/ui/sheets";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
-import { clipboard } from "@metro/common";
+import { clipboard, NavigationNative } from "@metro/common";
 import { Button, FlashList, FloatingActionButton, HelpMessage, IconButton, Stack, Text, TextInput } from "@metro/common/components";
 import { ErrorBoundary, Search } from "@ui/components";
 import { isNotNil } from "es-toolkit";
 import fuzzysort from "fuzzysort";
-import { ComponentType, ReactNode, useCallback, useMemo } from "react";
+import { ComponentType, ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Image, ScrollView, View } from "react-native";
 
 const { showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet"));
@@ -35,6 +36,9 @@ interface AddonPageProps<T extends object, I = any> {
         fetchFn?: (url: string) => Promise<void>;
         onPress?: () => void;
     }
+
+    OptionsActionSheetComponent?: ComponentType<any>;
+
     CardComponent: ComponentType<CardWrapper<T>>;
     ListHeaderComponent?: ComponentType<any>;
     ListFooterComponent?: ComponentType<any>;
@@ -112,6 +116,20 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
 
     const [search, setSearch] = React.useState("");
     const [sortFn, setSortFn] = React.useState<((a: T, b: T) => number) | null>(() => null);
+    const navigation = NavigationNative.useNavigation();
+
+    useEffect(() => {
+        if (props.OptionsActionSheetComponent) {
+            navigation.setOptions({
+                headerRight: () => <IconButton
+                    size="sm"
+                    variant="secondary"
+                    icon={findAssetId("MoreHorizontalIcon")}
+                    onPress={() => showSheet("AddonMoreSheet", props.OptionsActionSheetComponent!)}
+                />
+            });
+        }
+    }, [navigation]);
 
     const results = useMemo(() => {
         let values = props.items;
@@ -193,7 +211,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
                         Hmmm... could not find that!
                     </Text>
                 </View>}
-                contentContainerStyle={{ padding: 8, paddingHorizontal: 12 }}
+                contentContainerStyle={{ padding: 8, paddingHorizontal: 12, paddingBottom: 90 }}
                 ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
                 ListFooterComponent={props.ListFooterComponent}
                 renderItem={({ item }: any) => <CardComponent item={item.obj} result={item} />}

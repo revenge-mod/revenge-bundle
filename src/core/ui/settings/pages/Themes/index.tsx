@@ -2,11 +2,14 @@ import { formatString, Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
 import ColorManager from "@lib/addons/themes/colors/manager";
+import { updateBunnyColor } from "@lib/addons/themes/colors/updater";
 import { Author } from "@lib/addons/types";
+import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
 import { useProxy } from "@lib/api/storage";
 import { useProxy as useNewProxy } from "@lib/api/storage/new";
-import { Button } from "@metro/common/components";
+import { ActionSheet, BottomSheetTitleHeader, Button, TableRadioGroup, TableRadioRow, TableRowIcon } from "@metro/common/components";
+import { View } from "react-native";
 
 
 export default function Themes() {
@@ -42,6 +45,39 @@ export default function Themes() {
                 />
             }}
             CardComponent={ThemeCard}
+            OptionsActionSheetComponent={() => {
+                useNewProxy(ColorManager.preferences);
+
+                return <ActionSheet>
+                    <BottomSheetTitleHeader title="Options" />
+                    <View style={{ paddingVertical: 20, gap: 12 }}>
+                        <TableRadioGroup
+                            title="Override Theme Type"
+                            value={ColorManager.preferences.type ?? "auto"}
+                            hasIcons={true}
+                            onChange={(type: "auto" | "dark" | "light") => {
+                                ColorManager.preferences.type = type !== "auto" ? type : undefined;
+                                updateBunnyColor(ColorManager.getCurrentManifest(), { update: true });
+                            }}
+                        >
+                            <TableRadioRow icon={<TableRowIcon source={findAssetId("RobotIcon")} />} label="Auto" value="auto" />
+                            <TableRadioRow icon={<TableRowIcon source={findAssetId("ThemeDarkIcon")} />} label="Dark" value="dark" />
+                            <TableRadioRow icon={<TableRowIcon source={findAssetId("ThemeLightIcon")} />} label="Light" value="light" />
+                        </TableRadioGroup>
+                        <TableRadioGroup
+                            title="Chat Background"
+                            value={ColorManager.preferences.customBackground ?? "shown"}
+                            hasIcons={true}
+                            onChange={(type: "shown" | "hidden") => {
+                                ColorManager.preferences.customBackground = type !== "shown" ? type : null;
+                            }}
+                        >
+                            <TableRadioRow icon={<TableRowIcon source={findAssetId("ImageIcon")} />} label="Show" value={"shown"} />
+                            <TableRadioRow icon={<TableRowIcon source={findAssetId("DenyIcon")} />} label="Hide" value={"hidden"} />
+                        </TableRadioGroup>
+                    </View>
+                </ActionSheet>;
+            }}
         />
     );
 }

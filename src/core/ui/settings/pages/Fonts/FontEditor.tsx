@@ -168,16 +168,12 @@ function promptActionSheet(
     props: any
 ) {
     actionSheet.openLazy(
-        Promise.resolve({
-            default: () => (
-                <ErrorBoundary>
-                    <ActionSheet>
-                        <BottomSheetTitleHeader title="Import Font" />
-                        <Component fonts={fontEntries} {...props} />
-                    </ActionSheet>
-                </ErrorBoundary>
-            )
-        }),
+        () => <ErrorBoundary>
+            <ActionSheet>
+                <BottomSheetTitleHeader title="Import Font" />
+                <Component fonts={fontEntries} {...props} />
+            </ActionSheet>
+        </ErrorBoundary>,
         "FontEditorActionSheet"
     );
 }
@@ -259,7 +255,7 @@ export default function FontEditor(props: {
             {!props.name
                 ? <TableRowGroup title="Import">
                     {/** @ts-ignore */}
-                    {getCurrentTheme()?.data?.fonts && <TableRow
+                    {ColorManager.getCurrentManifest()?.fonts && <TableRow
                         label={Strings.LABEL_EXTRACT_FONTS_FROM_THEME}
                         subLabel={Strings.DESC_EXTRACT_FONTS_FROM_THEME}
                         icon={<TableRow.Icon source={findAssetId("HammerIcon")} />}

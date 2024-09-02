@@ -15,7 +15,8 @@ import { updateBunnyColor } from "./updater";
 
 interface BunnyColorPreferencesStorage {
     selected: string | null;
-    type?: "dark" | "light";
+    type?: "dark" | "light" | null;
+    customBackground: "hidden" | null;
     per: Record<string, { autoUpdate: boolean; }>;
 }
 
@@ -29,7 +30,7 @@ interface BunnyColorInfoStorage {
 export default new class ColorManager extends AddonManager<ColorManifest> {
     preferences = createStorage<BunnyColorPreferencesStorage>(
         "themes/colors/preferences.json",
-        { selected: null, per: {} }
+        { selected: null, per: {}, customBackground: null }
     );
 
     infos = createStorage<BunnyColorInfoStorage>("themes/colors/info.json");
