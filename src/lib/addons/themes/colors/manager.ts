@@ -1,6 +1,7 @@
 import AddonManager from "@lib/addons/AddonManager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
-import { removeFile, writeFile } from "@lib/api/native/fs";
+import { fileExists, removeFile, writeFile } from "@lib/api/native/fs";
+import { isPyonLoader } from "@lib/api/native/loader";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage/new";
 import { invariant } from "@lib/utils";
 import { safeFetch } from "@lib/utils/safeFetch";
@@ -44,6 +45,10 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             initColors(this.getCurrentManifest());
         } else {
             initColors(null);
+        }
+
+        if (isPyonLoader() && await fileExists("../vendetta_theme.json")) {
+            await writeFile("../vendetta_theme.json", "null");
         }
     }
 
