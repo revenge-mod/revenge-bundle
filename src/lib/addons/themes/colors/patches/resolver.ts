@@ -1,5 +1,5 @@
 import { _colorRef } from "@lib/addons/themes/colors/updater";
-import { ThemeManager } from "@lib/api/native/modules";
+import { RTNThemeManager } from "@lib/api/native/rn-modules";
 import { before, instead } from "@lib/api/patcher";
 import { findByProps } from "@metro";
 import { byMutableProp } from "@metro/filters";
@@ -26,7 +26,7 @@ export default function patchDefinitionAndResolver() {
     const unpatches = [
         before("isThemeDark", isThemeModule, callback),
         before("isThemeLight", isThemeModule, callback),
-        before("updateTheme", ThemeManager, callback),
+        before("updateTheme", RTNThemeManager, callback),
         instead("resolveSemanticColor", tokenReference.default.meta ?? tokenReference.default.internal, (args: any[], orig: any) => {
             if (!_colorRef.current) return orig(...args);
             if (args[0] !== _colorRef.key) return orig(...args);

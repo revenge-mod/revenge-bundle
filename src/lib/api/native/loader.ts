@@ -1,70 +1,127 @@
-// @ts-ignore
-const pyonLoaderIdentity = globalThis.__PYON_LOADER__;
-// @ts-ignore
-const vendettaLoaderIdentity = globalThis.__vendetta_loader;
+const {
+    __PYON_LOADER__: bnPayload,
+    __vendetta_loader: vdPayload
+} = globalThis as any;
 
-export interface VendettaLoaderIdentity {
+interface LoaderIdentity {
+    type: "vendetta" | "bunny";
     name: string;
+    version: string;
     features: {
-        loaderConfig?: boolean;
-        devtools?: {
-            prop: string;
-            version: string;
-        },
-        themes?: {
-            prop: string;
+        loaderConfig: {
+            path: string;
         };
+        themes: {
+            stored: any;
+            storePath: string;
+        } | null;
+        rdt: {
+            version: any;
+            exports: any;
+        } | null;
+        sysColors: {
+            palette: any;
+        } | null;
+        fonts: {
+            version: number;
+        } | null;
     };
 }
 
-export function isVendettaLoader() {
-    return vendettaLoaderIdentity != null;
-}
+export const LOADER_IDENTITY: LoaderIdentity = (() => {
+    if (bnPayload) {
+        return {
+            type: "bunny",
+            name: bnPayload.loaderName,
+            version: bnPayload.loaderVersion,
+            features: {
+                loaderConfig: {
+                    path: "loader.json"
+                },
+                themes: bnPayload.hasThemeSupport
+                    ? {
+                        stored: bnPayload.storedTheme,
+                        storePath: "current-theme.json"
+                    }
+                    : null,
+                rdt: {
+                    version: window.__reactDevTools?.version,
+                    exports: window.__reactDevTools?.exports
+                },
+                sysColors: bnPayload.isSysColorsSupported ? {
+                    palette: bnPayload.sysColors
+                } : null,
+                fonts: bnPayload.fontPatch ? {
+                    version: bnPayload.fontPatch,
+                } : null
+            }
+        };
+    } else {
+        return {
+            type: "vendetta",
+            name: vdPayload.name,
+            version: "N/A",
+            features: {
+                loaderConfig: {
+                    path: "../vendetta_loader.json"
+                },
+                themes: vdPayload.features.themes != null ? {
+                    stored: window[vdPayload.features.themes.prop] || null,
+                    storePath: "../vendetta_theme.json"
+                }: null,
+                rdt: vdPayload.features.devtools != null ? {
+                    exports: window[vdPayload.features.devtools.prop] || null,
+                    version: vdPayload.features.devtools.version
+                } : null,
+                sysColors: vdPayload.features.syscolors ? {
+                    palette: window[vdPayload!!.features.syscolors!!.prop] || null
+                }: null,
+                fonts: null
+            }
+        };
+    }
+})();
 
-export function isPyonLoader() {
-    return pyonLoaderIdentity != null;
-}
-
-function polyfillVendettaLoaderIdentity() {
-    if (!isPyonLoader() || isVendettaLoader()) return null;
+export function getVendettaLoaderIdentity() {
+    if (window.__vendetta_loader) return window.__vendetta_loader;
 
     const loader = {
-        name: pyonLoaderIdentity.loaderName,
-        features: {} as Record<string, any>
+        name: bnPayload.loaderName,
+        features: {
+            loaderConfig: LOADER_IDENTITY.features.loaderConfig != null,
+            syscolors: LOADER_IDENTITY.features.sysColors != null ? {
+                prop: "__vendetta_syscolors"
+            } : undefined,
+            themes: LOADER_IDENTITY.features.themes != null ? {
+                prop: "__vendetta_theme"
+            } : undefined
+        }
     };
 
-    if (isLoaderConfigSupported()) loader.features.loaderConfig = true;
-    if (isSysColorsSupported()) {
-        loader.features.syscolors = {
-            prop: "__vendetta_syscolors"
-        };
-
+    if (LOADER_IDENTITY.features.sysColors != null) {
         Object.defineProperty(globalThis, "__vendetta_syscolors", {
-            get: () => getSysColors(),
+            get: () => LOADER_IDENTITY.features.sysColors?.palette,
             configurable: true
         });
     }
-    if (isThemeSupported()) {
-        loader.features.themes = {
-            prop: "__vendetta_theme"
-        };
 
+    if (LOADER_IDENTITY.features.themes != null) {
         Object.defineProperty(globalThis, "__vendetta_theme", {
             get: () => {
-                // PyonXposed only returns keys it parses, making custom keys like Themes+' to gone
-                const id = getStoredTheme()?.id;
-                if (!id) return null;
+                try {
+                    const { default: ColorManager } = require("@lib/addons/themes/colors/manager");
+                    const { selected } = ColorManager.preferences;
+                    const manifest = ColorManager.getCurrentManifest();
+                    if (selected == null || manifest == null) return null;
 
-                const { default: ColorManager } = require("@lib/addons/themes/colors/manager");
-                const { selected } = ColorManager.preferences;
-                const manifest = ColorManager.getCurrentManifest();
-                if (selected == null || manifest == null) return null;
-
-                return {
-                    id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
-                    data: ColorManager.convertToVd(manifest),
-                    selected: true
-                };
+                    return {
+                        id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
+                        data: ColorManager.convertToVd(manifest),
+                        selected: true
+                    };
+                } catch {
+                    return LOADER_IDENTITY.features.themes?.stored;
+                }
             },
             configurable: true
         });
@@ -75,154 +132,5 @@ function polyfillVendettaLoaderIdentity() {
         configurable: true
     });
 
-    return loader as VendettaLoaderIdentity;
-}
-
-export function getLoaderIdentity() {
-    if (isPyonLoader()) {
-        return pyonLoaderIdentity;
-    } else if (isVendettaLoader()) {
-        return getVendettaLoaderIdentity();
-    }
-
-    return null;
-}
-
-export function getVendettaLoaderIdentity(): VendettaLoaderIdentity | null {
-    // @ts-ignore
-    if (globalThis.__vendetta_loader) return globalThis.__vendetta_loader;
-    return polyfillVendettaLoaderIdentity();
-}
-
-// add to __vendetta_loader anyway
-getVendettaLoaderIdentity();
-
-export function getLoaderName() {
-    if (isPyonLoader()) return pyonLoaderIdentity.loaderName;
-    else if (isVendettaLoader()) return vendettaLoaderIdentity.name;
-
-    return "Unknown";
-}
-
-export function getLoaderVersion(): string | null {
-    if (isPyonLoader()) return pyonLoaderIdentity.loaderVersion;
-    return null;
-}
-
-export function isLoaderConfigSupported() {
-    if (isPyonLoader()) {
-        return true;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.loaderConfig;
-    }
-
-    return false;
-}
-
-export function isThemeSupported() {
-    if (isPyonLoader()) {
-        return pyonLoaderIdentity.hasThemeSupport;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.themes != null;
-    }
-
-    return false;
-}
-
-export function getStoredTheme(): any {
-    if (isPyonLoader()) {
-        return pyonLoaderIdentity.storedTheme;
-    } else if (isVendettaLoader()) {
-        const themeProp = vendettaLoaderIdentity!!.features.themes?.prop;
-        if (!themeProp) return null;
-        // @ts-ignore
-        return globalThis[themeProp] || null;
-    }
-
-    return null;
-}
-
-export function getThemeFilePath() {
-    if (isPyonLoader()) {
-        return "pyoncord/current-theme.json";
-    } else if (isVendettaLoader()) {
-        return "vendetta_theme.json";
-    }
-
-    return null;
-}
-
-export function isReactDevToolsPreloaded() {
-    if (isPyonLoader()) {
-        return Boolean(window.__reactDevTools);
-    }
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools != null;
-    }
-
-    return false;
-}
-
-export function getReactDevToolsProp(): string | null {
-    if (!isReactDevToolsPreloaded()) return null;
-
-    if (isPyonLoader()) {
-        window.__pyoncord_rdt = window.__reactDevTools.exports;
-        return "__pyoncord_rdt";
-    }
-
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools!!.prop;
-    }
-
-    return null;
-}
-
-export function getReactDevToolsVersion() {
-    if (!isReactDevToolsPreloaded()) return null;
-
-    if (isPyonLoader()) {
-        return window.__reactDevTools.version || null;
-    }
-    if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.devtools!!.version;
-    }
-
-    return null;
-}
-
-export function isSysColorsSupported() {
-    if (isPyonLoader()) return pyonLoaderIdentity.isSysColorsSupported;
-    else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.syscolors != null;
-    }
-
-    return false;
-}
-
-export function getSysColors() {
-    if (!isSysColorsSupported()) return null;
-    if (isPyonLoader()) {
-        return pyonLoaderIdentity.sysColors;
-    } else if (isVendettaLoader()) {
-        return vendettaLoaderIdentity!!.features.syscolors!!.prop;
-    }
-
-    return null;
-}
-
-export function getLoaderConfigPath() {
-    if (isPyonLoader()) {
-        return "pyoncord/loader.json";
-    } else if (isVendettaLoader()) {
-        return "vendetta_loader.json";
-    }
-
-    return "loader.json";
-}
-
-export function isFontSupported() {
-    if (isPyonLoader()) return pyonLoaderIdentity.fontPatch === 2;
-
-    return false;
+    return loader;
 }

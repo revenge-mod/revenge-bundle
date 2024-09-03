@@ -1,13 +1,14 @@
 import BunnySettings from "@core/storage/BunnySettings";
 import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
-import { getLoaderName, getLoaderVersion } from "@lib/api/native/loader";
-import { BundleUpdaterManager, ClientInfoManager, DeviceManager } from "@lib/api/native/modules";
+import { RTNBundleUpdaterManager, RTNClientInfoManager, RTNDeviceManager } from "@lib/api/native/rn-modules";
 import { after } from "@lib/api/patcher";
 import { logger } from "@lib/utils/logger";
 import { showToast } from "@ui/toasts";
 import { version } from "bunny-build-info";
 import { Platform, type PlatformConstants } from "react-native";
+
+import { LOADER_IDENTITY } from "./native/loader";
 export let socket: WebSocket;
 
 export interface RNConstants extends PlatformConstants {
@@ -35,7 +36,7 @@ export async function toggleSafeMode(to?: boolean) {
     const enabled = BunnySettings.general.safeModeEnabled = (to ?? !BunnySettings.general.safeModeEnabled);
     const currentColor = ColorManager.getCurrentManifest();
     await ColorManager.writeForNative(enabled ? null : currentColor);
-    BundleUpdaterManager.reload();
+    RTNBundleUpdaterManager.reload();
 }
 
 export function connectToDebugger(url: string) {
@@ -97,18 +98,18 @@ export function getDebugInfo() {
          * */
         vendetta: {
             version: versionHash.split("-")[0],
-            loader: getLoaderName(),
+            loader: LOADER_IDENTITY.name,
         },
         bunny: {
             version: versionHash,
             loader: {
-                name: getLoaderName(),
-                version: getLoaderVersion()
+                name: LOADER_IDENTITY.name,
+                version: LOADER_IDENTITY.version
             }
         },
         discord: {
-            version: ClientInfoManager.Version,
-            build: ClientInfoManager.Build,
+            version: RTNClientInfoManager.Version,
+            build: RTNClientInfoManager.Build,
         },
         react: {
             version: React.version,
@@ -143,15 +144,15 @@ export function getDebugInfo() {
                         manufacturer: PlatformConstants.Manufacturer,
                         brand: PlatformConstants.Brand,
                         model: PlatformConstants.Model,
-                        codename: DeviceManager.device
+                        codename: RTNDeviceManager.device
                     }
                 },
                 ios: {
                     device: {
-                        manufacturer: DeviceManager.deviceManufacturer,
-                        brand: DeviceManager.deviceBrand,
-                        model: DeviceManager.deviceModel,
-                        codename: DeviceManager.device
+                        manufacturer: RTNDeviceManager.deviceManufacturer,
+                        brand: RTNDeviceManager.deviceBrand,
+                        model: RTNDeviceManager.deviceModel,
+                        codename: RTNDeviceManager.device
                     }
                 }
             }

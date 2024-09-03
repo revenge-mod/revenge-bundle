@@ -12,7 +12,7 @@ async function initializeBunny() {
         await require("@metro/internals/caches").initMetroCache();
         await require(".").default();
     } catch (e) {
-        const { ClientInfoManager } = require("@lib/api/native/modules");
+        const { ClientInfoManager } = require("@lib/api/native/rn-modules");
         const stack = e instanceof Error ? e.stack : undefined;
 
         console.log(stack ?? e?.toString?.() ?? e);

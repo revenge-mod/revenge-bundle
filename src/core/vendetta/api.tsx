@@ -4,7 +4,7 @@ import ColorManager from "@lib/addons/themes/colors/manager";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
-import { getVendettaLoaderIdentity, isPyonLoader } from "@lib/api/native/loader";
+import { getVendettaLoaderIdentity, LOADER_IDENTITY } from "@lib/api/native/loader";
 import patcher from "@lib/api/patcher";
 import * as utils from "@lib/utils";
 import { cyrb64Hash } from "@lib/utils/cyrb64";
@@ -256,7 +256,7 @@ export const initVendettaObject = (): any => {
             createMMKVBackend: (store: string) => storage.createMMKVBackend(store),
             createFileBackend: (file: string) => {
                 // Redirect path to vendetta_theme.json
-                if (isPyonLoader() && file === "vendetta_theme.json") {
+                if (LOADER_IDENTITY.type === "bunny" && file === "vendetta_theme.json") {
                     file = "pyoncord/current-theme.json";
                 }
 
@@ -283,7 +283,7 @@ export const initVendettaObject = (): any => {
             trace: (...message: any) => console.trace(...message),
             verbose: (...message: any) => console.log(...message)
         },
-        version: debug.versionHash,
+        version: debug.getDebugInfo().vendetta.version,
         unload: () => {
             delete window.vendetta;
         },

@@ -2,7 +2,7 @@
 import { Emitter } from "@core/vendetta/Emitter";
 import { Observable } from "@gullerya/object-observer";
 import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
-import { MMKVManager } from "@lib/api/native/modules";
+import { RTNMMKVManager } from "@lib/api/native/rn-modules";
 
 const storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
 const storagePromiseSymbol = Symbol.for("bunny.storage.promise");
@@ -52,7 +52,7 @@ export async function migrateToNewStorage(
             Promise.resolve(callback(proxy)).then(() => resolvePromise());
         });
     // eslint-disable-next-line no-cond-assign
-    } else if (fromMmkv = await MMKVManager.getItem(oldKey)) {
+    } else if (fromMmkv = await RTNMMKVManager.getItem(oldKey)) {
         await callback(JSON.parse(fromMmkv));
         migratedKeys.push(oldKey);
         return Promise.resolve();

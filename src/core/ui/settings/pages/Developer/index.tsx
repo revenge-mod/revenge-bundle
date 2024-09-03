@@ -4,7 +4,7 @@ import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
 import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger } from "@lib/api/debug";
-import { getReactDevToolsProp, isLoaderConfigSupported, isReactDevToolsPreloaded } from "@lib/api/native/loader";
+import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative } from "@metro/common";
 import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
@@ -53,18 +53,18 @@ export default function Developer() {
                             icon={<TableRow.Icon source={findAssetId("copy")} />}
                             onPress={() => connectToDebugger(BunnySettings.developer.debuggerUrl)}
                         />
-                        {isReactDevToolsPreloaded() && <>
+                        {LOADER_IDENTITY.features.rdt && <>
                             <TableRow
                                 label={Strings.CONNECT_TO_REACT_DEVTOOLS}
                                 icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
-                                onPress={() => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
+                                onPress={() => LOADER_IDENTITY.features.rdt?.exports?.connectToDevTools({
                                     host: BunnySettings.developer.debuggerUrl.split(":")?.[0],
                                     resolveRNStyle: StyleSheet.flatten,
                                 })}
                             />
                         </>}
                     </TableRowGroup>
-                    {isLoaderConfigSupported() && <>
+                    {LOADER_IDENTITY.features.loaderConfig && <>
                         <TableRowGroup title="Loader config">
                             <TableSwitchRow
                                 label={Strings.LOAD_FROM_CUSTOM_URL}

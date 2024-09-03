@@ -1,12 +1,12 @@
-import { FileManager } from "./modules";
+import { RTNFileManager } from "./rn-modules";
 
 /**
  * Removes all files in a directory from the path given
  * @param path Path to the targeted directory
  */
 export async function clearFolder(path: string, prefix = "pyoncord/") {
-    if (typeof FileManager.clearFolder !== "function") throw new Error("'fs.clearFolder' is not supported");
-    return void await FileManager.clearFolder("documents", `${prefix}${path}`);
+    if (typeof RTNFileManager.clearFolder !== "function") throw new Error("'fs.clearFolder' is not supported");
+    return void await RTNFileManager.clearFolder("documents", `${prefix}${path}`);
 }
 
 /**
@@ -14,8 +14,8 @@ export async function clearFolder(path: string, prefix = "pyoncord/") {
  * @param path Path to the file
  */
 export async function removeFile(path: string, prefix = "pyoncord/") {
-    if (typeof FileManager.removeFile !== "function") throw new Error("'fs.removeFile' is not supported");
-    return void await FileManager.removeFile("documents", `${prefix}${path}`);
+    if (typeof RTNFileManager.removeFile !== "function") throw new Error("'fs.removeFile' is not supported");
+    return void await RTNFileManager.removeFile("documents", `${prefix}${path}`);
 }
 
 /**
@@ -23,7 +23,7 @@ export async function removeFile(path: string, prefix = "pyoncord/") {
  * @param path Path to the file
  */
 export async function fileExists(path: string, prefix = "pyoncord/") {
-    return await FileManager.fileExists(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
+    return await RTNFileManager.fileExists(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`);
 }
 
 /**
@@ -33,7 +33,7 @@ export async function fileExists(path: string, prefix = "pyoncord/") {
  */
 export async function writeFile(path: string, data: string, prefix = "pyoncord/"): Promise<void> {
     if (typeof data !== "string") throw new Error("Argument 'data' must be a string");
-    return void await FileManager.writeFile("documents", `${prefix}${path}`, data, "utf8");
+    return void await RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "utf8");
 }
 
 /**
@@ -43,7 +43,7 @@ export async function writeFile(path: string, data: string, prefix = "pyoncord/"
  */
 export async function readFile(path: string, prefix = "pyoncord/"): Promise<string> {
     try {
-        return await FileManager.readFile(`${FileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
+        return await RTNFileManager.readFile(`${RTNFileManager.getConstants().DocumentsDirPath}/${prefix}${path}`, "utf8");
     } catch (err) {
         throw new Error(`An error occured while reading '${path}'`, { cause: err });
     }
@@ -66,7 +66,7 @@ export async function downloadFile(url: string, path: string, prefix = "pyoncord
         data = dataURL.slice(index + 7);
     }
 
-    return void await FileManager.writeFile("documents", `${prefix}${path}`, data, "base64");
+    return void await RTNFileManager.writeFile("documents", `${prefix}${path}`, data, "base64");
 }
 
 // // thanks Rosie, doesnt work though

@@ -2,7 +2,7 @@ import PyoncordIcon from "@assets/icons/pyoncord.png";
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import { findAssetId } from "@lib/api/assets";
-import { isFontSupported, isThemeSupported } from "@lib/api/native/loader";
+import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { registerSection } from "@ui/settings";
 import { version } from "bunny-build-info";
 
@@ -32,14 +32,14 @@ export default function initSettings() {
                 title: () => Strings.THEMES,
                 icon: findAssetId("PaintPaletteIcon"),
                 render: () => import("@core/ui/settings/pages/Themes"),
-                usePredicate: () => isThemeSupported()
+                usePredicate: () => LOADER_IDENTITY.features.themes != null
             },
             {
                 key: "BUNNY_FONTS",
                 title: () => Strings.FONTS,
                 icon: findAssetId("ic_add_text"),
                 render: () => import("@core/ui/settings/pages/Fonts"),
-                usePredicate: () => isFontSupported()
+                usePredicate: () => LOADER_IDENTITY.features.fonts != null
             },
             {
                 key: "BUNNY_DEVELOPER",

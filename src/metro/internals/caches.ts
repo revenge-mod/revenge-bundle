@@ -1,4 +1,4 @@
-import { ClientInfoManager, MMKVManager } from "@lib/api/native/modules";
+import { RTNClientInfoManager, RTNMMKVManager } from "@lib/api/native/rn-modules";
 import { debounce } from "es-toolkit";
 
 import { ModuleFlags, ModulesMapInternal } from "./enums";
@@ -17,7 +17,7 @@ export const getMetroCache = window.__getMetroCache = () => _metroCache;
 function buildInitCache() {
     const cache = {
         _v: CACHE_VERSION,
-        _buildNumber: ClientInfoManager.Build as number,
+        _buildNumber: RTNClientInfoManager.Build as number,
         _modulesCount: Object.keys(window.modules).length,
         exportsIndex: {} as Record<string, number>,
         findIndex: {} as Record<string, ModulesMap | undefined>,
@@ -40,7 +40,7 @@ function buildInitCache() {
 // TODO: Store in file system... is a better idea?
 /** @internal */
 export async function initMetroCache() {
-    const rawCache = await MMKVManager.getItem(BUNNY_METRO_CACHE_KEY);
+    const rawCache = await RTNMMKVManager.getItem(BUNNY_METRO_CACHE_KEY);
     if (rawCache == null) return void buildInitCache();
 
     try {
@@ -49,7 +49,7 @@ export async function initMetroCache() {
             _metroCache = null!;
             throw "cache invalidated; cache version outdated";
         }
-        if (_metroCache._buildNumber !== ClientInfoManager.Build) {
+        if (_metroCache._buildNumber !== RTNClientInfoManager.Build) {
             _metroCache = null!;
             throw "cache invalidated; version mismatch";
         }
@@ -63,7 +63,7 @@ export async function initMetroCache() {
 }
 
 const saveCache = debounce(() => {
-    MMKVManager.setItem(BUNNY_METRO_CACHE_KEY, JSON.stringify(_metroCache));
+    RTNMMKVManager.setItem(BUNNY_METRO_CACHE_KEY, JSON.stringify(_metroCache));
 }, 1000);
 
 function extractExportsFlags(moduleExports: any) {

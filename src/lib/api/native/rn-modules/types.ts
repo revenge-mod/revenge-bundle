@@ -1,12 +1,10 @@
-const nmp = window.nativeModuleProxy;
-
 /**
  * A key-value storage based upon `SharedPreferences` on Android.
  *
  * These types are based on Android though everything should be the same between
  * platforms.
  */
-export interface MMKVManager {
+export interface RTNMMKVManager {
     /**
      * Get the value for the given `key`, or null
      * @param key The key to fetch
@@ -34,7 +32,7 @@ export interface MMKVManager {
     clear: () => void;
 }
 
-export interface FileManager {
+export interface RTNFileManager {
     /**
      * @param path **Full** path to file
      */
@@ -85,13 +83,3 @@ export interface FileManager {
      */
     DocumentsDirPath: string;
 }
-
-export const MMKVManager = nmp.MMKVManager as MMKVManager;
-//! 173.10 renamed this to RTNFileManager.
-export const FileManager = (nmp.DCDFileManager ?? nmp.RTNFileManager) as FileManager;
-//! 173.13 renamed this to RTNClientInfoManager.
-export const ClientInfoManager = nmp.InfoDictionaryManager ?? nmp.RTNClientInfoManager;
-//! 173.14 renamed this to RTNDeviceManager.
-export const DeviceManager = nmp.DCDDeviceManager ?? nmp.RTNDeviceManager;
-export const { BundleUpdaterManager } = nmp;
-export const ThemeManager = nmp.RTNThemeManager ?? nmp.DCDTheme;

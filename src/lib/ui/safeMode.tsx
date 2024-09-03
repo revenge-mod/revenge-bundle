@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import { toggleSafeMode } from "@lib/api/debug";
-import { DeviceManager } from "@lib/api/native/modules";
+import { RTNDeviceManager } from "@lib/api/native/rn-modules";
 import { after } from "@lib/api/patcher";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button, CompatButton, SafeAreaView } from "@metro/common/components";
@@ -43,7 +43,7 @@ const styles = createThemedStyleSheet({
         color: semanticColors.TEXT_MUTED,
     },
     footer: {
-        flexDirection: DeviceManager.isTablet ? "row" : "column",
+        flexDirection: RTNDeviceManager.isTablet ? "row" : "column",
         justifyContent: "flex-end",
         marginVertical: 8,
     },
@@ -145,7 +145,7 @@ export default () => after.await("render", getErrorBoundaryContext(), function (
                             size={button.size ?? "small"}
                             onPress={button.onPress}
                             style={{
-                                ...(DeviceManager.isTablet ? {
+                                ...(RTNDeviceManager.isTablet ? {
                                     flex: `0.${buttons.length}`,
                                     marginLeft: buttonIndex
                                 } : {

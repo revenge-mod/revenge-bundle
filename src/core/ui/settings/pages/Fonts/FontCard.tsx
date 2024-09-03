@@ -3,7 +3,7 @@ import { CardWrapper } from "@core/ui/components/AddonCard";
 import FontManager from "@lib/addons/fonts";
 import { FontManifest } from "@lib/addons/fonts/types";
 import { findAssetId } from "@lib/api/assets";
-import { BundleUpdaterManager } from "@lib/api/native/modules";
+import { RTNBundleUpdaterManager } from "@lib/api/native/rn-modules";
 import { useObservable } from "@lib/api/storage";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
@@ -105,7 +105,7 @@ export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
                                         confirmText: Strings.RELOAD,
                                         cancelText: Strings.CANCEL,
                                         confirmColor: "red",
-                                        onConfirm: BundleUpdaterManager.reload
+                                        onConfirm: RTNBundleUpdaterManager.reload
                                     });
                                 }}
                             />
