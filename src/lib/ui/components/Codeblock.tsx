@@ -1,5 +1,4 @@
-import { constants } from "@metro/common";
-import { semanticColors } from "@ui/color";
+import { constants, tokens } from "@metro/common";
 import { createStyles } from "@ui/styles";
 import { Platform, Text, TextInput } from "react-native";
 
@@ -14,11 +13,11 @@ const useStyles = createStyles({
         fontFamily: constants.Fonts.CODE_NORMAL,
         fontSize: 12,
         textAlignVertical: "center",
-        backgroundColor: semanticColors.BACKGROUND_SECONDARY,
-        color: semanticColors.TEXT_NORMAL,
+        backgroundColor: tokens.colors.BACKGROUND_SECONDARY,
+        color: tokens.colors.TEXT_NORMAL,
         borderWidth: 1,
         borderRadius: 12,
-        borderColor: semanticColors.BACKGROUND_TERTIARY,
+        borderColor: tokens.colors.BACKGROUND_TERTIARY,
         padding: 10,
     },
 });

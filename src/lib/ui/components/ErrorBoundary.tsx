@@ -3,7 +3,7 @@ import { Nullish } from "@lib/utils/types";
 import { React } from "@metro/common";
 import { Button, LegacyFormText } from "@metro/common/components";
 import { Codeblock } from "@ui/components";
-import { createThemedStyleSheet } from "@ui/styles";
+import { createLegacyClassComponentStyles, ThemeContext } from "@ui/styles";
 import { ScrollView } from "react-native";
 
 type ErrorBoundaryState = {
@@ -17,7 +17,7 @@ export interface ErrorBoundaryProps {
     children: JSX.Element | Nullish | (JSX.Element | Nullish)[];
 }
 
-const styles = createThemedStyleSheet({
+const getStyles = createLegacyClassComponentStyles({
     view: {
         flex: 1,
         flexDirection: "column",
@@ -36,9 +36,11 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
         this.state = { hasErr: false };
     }
 
+    static contextType = ThemeContext;
     static getDerivedStateFromError = (error: Error) => ({ hasErr: true, error });
 
     render() {
+        const styles = getStyles(this.context);
         if (!this.state.hasErr) return this.props.children;
 
         return (

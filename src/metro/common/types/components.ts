@@ -1,5 +1,5 @@
 import { Nullish } from "@lib/utils/types";
-import { DiscordTextStyles } from "@ui/types";
+import { TextStyles, ThemeColors } from "@ui/types";
 import { MutableRefObject, ReactNode, RefObject } from "react";
 import type * as RN from "react-native";
 import { ImageSourcePropType, PressableProps } from "react-native";
@@ -144,8 +144,8 @@ interface ActionSheetProps {
 export type ActionSheet = React.FC<React.PropsWithChildren<ActionSheetProps>>;
 
 type TextProps = React.ComponentProps<typeof RN.Text> & {
-    variant?: DiscordTextStyles;
-    color?: string; // TODO: type this
+    variant?: TextStyles;
+    color?: ThemeColors;
     lineClamp?: number;
     maxFontSizeMultiplier?: number;
     style?: RN.TextStyle;

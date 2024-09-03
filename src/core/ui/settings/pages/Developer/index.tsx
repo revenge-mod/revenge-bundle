@@ -6,10 +6,9 @@ import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger } from "@lib/api/debug";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { lazyDestructure } from "@lib/utils/lazy";
-import { NavigationNative } from "@metro/common";
+import { NavigationNative, tokens } from "@metro/common";
 import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
 import { findByProps } from "@metro/wrappers";
-import { semanticColors } from "@ui/color";
 import { ErrorBoundary } from "@ui/components";
 import { createStyles, TextStyleSheet } from "@ui/styles";
 import { ScrollView, StyleSheet } from "react-native";
@@ -22,7 +21,7 @@ const RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedd
 const useStyles = createStyles({
     leadingText: {
         ...TextStyleSheet["heading-md/semibold"],
-        color: semanticColors.TEXT_MUTED,
+        color: tokens.colors.TEXT_MUTED,
         marginRight: -4
     },
 });

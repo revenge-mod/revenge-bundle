@@ -1,8 +1,8 @@
 import { findAssetId } from "@lib/api/assets";
 import { lazyDestructure } from "@lib/utils/lazy";
+import { tokens } from "@metro/common";
 import { Card, FormRadio, FormSwitch, IconButton, LegacyFormRow, Stack, Text } from "@metro/common/components";
 import { findByProps } from "@metro/wrappers";
-import { semanticColors } from "@ui/color";
 import { createStyles, TextStyleSheet } from "@ui/styles";
 import { TouchableOpacity, View } from "react-native";
 
@@ -12,7 +12,7 @@ const { showSimpleActionSheet } = lazyDestructure(() => findByProps("showSimpleA
 // TODO: These styles work weirdly. iOS has cramped text, Android with low DPI probably does too. Fix?
 const useStyles = createStyles({
     card: {
-        backgroundColor: semanticColors?.CARD_SECONDARY_BG,
+        backgroundColor: tokens.colors.CARD_SECONDARY_BG,
         borderRadius: 12,
         overflow: "hidden"
     },
@@ -32,15 +32,15 @@ const useStyles = createStyles({
     },
     headerLabel: {
         ...TextStyleSheet["heading-md/semibold"],
-        color: semanticColors.TEXT_NORMAL,
+        color: tokens.colors.TEXT_NORMAL,
     },
     headerSubtitle: {
         ...TextStyleSheet["text-md/semibold"],
-        color: semanticColors.TEXT_MUTED,
+        color: tokens.colors.TEXT_MUTED,
     },
     descriptionLabel: {
         ...TextStyleSheet["text-md/semibold"],
-        color: semanticColors.TEXT_NORMAL,
+        color: tokens.colors.TEXT_NORMAL,
     },
     actions: {
         flexDirection: "row-reverse",
@@ -48,7 +48,7 @@ const useStyles = createStyles({
         gap: 5
     },
     iconStyle: {
-        tintColor: semanticColors.LOGO_PRIMARY,
+        tintColor: tokens.colors.LOGO_PRIMARY,
         opacity: 0.2,
         height: 64,
         width: 64,

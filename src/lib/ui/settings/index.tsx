@@ -27,7 +27,7 @@ export function registerSection(section: { name: string; items: RowConfig[]; }) 
 /**
  * @internal
  */
-export function patchSettings() {
+export function patchSettingsSection() {
     const unpatches = new Array<() => boolean>;
 
     patchPanelUI(unpatches);

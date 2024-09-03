@@ -1,4 +1,5 @@
 import BunnySettings from "@core/storage/BunnySettings";
+import * as alerts from "@core/vendetta/ui/alerts";
 import PluginManager from "@lib/addons/plugins/manager";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import * as assets from "@lib/api/assets";
@@ -6,16 +7,14 @@ import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
 import { getVendettaLoaderIdentity, LOADER_IDENTITY } from "@lib/api/native/loader";
 import patcher from "@lib/api/patcher";
+import { isSemanticColor, resolveSemanticColor } from "@lib/ui/styles";
 import * as utils from "@lib/utils";
 import { cyrb64Hash } from "@lib/utils/cyrb64";
 import * as metro from "@metro";
 import * as common from "@metro/common";
 import { Forms } from "@metro/common/components";
 import * as commonComponents from "@metro/common/components";
-import * as alerts from "@ui/alerts";
-import * as color from "@ui/color";
 import * as components from "@ui/components";
-import { createThemedStyleSheet } from "@ui/styles";
 import * as toasts from "@ui/toasts";
 import { omit } from "es-toolkit";
 import { memoize } from "lodash";
@@ -171,7 +170,19 @@ export const initVendettaObject = (): any => {
                 url: common.url,
                 toasts: common.toasts,
                 stylesheet: {
-                    createThemedStyleSheet
+                    createThemedStyleSheet: function createThemedStyleSheet(sheet: any) {
+                        for (const key in sheet) {
+                            // @ts-ignore
+                            sheet[key] = new Proxy(StyleSheet.flatten(sheet[key]), {
+                                get(target, prop, receiver) {
+                                    const res = Reflect.get(target, prop, receiver);
+                                    return isSemanticColor(res) ? resolveSemanticColor(res) : res;
+                                }
+                            });
+                        }
+
+                        return sheet;
+                    }
                 },
                 clipboard: common.clipboard,
                 assets: common.assets,
@@ -258,8 +269,8 @@ export const initVendettaObject = (): any => {
                 getAssetByID: (id: number) => assets.findAsset(id),
                 getAssetIDByName: (name: string) => assets.findAssetId(name)
             },
-            semanticColors: color.semanticColors,
-            rawColors: color.rawColors
+            semanticColors: common.tokens.colors,
+            rawColors: common.tokens.unsafe_Colors
         },
         plugins: createPluginsObject(),
         themes: createThemesObject(),

@@ -4,7 +4,7 @@ import { findAssetId } from "@lib/api/assets";
 import { purgeStorage } from "@lib/api/storage";
 import { clipboard } from "@metro/common";
 import { ActionSheet, ActionSheetRow, Button, Stack, TableRow, Text } from "@metro/common/components";
-import { showConfirmationAlert } from "@ui/alerts";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import { hideSheet } from "@ui/sheets";
 import { showToast } from "@ui/toasts";
 import { ScrollView, View } from "react-native";

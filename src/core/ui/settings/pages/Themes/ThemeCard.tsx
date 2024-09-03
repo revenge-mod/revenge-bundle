@@ -5,7 +5,7 @@ import ColorManager from "@lib/addons/themes/colors/manager";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
 import { clipboard } from "@metro/common";
-import { showConfirmationAlert } from "@ui/alerts";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import { showToast } from "@ui/toasts";
 
 type ColorDisplayInfo = ReturnType<typeof ColorManager.getDisplayInfo>;

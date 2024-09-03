@@ -1,4 +1,4 @@
-import initFixes from "@core/fixes";
+import patchErrorBoundary from "@core/debug/patches/patchErrorBoundary";
 import { initFetchI18nStrings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import initSettings from "@core/ui/settings";
@@ -10,8 +10,7 @@ import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
 import { logger } from "@lib/utils/logger";
-import initSafeMode from "@ui/safeMode";
-import { patchSettings } from "@ui/settings";
+import { patchSettingsSection } from "@ui/settings";
 
 import * as lib from "./lib";
 
@@ -24,14 +23,13 @@ export default async () => {
     // Load everything in parallel
     await Promise.all([
         injectFluxInterceptor(),
-        patchSettings(),
+        patchSettingsSection(),
         patchLogHook(),
         patchCommands(),
         initVendettaObject(),
         initFetchI18nStrings(),
         initSettings(),
-        initFixes(),
-        initSafeMode()
+        patchErrorBoundary()
     ]).then(
         // Push them all to unloader
         u => u.forEach(f => f && lib.unload.push(f))

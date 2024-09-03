@@ -1,8 +1,9 @@
 import { formatString, Strings } from "@core/i18n";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import PluginManager from "@lib/addons/plugins/manager";
-import { installTheme } from "@lib/addons/themes";
+import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
-import { isThemeSupported } from "@lib/api/native/loader";
+import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { after, instead } from "@lib/api/patcher";
 import { THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -10,7 +11,6 @@ import { channels, url } from "@metro/common";
 import { byMutableProp } from "@metro/filters";
 import { findExports } from "@metro/finders";
 import { findByProps, findByPropsLazy } from "@metro/wrappers";
-import { showConfirmationAlert } from "@ui/alerts";
 import { showToast } from "@ui/toasts";
 
 const showSimpleActionSheet = findExports(byMutableProp("showSimpleActionSheet"));
@@ -22,13 +22,13 @@ const { getChannel } = lazyDestructure(() => findByProps("getChannel"));
 function typeFromUrl(url: string) {
     if (url.startsWith(VD_PROXY_PREFIX)) {
         return "plugin";
-    } else if (url.endsWith(".json") && isThemeSupported()) {
+    } else if (url.endsWith(".json") && LOADER_IDENTITY.features.themes) {
         return "theme";
     }
 }
 
 function installWithToast(type: "plugin" | "theme", url: string) {
-    (type === "plugin" ? PluginManager.install.bind(PluginManager) : installTheme)(url)
+    (type === "plugin" ? PluginManager.install.bind(PluginManager) : ColorManager.install.bind(ColorManager))(url)
         .then(() => {
             showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
         })

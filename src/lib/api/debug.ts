@@ -1,7 +1,5 @@
-import BunnySettings from "@core/storage/BunnySettings";
-import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
-import { RTNBundleUpdaterManager, RTNClientInfoManager, RTNDeviceManager } from "@lib/api/native/rn-modules";
+import { RTNClientInfoManager, RTNDeviceManager } from "@lib/api/native/rn-modules";
 import { after } from "@lib/api/patcher";
 import { logger } from "@lib/utils/logger";
 import { showToast } from "@ui/toasts";
@@ -27,16 +25,6 @@ export interface RNConstants extends PlatformConstants {
     interfaceIdiom: string;
     osVersion: string;
     systemName: string;
-}
-
-/**
- * @internal
- */
-export async function toggleSafeMode(to?: boolean) {
-    const enabled = BunnySettings.general.safeModeEnabled = (to ?? !BunnySettings.general.safeModeEnabled);
-    const currentColor = ColorManager.getCurrentManifest();
-    await ColorManager.writeForNative(enabled ? null : currentColor);
-    RTNBundleUpdaterManager.reload();
 }
 
 export function connectToDebugger(url: string) {

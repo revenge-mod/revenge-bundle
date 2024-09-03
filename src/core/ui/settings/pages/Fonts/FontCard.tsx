@@ -10,7 +10,7 @@ import { findByProps } from "@metro";
 import { NavigationNative, tokens } from "@metro/common";
 import { Button, Card, IconButton, Stack, Text } from "@metro/common/components";
 import * as Skia from "@shopify/react-native-skia";
-import { showConfirmationAlert } from "@ui/alerts";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import { TextStyleSheet } from "@ui/styles";
 import { useMemo } from "react";
 import { View } from "react-native";
