@@ -6,9 +6,6 @@ export const VD_PROXY_PREFIX = "https://vd-plugins.github.io/proxy";
 export const BUNNY_PROXY_PREFIX = "https://bn-plugins.github.io/vd-proxy";
 export const OLD_BUNNY_PROXY_PREFIX = "https://bunny-mod.github.io/plugins-proxy";
 
-export const OFFICIAL_PLUGINS_REPO_URL = "https://bn-plugins.github.io/dist/repo.json";
-
-// These are still Vendetta's
-export const DISCORD_SERVER_ID = "1015931589865246730";
-export const PLUGINS_CHANNEL_ID = "1091880384561684561";
-export const THEMES_CHANNEL_ID = "1091880434939482202";
+export const DISCORD_SERVER_ID = "1196075698301968455";
+export const PLUGINS_CHANNEL_ID = "1235651661599342705";
+export const THEMES_CHANNEL_ID = "1235652735089643662";

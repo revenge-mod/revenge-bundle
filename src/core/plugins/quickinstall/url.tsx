@@ -5,7 +5,7 @@ import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { after, instead } from "@lib/api/patcher";
-import { THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
+import { THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { channels, url } from "@metro/common";
 import { byMutableProp } from "@metro/filters";

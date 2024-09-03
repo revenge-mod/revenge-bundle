@@ -40,7 +40,7 @@ function treeSearch(tree: SearchTree, filter: SearchFilter, opts: Required<FindI
     }
 }
 
-export const findInTree = (
+export default function findInTree(
     tree: SearchTree,
     filter: SearchFilter,
     {
@@ -48,4 +48,6 @@ export const findInTree = (
         ignore = [],
         maxDepth = 100
     }: FindInTreeOptions = {},
-): any | undefined => treeSearch(tree, filter, { walkable, ignore, maxDepth }, 0);
+): any | undefined {
+    return treeSearch(tree, filter, { walkable, ignore, maxDepth }, 0);
+}

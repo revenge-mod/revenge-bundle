@@ -3,7 +3,7 @@ import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync } from "@lib/api/storage";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { DiscordLogger } from "@lib/utils/logger";
-import { safeFetch } from "@lib/utils/safeFetch";
+import safeFetch from "@lib/utils/safeFetch";
 import { omit } from "lodash";
 
 import { createBunnyPluginAPI } from "./api";

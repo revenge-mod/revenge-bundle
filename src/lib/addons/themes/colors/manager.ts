@@ -5,7 +5,7 @@ import { fileExists, removeFile, writeFile } from "@lib/api/native/fs";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage";
 import { invariant } from "@lib/utils";
-import { safeFetch } from "@lib/utils/safeFetch";
+import safeFetch from "@lib/utils/safeFetch";
 import chroma from "chroma-js";
 import { omit } from "lodash";
 

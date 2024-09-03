@@ -5,7 +5,7 @@ import { PyoncordIcon } from "@core/ui/settings";
 import About from "@core/ui/settings/pages/General/About";
 import { findAssetId } from "@lib/api/assets";
 import { getDebugInfo } from "@lib/api/debug";
-import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
+import { DISCORD_SERVER, GITHUB } from "@lib/constants";
 import { NavigationNative, url } from "@metro/common";
 import { Stack, TableRow, TableRowGroup, TableSwitchRow } from "@metro/common/components";
 import { NativeModules, ScrollView } from "react-native";
