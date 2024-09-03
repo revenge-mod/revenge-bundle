@@ -1,6 +1,6 @@
 import AddonManager from "@lib/addons/AddonManager";
 import { downloadFile, fileExists, removeFile, writeFile } from "@lib/api/native/fs";
-import { awaitStorage, createStorage, getPreloadedStorage, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage";
+import { awaitStorage, createStorage, migrateToNewStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { omit } from "es-toolkit";
@@ -9,8 +9,10 @@ import { FontManifest, FontPreferences, FontTraces, OldFontDefinition } from "./
 
 export default new class FontManager extends AddonManager<FontManifest> {
     preferences = createStorage<FontPreferences>("themes/fonts/preferences.json", {
-        selected: null,
-        per: {}
+        dflt: {
+            selected: null,
+            per: {}
+        }
     });
     traces = createStorage<FontTraces>("themes/fonts/traces.json");
 
@@ -64,7 +66,7 @@ export default new class FontManager extends AddonManager<FontManifest> {
     }
 
     getManifest(id: string): FontManifest {
-        return createStorage(`themes/fonts/manifests/${id}.json`, null);
+        return createStorage(`themes/fonts/manifests/${id}.json`, { nullIfEmpty: true });
     }
 
     async writeToNative(manifest: FontManifest | null) {
@@ -171,7 +173,8 @@ export default new class FontManager extends AddonManager<FontManifest> {
         if (id && !this.traces[id] || typeof id !== "string") throw new Error(`Unknown font '${id}'`);
 
         this.preferences.selected = id;
-        await this.writeToNative(id != null ? getPreloadedStorage(`themes/fonts/manifests/${id}.json`) : null);
+
+        await this.writeToNative(id != null ? this.getManifest(id) : null);
     }
 
     async uninstall(id: string): Promise<void> {

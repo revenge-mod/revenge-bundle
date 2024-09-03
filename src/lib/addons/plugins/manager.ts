@@ -47,7 +47,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         return migrateToNewStorage(oldKey, async storage => {
             for (const plugin of Object.values<VendettaPlugin>(storage)) {
                 const sanitizedId = this.sanitizeId(plugin.id);
-                const pluginStorage = await createStorageAsync(`../vd_mmkv/${sanitizedId}`, null);
+                const pluginStorage = await createStorageAsync(`../vd_mmkv/${sanitizedId}`, { nullIfEmpty: true });
 
                 await updateStorageAsync(
                     `plugins/manifests/${sanitizedId}.json`,

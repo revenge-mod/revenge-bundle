@@ -31,7 +31,9 @@ interface BunnyColorInfoStorage {
 export default new class ColorManager extends AddonManager<ColorManifest> {
     preferences = createStorage<BunnyColorPreferencesStorage>(
         "themes/colors/preferences.json",
-        { selected: null, per: {}, customBackground: null }
+        {
+            dflt: { selected: null, per: {}, customBackground: null }
+        }
     );
 
     infos = createStorage<BunnyColorInfoStorage>("themes/colors/info.json");
@@ -145,7 +147,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
 
     getDisplayInfo(id: string): BunnyPluginManifest["display"] & { id: string } {
         id = this.sanitizeId(id);
-        const manifest = createStorage<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
+        const manifest = createStorage<ColorManifest>(`themes/colors/data/${id}.json`, { nullIfEmpty: true });
         if (!manifest) throw new Error(`Theme manifest of '${id}' was not stored`);
 
         if (manifest.spec === 3) {
@@ -208,7 +210,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         this.preferences.selected = id;
 
         if (id) {
-            let manifest = await createStorageAsync<ColorManifest | null>(`themes/colors/data/${id}.json`, null);
+            let manifest = await createStorageAsync<ColorManifest>(`themes/colors/data/${id}.json`, { nullIfEmpty: true });
             manifest ??= await this.fetch(this.infos[id].sourceUrl);
             updateBunnyColor(manifest, { update: true });
             await this.writeForNative(manifest);

@@ -1,7 +1,7 @@
 import "../global.d.ts"; // eslint-disable-line import-alias/import-alias
 import "../modules.d.ts"; // eslint-disable-line import-alias/import-alias
 
-export * as fonts from "./addons/fonts/index.js";
+export * as fonts from "./addons/fonts";
 export * as plugins from "./addons/plugins";
 export * as themes from "./addons/themes";
 export * as api from "./api";

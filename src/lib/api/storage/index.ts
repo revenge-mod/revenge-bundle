@@ -3,28 +3,25 @@ import { Emitter } from "@core/vendetta/Emitter";
 import { Observable } from "@gullerya/object-observer";
 import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { MMKVManager } from "@lib/api/native/modules";
-interface StorageBackend<T = unknown> {
-    get: () => Promise<T>;
-    set: (data: T) => Promise<void>;
-    exists: () => Promise<boolean>;
-}
 
 const storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
 const storagePromiseSymbol = Symbol.for("bunny.storage.promise");
 
 const _loadedPath = {} as Record<string, any>;
 
-function createFileBackend<T = any>(filePath: string): StorageBackend<T> {
+function createFileBackend<T extends object>(filePath: string) {
     return {
         get: async () => {
             try {
-                return JSON.parse(await readFile(filePath));
+                return JSON.parse(await readFile(filePath)) as T;
             } catch (e) {
                 throw new Error(`Failed to parse storage from '${filePath}'`, { cause: e });
             }
         },
-        set: async data => {
-            if (!data || typeof data !== "object") throw new Error("data needs to be an object");
+        set: async (data: T) => {
+            if (!data || typeof data !== "object") {
+                throw new Error("data needs to be an object");
+            }
             await writeFile(filePath, JSON.stringify(data));
         },
         exists: async () => {
@@ -44,14 +41,14 @@ export async function migrateToNewStorage(
     let resolvePromise: () => void;
 
     // @ts-expect-error - assigning to migrateToNewStorage._migrated
-    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".storage-v1-migrated", []);
+    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".storage-v1-migrated", { dflt: [] });
 
     if (migratedKeys.includes(oldKey)) return;
 
     let fromMmkv: string | null;
     const sanitizedOldKey = oldKey.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
     if (await fileExists(`../vd_mmkv/${sanitizedOldKey}`)) {
-        createStorageAndCallback(`../vd_mmkv/${sanitizedOldKey}`, {}, proxy => {
+        createStorageAndCallback(`../vd_mmkv/${sanitizedOldKey}`, proxy => {
             Promise.resolve(callback(proxy)).then(() => resolvePromise());
         });
     // eslint-disable-next-line no-cond-assign
@@ -70,7 +67,6 @@ export async function migrateToNewStorage(
 export function useObservable(...observables: Observable[]) {
     if (observables.some((o: any) => o?.[storageInitErrorSymbol])) throw new Error(
         "An error occured while initializing the storage",
-        { cause: (observables.find((o: any) => o?.[storageInitErrorSymbol]) as any)[storageInitErrorSymbol] }
     );
 
     if (observables.some(o => !Observable.isObservable(o))) {
@@ -90,12 +86,19 @@ export function useObservable(...observables: Observable[]) {
     }, []);
 }
 
-export async function updateStorageAsync<T>(path: string, value: T): Promise<void> {
+export async function updateStorageAsync<T extends object = {}>(path: string, value: T): Promise<void> {
     _loadedPath[path] = value;
     await createFileBackend<T>(path).set(value);
 }
 
-export function createStorageAndCallback<T>(path: string, dflt = {} as T, cb: (proxy: T) => void) {
+export function createStorageAndCallback<T extends object = {}>(
+    path: string,
+    cb: (proxy: T) => void,
+    {
+        dflt = {} as T,
+        nullIfEmpty = false
+    } = {}
+) {
     let emitter: Emitter;
 
     const callback = (data: any) => {
@@ -132,8 +135,12 @@ export function createStorageAndCallback<T>(path: string, dflt = {} as T, cb: (p
     else {
         backend.exists().then(async exists => {
             if (!exists) {
-                await backend.set(dflt);
-                callback(dflt);
+                if (nullIfEmpty) {
+                    callback(null);
+                } else {
+                    await backend.set(dflt);
+                    callback(dflt);
+                }
             } else {
                 callback(await backend.get());
             }
@@ -141,23 +148,31 @@ export function createStorageAndCallback<T>(path: string, dflt = {} as T, cb: (p
     }
 }
 
-export async function createStorageAsync<T>(path: string, dflt = {} as T): Promise<T> {
-    return new Promise(r => createStorageAndCallback(path, dflt, r));
+type StorageOptions<T extends object> = Parameters<typeof createStorageAndCallback<T>>[2];
+
+export async function createStorageAsync<T extends object = {}>(
+    path: string,
+    opts: StorageOptions<T> = {}
+): Promise<T> {
+    return new Promise(r => createStorageAndCallback(path, r, opts));
 }
 
-export const createStorage = <T>(path: string, dflt = {} as T): T & { [key: symbol]: any; } => {
+export const createStorage = <T extends object = {}>(
+    path: string,
+    opts: StorageOptions<T> = {}
+): T => {
     const promise = new Promise(r => resolvePromise = r);
     let awaited: any, resolved: boolean, error: any, resolvePromise: (val?: unknown) => void;
 
-    createStorageAndCallback(path, dflt, proxy => {
+    createStorageAndCallback(path, proxy => {
         awaited = proxy;
         resolved = true;
         resolvePromise();
-    });
+    }, opts);
 
     const check = () => {
         if (resolved) return true;
-        throw new Error("Attempted to access storage without initializing");
+        throw new Error(`Attempted to access storage without initializing: ${path}`);
     };
 
     return new Proxy({} as any, {
@@ -176,17 +191,16 @@ export const createStorage = <T>(path: string, dflt = {} as T): T & { [key: symb
     });
 };
 
-export async function preloadStorageIfExists(path: string) {
-    if (_loadedPath[path]) return _loadedPath[path];
+export async function preloadStorageIfExists(path: string): Promise<boolean> {
+    if (_loadedPath[path]) return true;
 
     const backend = createFileBackend(path);
     if (await backend.exists()) {
-        return _loadedPath[path] = await backend.get();
+        _loadedPath[path] = await backend.get();
+        return false;
     }
-}
 
-export function getPreloadedStorage<T>(path: string): T {
-    return _loadedPath[path];
+    return true;
 }
 
 export async function purgeStorage(path: string) {
