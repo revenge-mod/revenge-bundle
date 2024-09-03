@@ -22,7 +22,7 @@ for (const key in metroModules) {
     const id = Number(key);
     const metroModule = metroModules[id];
 
-    const cache = getMetroCache().exportsIndex[id];
+    const cache = getMetroCache().flagsIndex[id];
     if (cache & ModuleFlags.BLACKLISTED) {
         blacklistModule(id);
         continue;
@@ -85,7 +85,7 @@ function onModuleRequire(moduleExports: any, id: Metro.ModuleID) {
         moduleExports.default.track = () => Promise.resolve();
 
     if (moduleExports.registerAsset) {
-        require("@lib/api/assets").patchAssets(moduleExports);
+        require("@lib/api/assets/patches").patchAssets(moduleExports);
     }
 
     // There are modules registering the same native component

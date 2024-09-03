@@ -3,7 +3,7 @@ import { debounce } from "es-toolkit";
 
 import { ModuleFlags, ModulesMapInternal } from "./enums";
 
-const CACHE_VERSION = 52;
+const CACHE_VERSION = 55;
 const BUNNY_METRO_CACHE_KEY = "__bunny_metro_cache_key__";
 
 type ModulesMap = {
@@ -19,10 +19,9 @@ function buildInitCache() {
         _v: CACHE_VERSION,
         _buildNumber: RTNClientInfoManager.Build as number,
         _modulesCount: Object.keys(window.modules).length,
-        exportsIndex: {} as Record<string, number>,
+        flagsIndex: {} as Record<string, number>,
         findIndex: {} as Record<string, ModulesMap | undefined>,
-        polyfillIndex: {} as Record<string, ModulesMap | undefined>,
-        assetsIndex: {} as Record<string, ModulesMap | undefined>
+        polyfillIndex: {} as Record<string, ModulesMap | undefined>
     } as const;
 
     // Force load all modules so useful modules are pre-cached. Delay by a second
@@ -77,13 +76,18 @@ function extractExportsFlags(moduleExports: any) {
 export function indexExportsFlags(moduleId: number, moduleExports: any) {
     const flags = extractExportsFlags(moduleExports);
     if (flags && flags !== ModuleFlags.EXISTS) {
-        _metroCache.exportsIndex[moduleId] = flags;
+        _metroCache.flagsIndex[moduleId] = flags;
     }
 }
 
 /** @internal */
 export function indexBlacklistFlag(id: number) {
-    _metroCache.exportsIndex[id] |= ModuleFlags.BLACKLISTED;
+    _metroCache.flagsIndex[id] |= ModuleFlags.BLACKLISTED;
+}
+
+/** @internal */
+export function indexAssetModuleFlag(id: number) {
+    _metroCache.flagsIndex[id] |= ModuleFlags.ASSET;
 }
 
 /** @internal */
@@ -123,12 +127,4 @@ export function getPolyfillModuleCacher(name: string) {
             saveCache();
         }
     };
-}
-
-/** @internal */
-export function indexAssetName(name: string, moduleId: number) {
-    if (!isNaN(moduleId)) {
-        (_metroCache.assetsIndex[name] ??= {})[moduleId] = 1;
-        saveCache();
-    }
 }

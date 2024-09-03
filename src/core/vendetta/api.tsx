@@ -233,7 +233,26 @@ export const initVendettaObject = (): any => {
                 showInputAlert: (options: any) => alerts.showInputAlert(options)
             },
             assets: {
-                all: assets.assetsMap,
+                all: new Proxy<any>({}, {
+                    get(cache, p) {
+                        if (typeof p !== "string") return undefined;
+                        if (cache[p]) return cache[p];
+
+                        for (const asset of assets.iterateAssets()) {
+                            if (asset.name) return cache[p] = asset;
+                        }
+                    },
+                    ownKeys(cache) {
+                        const keys = new Set<string>();
+
+                        for (const asset of assets.iterateAssets()) {
+                            cache[asset.name] = asset;
+                            keys.add(asset.name);
+                        }
+
+                        return [...keys];
+                    },
+                }),
                 find: (filter: (a: any) => boolean) => assets.findAsset(filter),
                 getAssetByName: (name: string) => assets.findAsset(name),
                 getAssetByID: (id: number) => assets.findAsset(id),
