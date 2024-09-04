@@ -12,7 +12,7 @@ export * as utils from "./utils";
 export * as metro from "@metro";
 
 import * as fonts from "./addons/fonts";
-import * as plugins from "./addons/plugins/manager.js";
+import * as plugins from "./addons/plugins";
 import * as themes from "./addons/themes";
 import { proxyLazy } from "./utils/lazy";
 

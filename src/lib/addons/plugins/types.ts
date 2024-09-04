@@ -1,6 +1,6 @@
+import { logger } from "@core/logger";
 import { BunnyManifest } from "@lib/addons/types";
 import { createStorage } from "@lib/api/storage";
-import { Logger } from "@core/logger";
 
 export interface PluginRepo {
     [id: string]: {
@@ -22,7 +22,7 @@ export interface PluginSettingsStorage {
     };
 }
 
-export interface PluginInformationStorage {
+export interface PluginTracesStorage {
     [pluginId: string]: {
         sourceUrl: string;
         installTime: string | null;
@@ -51,9 +51,9 @@ export interface PluginInstanceInternal extends PluginInstance {
 }
 
 export interface BunnyPluginProperty {
-    readonly logger: Logger;
+    readonly logger: typeof logger;
     readonly manifest: BunnyPluginManifestInternal;
-    createStorage<T>(): ReturnType<typeof createStorage<T>>;
+    createStorage<T extends object>(): ReturnType<typeof createStorage<T>>;
 }
 
 export type BunnyPluginObject = typeof window.bunny & {

@@ -74,8 +74,8 @@ export default function Plugins() {
         resolveItem={unifyVdPlugin}
         ListHeaderComponent={() => {
             const unproxiedPlugins = PluginManager.getAllIds().filter(p =>
-                !PluginManager.infos[p].sourceUrl.startsWith(VD_PROXY_PREFIX)
-                && !PluginManager.infos[p].sourceUrl.startsWith(BUNNY_PROXY_PREFIX)
+                !PluginManager.traces[p].sourceUrl.startsWith(VD_PROXY_PREFIX)
+                && !PluginManager.traces[p].sourceUrl.startsWith(BUNNY_PROXY_PREFIX)
             );
 
             if (!unproxiedPlugins.length) return null;

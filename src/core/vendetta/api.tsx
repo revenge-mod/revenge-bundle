@@ -31,8 +31,8 @@ function createPluginsObject() {
     const makeObject = memoize(
         () => PluginManager.getAllIds()
             .reduce((obj, id) => Object.assign(obj, {
-                [PluginManager.infos[id].sourceUrl]: {
-                    id: PluginManager.infos[id].sourceUrl,
+                [PluginManager.traces[id].sourceUrl]: {
+                    id: PluginManager.traces[id].sourceUrl,
                     manifest: PluginManager.convertToVd(PluginManager.getManifest(id)),
                     get enabled() { return PluginManager.settings[id].enabled; },
                     get update() { return PluginManager.settings[id].autoUpdate; },

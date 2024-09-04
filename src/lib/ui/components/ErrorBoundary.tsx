@@ -1,10 +1,7 @@
-import { Strings } from "@core/i18n";
+import ErrorCard from "@core/ui/reporter/components/ErrorCard";
 import { Nullish } from "@lib/utils/types";
 import { React } from "@metro/common";
-import { Button, LegacyFormText } from "@metro/common/components";
-import { Codeblock } from "@ui/components";
 import { createLegacyClassComponentStyles, ThemeContext } from "@ui/styles";
-import { ScrollView } from "react-native";
 
 type ErrorBoundaryState = {
     hasErr: false;
@@ -44,20 +41,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
         if (!this.state.hasErr) return this.props.children;
 
         return (
-            <ScrollView style={styles.view}>
-                <LegacyFormText style={styles.title}>{Strings.UH_OH}</LegacyFormText>
-                <Codeblock selectable style={{ marginBottom: 5 }}>{this.state.error.name}</Codeblock>
-                <Codeblock selectable style={{ marginBottom: 5 }}>{this.state.error.message}</Codeblock>
-                {this.state.error.stack && <ScrollView style={{ maxHeight: 420, marginBottom: 5 }}>
-                    <Codeblock selectable>{this.state.error.stack}</Codeblock>
-                </ScrollView>}
-                <Button
-                    size="md"
-                    variant="destructive"
-                    onPress={() => this.setState({ hasErr: false })}
-                    text={Strings.RETRY}
-                />
-            </ScrollView>
+            <ErrorCard error={this.state.error} onRetryRender={() => this.setState({ hasErr: false })} />
         );
     }
 }

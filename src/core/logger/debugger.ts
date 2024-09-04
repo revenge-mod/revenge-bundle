@@ -38,8 +38,6 @@ export function patchLogHook() {
         if (socket?.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ message: args[0], level: args[1] }));
         }
-
-        logger.log(args[0]);
     });
 
     return () => {

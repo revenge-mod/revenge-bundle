@@ -5,7 +5,7 @@ function error(strings: TemplateStringsArray, ...args: any[]) {
         console.error(String.raw(strings, ...args));
     }
 
-    console.error(...strings, ...args);
+    console.error(strings, ...args);
 }
 
 export const logger = {

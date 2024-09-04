@@ -1,7 +1,7 @@
+import { logger } from "@core/logger";
 import { patcher } from "@lib/api";
 import { registerCommand } from "@lib/api/commands";
 import { createStorage } from "@lib/api/storage";
-import { logger } from "@core/logger";
 
 import PluginManager from "./manager";
 import { BunnyPluginObject } from "./types";

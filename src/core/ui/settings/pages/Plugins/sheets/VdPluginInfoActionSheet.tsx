@@ -63,7 +63,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         label={Strings.COPY_URL}
                         icon={<TableRow.Icon source={findAssetId("LinkIcon")} />}
                         onPress={() => {
-                            clipboard.setString(PluginManager.infos[plugin.id].sourceUrl);
+                            clipboard.setString(PluginManager.traces[plugin.id].sourceUrl);
                             showToast.showCopyToClipboard();
                         }}
                     />

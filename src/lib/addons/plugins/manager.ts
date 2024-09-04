@@ -1,13 +1,14 @@
+import { logger } from "@core/logger";
+import PluginReporter from "@core/ui/reporter/PluginReporter";
 import AddonManager from "@lib/addons/AddonManager";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync } from "@lib/api/storage";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
-import { DiscordLogger } from "@core/logger";
 import safeFetch from "@lib/utils/safeFetch";
 import { omit } from "lodash";
 
 import { createBunnyPluginAPI } from "./api";
-import { BunnyPluginManifest, BunnyPluginObject, PluginInformationStorage, PluginInstance, PluginInstanceInternal, PluginSettingsStorage } from "./types";
+import { BunnyPluginManifest, BunnyPluginObject, PluginInstance, PluginInstanceInternal, PluginSettingsStorage,PluginTracesStorage } from "./types";
 
 type VendettaPlugin = any;
 
@@ -21,7 +22,7 @@ function assert<T>(condition: T, id: string, attempt: string): asserts condition
 
 export default new class PluginManager extends AddonManager<BunnyPluginManifest> {
     settings = createStorage<PluginSettingsStorage>("plugins/settings.json");
-    infos = createStorage<PluginInformationStorage>("plugins/infos.json");
+    traces = createStorage<PluginTracesStorage>("plugins/infos.json");
 
     #instances = new Map<string, PluginInstance>();
     #bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
@@ -29,15 +30,16 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
     async initialize() {
         await this.#updateAllPromise;
+
         for (const id of this.getAllIds()) {
             if (this.settings[id].enabled) {
-                this.start(id);
+                this.start(id, { throwOnPluginError: true });
             }
         }
     }
 
     async prepare(): Promise<void> {
-        await awaitStorage(this.settings, this.infos);
+        await awaitStorage(this.settings, this.traces);
         await this.migrate("VENDETTA_PLUGINS");
         await Promise.all(this.getAllIds().map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
         this.#updateAllPromise = this.updateAll();
@@ -64,7 +66,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                     autoUpdate: plugin.update
                 };
 
-                this.infos[sanitizedId] ??= {
+                this.traces[sanitizedId] ??= {
                     sourceUrl: plugin.id,
                     installTime: null,
                     isVendetta: true
@@ -110,12 +112,8 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         return createStorage(`plugins/manifests/${id}.json`);
     }
 
-    isCore(id: string) {
-        return false; // TODO
-    }
-
     getAllIds(): string[] {
-        return Object.keys(this.infos);
+        return Object.keys(this.traces);
     }
 
     getType(manifest: BunnyPluginManifest | VendettaPlugin["manifest"]) {
@@ -130,14 +128,14 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
     async refetch(id: string) {
         id = this.sanitizeId(id);
-        const { sourceUrl } = this.infos[id];
+        const { sourceUrl } = this.traces[id];
         await this.fetch(sourceUrl, { id });
     }
 
     async fetch(url: string, { id = "" } = {}): Promise<BunnyPluginManifest> {
         if (!url.endsWith("/")) url += "/";
 
-        const existingId = id || Object.entries(this.infos).find(([, v]) => v.sourceUrl === url)?.[0];
+        const existingId = id || Object.entries(this.traces).find(([, v]) => v.sourceUrl === url)?.[0];
         const existingManifest = existingId ? this.getManifest(existingId) : null;
 
         let pluginManifest: BunnyPluginManifest;
@@ -152,7 +150,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         }
 
         assert(
-            this.infos[pluginManifest.id] ? this.infos[pluginManifest.id].sourceUrl === url : true,
+            this.traces[pluginManifest.id] ? this.traces[pluginManifest.id].sourceUrl === url : true,
             pluginManifest.id ?? url,
             "fetching a plugin already installed with another source"
         );
@@ -192,74 +190,70 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
         let pluginInstance: PluginInstance;
 
-        if (!this.isCore(id)) {
-            if (!this.infos[id].isVendetta) {
-                let instantiator: (
+        if (!this.traces[id].isVendetta) {
+            let instantiator: (
                     bunny: BunnyPluginObject,
                     definePlugin?: (p: PluginInstance) => PluginInstanceInternal
                 ) => PluginInstanceInternal;
 
-                try {
-                    const iife = await readFile(`plugins/scripts/${id}.js`);
-                    instantiator = globalEvalWithSourceUrl(
-                        `(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`,
-                        `bunny-plugin/${id}-${manifest.hash}`
-                    );
-                } catch (error) {
-                    throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", { cause: error });
-                }
+            try {
+                const iife = await readFile(`plugins/scripts/${id}.js`);
+                instantiator = globalEvalWithSourceUrl(
+                    `(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`,
+                    `bunny-plugin/${id}-${manifest.hash}`
+                );
+            } catch (error) {
+                PluginReporter.reportPluginError(id, error);
+                throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", { cause: error });
+            }
 
-                try {
-                    const api = createBunnyPluginAPI(id);
-                    pluginInstance = instantiator(api.object, p => {
-                        return Object.assign(p, { manifest }) as PluginInstanceInternal;
-                    });
+            try {
+                const api = createBunnyPluginAPI(id);
+                pluginInstance = instantiator(api.object, p => {
+                    return Object.assign(p, { manifest }) as PluginInstanceInternal;
+                });
 
-                    if (!pluginInstance) throw new Error(`Plugin '${id}' does not export a valid plugin instance`);
+                if (!pluginInstance) throw new Error(`Plugin '${id}' does not export a valid plugin instance`);
 
-                    this.#bunnyApiObjects.set(id, api);
-                    this.#instances.set(id, pluginInstance);
-                } catch (error) {
-                    throw new Error("An error occured while instantiating plugin's code", { cause: error });
-                }
-            } else {
-                try {
-                    const iife = await readFile(`plugins/scripts/${id}.js`);
-
-                    const vendettaForPlugins = {
-                        ...window.vendetta,
-                        plugin: {
-                            id: manifest.id,
-                            manifest: this.convertToVd(manifest),
-                            storage: await createStorageAsync<Record<string, any>>(`plugins/storage/${this.sanitizeId(id)}.json`)
-                        },
-                        logger: new DiscordLogger(`Vendetta » ${manifest.display.name}`),
-                    };
-
-                    const instantiator = globalEvalWithSourceUrl(
-                        `vendetta=>{return ${iife}}`,
-                        `vd-plugin/${id}-${manifest.hash}`
-                    );
-
-                    const raw = instantiator(vendettaForPlugins);
-                    const ret = typeof raw === "function" ? raw() : raw;
-                    const rawInstance = ret?.default ?? ret ?? {};
-                    pluginInstance = {
-                        start: rawInstance.onLoad,
-                        stop: rawInstance.onUnload,
-                        SettingsComponent: rawInstance.settings
-                    };
-
-                    this.#instances.set(id, pluginInstance);
-                } catch (err) {
-
-                    throw new Error("An error occured while instantiating Vendetta plugin", { cause: err });
-                }
+                this.#bunnyApiObjects.set(id, api);
+                this.#instances.set(id, pluginInstance);
+            } catch (error) {
+                PluginReporter.reportPluginError(id, error);
+                throw new Error("An error occured while instantiating plugin's code", { cause: error });
             }
         } else {
-            // pluginInstance = corePluginInstances.get(id)!;
-            assert(false, id, "start a non-existent core plugin");
-            this.#instances.set(id, pluginInstance);
+            try {
+                const iife = await readFile(`plugins/scripts/${id}.js`);
+
+                const vendettaForPlugins = {
+                    ...window.vendetta,
+                    plugin: {
+                        id: manifest.id,
+                        manifest: this.convertToVd(manifest),
+                        storage: await createStorageAsync<Record<string, any>>(`plugins/storage/${this.sanitizeId(id)}.json`)
+                    },
+                    logger,
+                };
+
+                const instantiator = globalEvalWithSourceUrl(
+                    `vendetta=>{return ${iife}}`,
+                    `vd-plugin/${id}-${manifest.hash}`
+                );
+
+                const raw = instantiator(vendettaForPlugins);
+                const ret = typeof raw === "function" ? raw() : raw;
+                const rawInstance = ret?.default ?? ret ?? {};
+                pluginInstance = {
+                    start: rawInstance.onLoad,
+                    stop: rawInstance.onUnload,
+                    SettingsComponent: rawInstance.settings
+                };
+
+                this.#instances.set(id, pluginInstance);
+            } catch (err) {
+                PluginReporter.reportPluginError(id, err);
+                throw new Error("An error occured while instantiating Vendetta plugin", { cause: err });
+            }
         }
 
         try {
@@ -271,6 +265,8 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             if (throwOnPluginError) {
                 throw new Error("An error occured while starting the plugin", { cause: error });
             }
+
+            PluginReporter.reportPluginError(id, error);
         }
     }
 
@@ -316,7 +312,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
         const manifest = await this.fetch(url);
 
-        this.infos[manifest.id] = {
+        this.traces[manifest.id] = {
             sourceUrl: url,
             installTime: new Date().toISOString(),
             isVendetta: manifest.id.startsWith("https-")
@@ -337,7 +333,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             await this.stop(id);
         }
 
-        delete this.infos[id];
+        delete this.traces[id];
         delete this.settings[id];
 
         await removeFile(`plugins/scripts/${id}.js`);
@@ -347,7 +343,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
     async updateAll() {
         const pluginIds = this.getAllIds();
-        const update = (id: string) => this.fetch(this.infos[id].sourceUrl, { id });
+        const update = (id: string) => this.fetch(this.traces[id].sourceUrl, { id });
         await Promise.allSettled(pluginIds.map(update));
     }
 };

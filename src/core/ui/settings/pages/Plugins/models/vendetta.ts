@@ -16,7 +16,7 @@ export default function unifyVdPlugin(manifest: BunnyPluginManifest): UnifiedPlu
         isInstalled: () => Boolean(PluginManager.settings[manifest.id]),
         usePluginState() {
             useObservable(PluginManager.settings[manifest.id]);
-            useObservable(PluginManager.infos[manifest.id]);
+            useObservable(PluginManager.traces[manifest.id]);
         },
         toggle(start: boolean) {
             start
