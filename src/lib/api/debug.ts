@@ -1,13 +1,8 @@
-import { findAssetId } from "@lib/api/assets";
 import { RTNClientInfoManager, RTNDeviceManager } from "@lib/api/native/rn-modules";
-import { after } from "@lib/api/patcher";
-import { logger } from "@lib/utils/logger";
-import { showToast } from "@ui/toasts";
 import { version } from "bunny-build-info";
 import { Platform, type PlatformConstants } from "react-native";
 
 import { LOADER_IDENTITY } from "./native/loader";
-export let socket: WebSocket;
 
 export interface RNConstants extends PlatformConstants {
     // Android
@@ -27,49 +22,6 @@ export interface RNConstants extends PlatformConstants {
     systemName: string;
 }
 
-export function connectToDebugger(url: string) {
-    if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) socket.close();
-
-    if (!url) {
-        showToast("Invalid debugger URL!", findAssetId("Small"));
-        return;
-    }
-
-    socket = new WebSocket(`ws://${url}`);
-
-    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
-    socket.addEventListener("message", (message: any) => {
-        try {
-            (0, eval)(message.data);
-        } catch (e) {
-            console.error(e);
-        }
-    });
-
-    socket.addEventListener("error", (err: any) => {
-        console.log(`Debugger error: ${err.message}`);
-        showToast("An error occurred with the debugger connection!", findAssetId("Small"));
-    });
-}
-
-/**
- * @internal
- */
-export function patchLogHook() {
-    const unpatch = after("nativeLoggingHook", globalThis, args => {
-        if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ message: args[0], level: args[1] }));
-        logger.log(args[0]);
-    });
-
-    return () => {
-        socket && socket.close();
-        unpatch();
-    };
-}
-
-/** @internal */
-export const versionHash = version;
-
 export function getDebugInfo() {
     // Hermes
     const hermesProps = window.HermesInternal.getRuntimeProperties();
@@ -85,11 +37,11 @@ export function getDebugInfo() {
          * @deprecated use `bunny` field
          * */
         vendetta: {
-            version: versionHash.split("-")[0],
+            version: version.split("-")[0],
             loader: LOADER_IDENTITY.name,
         },
         bunny: {
-            version: versionHash,
+            version: version,
             loader: {
                 name: LOADER_IDENTITY.name,
                 version: LOADER_IDENTITY.version

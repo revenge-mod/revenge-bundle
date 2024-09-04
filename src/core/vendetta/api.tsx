@@ -1,3 +1,5 @@
+import { logger } from "@core/logger";
+import { connectToDebugger } from "@core/logger/debugger";
 import BunnySettings from "@core/storage/BunnySettings";
 import * as alerts from "@core/vendetta/ui/alerts";
 import PluginManager from "@lib/addons/plugins/manager";
@@ -139,7 +141,7 @@ export const initVendettaObject = (): any => {
                             ...module,
                             ActionSheetTitleHeader: module.BottomSheetTitleHeader,
                             ActionSheetContentContainer: ({ children }: any) => {
-                                useEffect(() => console.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                                useEffect(() => logger.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
                                 return createElement(View, null, children);
                             }
                         };
@@ -219,7 +221,7 @@ export const initVendettaObject = (): any => {
             without: (object: any, ...keys: any) => omit(object, keys)
         },
         debug: {
-            connectToDebugger: (url: string) => debug.connectToDebugger(url),
+            connectToDebugger: (url: string) => connectToDebugger(url),
             getDebugInfo: () => debug.getDebugInfo()
         },
         ui: {

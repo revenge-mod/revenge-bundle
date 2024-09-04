@@ -1,3 +1,4 @@
+import { logger } from "@core/logger";
 import { FluxDispatcher } from "@metro/common";
 import { findByNameLazy } from "@metro/wrappers";
 import { PrimitiveType } from "intl-messageformat";
@@ -49,7 +50,7 @@ export function initFetchI18nStrings() {
                 .then(r => r.json())
                 .then(strings => _loadedStrings[resolvedLocale] = strings)
                 .then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale))
-                .catch(e => console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`));
+                .catch(e => logger.error`An error occured while fetching strings for ${resolvedLocale}: ${e}`);
         } else {
             _currentLocale = resolvedLocale;
         }

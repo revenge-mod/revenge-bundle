@@ -1,9 +1,9 @@
 import { Strings } from "@core/i18n";
+import { connectToDebugger } from "@core/logger/debugger";
 import BunnySettings from "@core/storage/BunnySettings";
 import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
 import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { findAssetId } from "@lib/api/assets";
-import { connectToDebugger } from "@lib/api/debug";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative, tokens } from "@metro/common";

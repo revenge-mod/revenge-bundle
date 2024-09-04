@@ -1,6 +1,6 @@
 import { BunnyManifest } from "@lib/addons/types";
 import { createStorage } from "@lib/api/storage";
-import { Logger } from "@lib/utils/logger";
+import { Logger } from "@core/logger";
 
 export interface PluginRepo {
     [id: string]: {

@@ -1,6 +1,6 @@
 import { ApplicationCommand, ApplicationCommandInputType, ApplicationCommandType, BunnyApplicationCommand } from "@lib/api/commands/types";
 import { after, instead } from "@lib/api/patcher";
-import { logger } from "@lib/utils/logger";
+import { logger } from "@core/logger";
 import { commands as commandsModule, messageUtil } from "@metro/common";
 
 let commands: ApplicationCommand[] = [];

@@ -1,15 +1,15 @@
 import patchErrorBoundary from "@core/debug/patches/patchErrorBoundary";
 import { initFetchI18nStrings } from "@core/i18n";
+import { logger } from "@core/logger";
+import { patchLogHook } from "@core/logger/debugger";
 import BunnySettings from "@core/storage/BunnySettings";
-import initSettings from "@core/ui/settings";
+import initRegisterSettings from "@core/ui/settings";
 import { initVendettaObject } from "@core/vendetta/api";
 import FontManager from "@lib/addons/fonts";
 import PluginManager from "@lib/addons/plugins/manager";
 import ColorManager from "@lib/addons/themes/colors/manager";
 import { patchCommands } from "@lib/api/commands";
-import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
-import { logger } from "@lib/utils/logger";
 import { patchSettingsSection } from "@ui/settings";
 
 import * as lib from "./lib";
@@ -28,7 +28,7 @@ export default async () => {
         patchCommands(),
         initVendettaObject(),
         initFetchI18nStrings(),
-        initSettings(),
+        initRegisterSettings(),
         patchErrorBoundary()
     ]).then(
         // Push them all to unloader
