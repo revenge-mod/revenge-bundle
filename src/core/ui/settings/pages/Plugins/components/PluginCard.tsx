@@ -123,11 +123,16 @@ const Actions = memo(() => {
 export default function PluginCard({ result, item: plugin }: CardWrapper<UnifiedPluginModel>) {
     plugin.usePluginState();
 
+    const navigation = NavigationNative.useNavigation();
     const cardContextValue = useMemo(() => ({ plugin, result }), [plugin, result]);
 
     return (
         <CardContext.Provider value={cardContextValue}>
-            <Card>
+            <Card onPress={() => void showSheet(
+                "PluginInfoActionSheet",
+                plugin.resolveSheetComponent(),
+                { plugin, navigation }
+            )}>
                 <Stack spacing={16}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                         <View style={{ flexShrink: 1 }}>

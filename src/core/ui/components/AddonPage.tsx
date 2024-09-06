@@ -152,7 +152,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
     if (results.length === 0 && !search) {
         return <View style={{ gap: 32, flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
             <View style={{ gap: 8, alignItems: "center" }}>
-                <Image source={findAssetId("empty_quick_switcher")} />
+                <Image source={findAssetId("empty_quick_switcher")!} />
                 <Text variant="text-lg/semibold" color="text-normal">
                     Oops! Nothing to see here… yet!
                 </Text>
@@ -205,7 +205,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
                 estimatedItemSize={136}
                 ListHeaderComponent={headerElement}
                 ListEmptyComponent={() => <View style={{ gap: 12, padding: 12, alignItems: "center" }}>
-                    <Image source={findAssetId("devices_not_found")} />
+                    <Image source={findAssetId("devices_not_found")!} />
                     <Text variant="text-lg/semibold" color="text-normal">
                         Hmmm... could not find that!
                     </Text>

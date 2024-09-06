@@ -21,7 +21,7 @@ import * as toasts from "@ui/toasts";
 import { omit } from "es-toolkit";
 import { memoize } from "lodash";
 import { createElement, useEffect } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import * as storage from "./storage";
 
@@ -272,7 +272,7 @@ export const initVendettaObject = (): any => {
                 getAssetIDByName: (name: string) => assets.findAssetId(name)
             },
             semanticColors: common.tokens.colors,
-            rawColors: common.tokens.unsafe_Colors
+            rawColors: common.tokens.unsafe_rawColors
         },
         plugins: createPluginsObject(),
         themes: createThemesObject(),

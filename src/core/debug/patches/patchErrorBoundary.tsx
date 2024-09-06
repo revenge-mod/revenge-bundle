@@ -1,6 +1,7 @@
 import { toggleSafeMode } from "@core/debug/safeMode";
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
+import ErrorBoundaryScreen from "@core/ui/reporter/components/ErrorBoundaryScreen";
 import { RTNBundleUpdaterManager, RTNDeviceManager } from "@lib/api/native/rn-modules";
 import { after } from "@lib/api/patcher";
 import { lazyDestructure } from "@lib/utils/lazy";
@@ -87,7 +88,7 @@ function ErrorScreen({ ret, error, rerender }: any) {
     // This is in the patch and not outside of it so that we can use `this`, e.g. for setting state
     const buttons: Button[] = [
         { text: Strings.RELOAD_DISCORD, onPress: () => RTNBundleUpdaterManager.reload() },
-        ...!BunnySettings.isSafeMode() ? [{ text: Strings.RELOAD_IN_SAFE_MODE, onPress: toggleSafeMode }] : [],
+        ...!BunnySettings.isSafeMode() ? [{ text: Strings.RELOAD_IN_SAFE_MODE, onPress: () => toggleSafeMode({ to: true }) }] : [],
         { text: Strings.RETRY_RENDER, color: "red", onPress: rerender },
     ];
 
@@ -150,6 +151,9 @@ export default function patchErrorBoundary() {
     return after.await("render", getErrorBoundaryContext(), function (this: any, _, ret) {
         if (!this.state.error) return;
 
-        return <ErrorScreen ret={ret} error={this.state.error} rerender={() => this.setState({ info: null, error: null })} />;
+        return <ErrorBoundaryScreen
+            error={this.state.error}
+            rerender={() => this.setState({ info: null, error: null })}
+        />;
     });
 }

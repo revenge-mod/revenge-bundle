@@ -15,13 +15,14 @@ const _nameToAssetCache = {} as Record<string, Asset>;
 
 export function* iterateAssets() {
     const { flagsIndex } = getMetroCache();
+    const yielded = new Set<number>();
 
     for (const id in flagsIndex) {
         if (flagsIndex[id] & ModuleFlags.ASSET) {
             const assetId = requireModule(Number(id));
-            if (typeof assetId !== "number") continue;
-
+            if (typeof assetId !== "number" || yielded.has(assetId)) continue;
             yield getAssetById(assetId);
+            yielded.add(assetId);
         }
     }
 }

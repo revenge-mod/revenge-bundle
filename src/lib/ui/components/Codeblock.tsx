@@ -1,24 +1,27 @@
 import { constants, tokens } from "@metro/common";
 import { createStyles } from "@ui/styles";
-import { Platform, Text, TextInput } from "react-native";
+import { Platform, ScrollView, Text, TextInput, TextStyle, ViewStyle } from "react-native";
 
 export interface CodeblockProps {
     selectable?: boolean;
-    style?: import("react-native").TextStyle;
+    style?: TextStyle;
+    backgroundStyle?: ViewStyle;
     children?: string;
 }
 
 const useStyles = createStyles({
-    codeBlock: {
-        fontFamily: constants.Fonts.CODE_NORMAL,
-        fontSize: 12,
-        textAlignVertical: "center",
+    background: {
         backgroundColor: tokens.colors.BACKGROUND_SECONDARY,
-        color: tokens.colors.TEXT_NORMAL,
         borderWidth: 1,
         borderRadius: 12,
         borderColor: tokens.colors.BACKGROUND_TERTIARY,
         padding: 10,
+    },
+    codeBlock: {
+        fontFamily: constants.Fonts.CODE_NORMAL,
+        fontSize: 12,
+        textAlignVertical: "center",
+        color: tokens.colors.TEXT_NORMAL,
     },
 });
 
@@ -26,11 +29,19 @@ const useStyles = createStyles({
 const InputBasedCodeblock = ({ style, children }: CodeblockProps) => <TextInput editable={false} multiline style={[useStyles().codeBlock, style && style]} value={children} />;
 const TextBasedCodeblock = ({ selectable, style, children }: CodeblockProps) => <Text selectable={selectable} style={[useStyles().codeBlock, style && style]}>{children}</Text>;
 
-export default function Codeblock({ selectable, style, children }: CodeblockProps) {
-    if (!selectable) return <TextBasedCodeblock style={style} children={children} />;
+export default function Codeblock({ selectable, style, backgroundStyle, children }: CodeblockProps) {
+    const styles = useStyles();
+    if (!selectable) {
+        return <ScrollView style={[backgroundStyle, styles.background]}>
+            <TextBasedCodeblock style={style} children={children} />
+        </ScrollView>;
+    } else {
+        return <ScrollView style={[backgroundStyle, styles.background]}>
+            {Platform.select({
+                ios: <InputBasedCodeblock style={style} children={children} />,
+                default: <TextBasedCodeblock style={style} children={children} selectable />,
+            })}
+        </ScrollView>;
+    }
 
-    return Platform.select({
-        ios: <InputBasedCodeblock style={style} children={children} />,
-        default: <TextBasedCodeblock style={style} children={children} selectable />,
-    });
 }

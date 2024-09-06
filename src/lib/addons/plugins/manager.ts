@@ -1,5 +1,5 @@
 import { logger } from "@core/logger";
-import PluginReporter from "@core/ui/reporter/PluginReporter";
+import PluginReporter, { PluginStage } from "@core/ui/reporter/PluginReporter";
 import AddonManager from "@lib/addons/AddonManager";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync } from "@lib/api/storage";
@@ -177,7 +177,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         return pluginManifest;
     }
 
-    async start(id: string, { throwOnPluginError = false, disableOnError = true } = {}): Promise<void> {
+    async start(id: string, { throwOnPluginError = false, disableOnError = true, awaitPlugin = true } = {}): Promise<void> {
         id = this.sanitizeId(id);
         const manifest = this.getManifest(id);
 
@@ -197,6 +197,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 ) => PluginInstanceInternal;
 
             try {
+                PluginReporter.updateStage(id, PluginStage.PARSING);
                 const iife = await readFile(`plugins/scripts/${id}.js`);
                 instantiator = globalEvalWithSourceUrl(
                     `(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`,
@@ -208,6 +209,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             }
 
             try {
+                PluginReporter.updateStage(id, PluginStage.INSTANTIATING);
                 const api = createBunnyPluginAPI(id);
                 pluginInstance = instantiator(api.object, p => {
                     return Object.assign(p, { manifest }) as PluginInstanceInternal;
@@ -223,6 +225,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             }
         } else {
             try {
+                PluginReporter.updateStage(id, PluginStage.PARSING);
                 const iife = await readFile(`plugins/scripts/${id}.js`);
 
                 const vendettaForPlugins = {
@@ -235,6 +238,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                     logger,
                 };
 
+                PluginReporter.updateStage(id, PluginStage.INSTANTIATING);
                 const instantiator = globalEvalWithSourceUrl(
                     `vendetta=>{return ${iife}}`,
                     `vd-plugin/${id}-${manifest.hash}`
@@ -257,7 +261,10 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         }
 
         try {
-            pluginInstance.start?.();
+            PluginReporter.updateStage(id, PluginStage.STARTING);
+            const promise = pluginInstance.start?.();
+            if (awaitPlugin) await promise;
+            PluginReporter.updateStage(id, PluginStage.STARTED);
         } catch (error) {
             if (disableOnError) {
                 this.disable(id, { throwOnPluginError });
@@ -270,13 +277,16 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         }
     }
 
-    async stop(id: string, { throwOnPluginError = false } = {}) {
+    async stop(id: string, { throwOnPluginError = false, awaitPlugin = false } = {}) {
         id = this.sanitizeId(id);
         const instance = this.#instances.get(id);
         assert(instance, id, "stop a non-started plugin");
 
         try {
-            instance.stop?.();
+            PluginReporter.updateStage(id, PluginStage.STOPPING);
+            const promise = instance.stop?.();
+            if (awaitPlugin) await promise;
+            PluginReporter.updateStage(id, PluginStage.STOPPED);
         } catch (err) {
             if (throwOnPluginError) {
                 throw new Error("instance.stop() threw an error", { cause: err });
@@ -343,7 +353,10 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
     async updateAll() {
         const pluginIds = this.getAllIds();
-        const update = (id: string) => this.fetch(this.traces[id].sourceUrl, { id });
+        const update = (id: string) => {
+            PluginReporter.updateStage(id, PluginStage.FETCHING);
+            this.fetch(this.traces[id].sourceUrl, { id });
+        };
         await Promise.allSettled(pluginIds.map(update));
     }
 };

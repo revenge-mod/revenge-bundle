@@ -1,13 +1,14 @@
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
+import PluginReporter from "@core/ui/reporter/PluginReporter";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
 import PluginManager from "@lib/addons/plugins/manager";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
-import { showToast } from "@lib/ui/toasts";
 import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/constants";
+import { showToast } from "@lib/ui/toasts";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { NavigationNative } from "@metro/common";
@@ -64,7 +65,6 @@ function PluginPage(props: PluginPageProps) {
 
 export default function Plugins() {
     BunnySettings.useSettings();
-    const navigation = NavigationNative.useNavigation();
 
     return <PluginPage
         useItems={() => {
@@ -72,43 +72,7 @@ export default function Plugins() {
             return PluginManager.getAllIds().map(id => PluginManager.getManifest(id));
         }}
         resolveItem={unifyVdPlugin}
-        ListHeaderComponent={() => {
-            const unproxiedPlugins = PluginManager.getAllIds().filter(p =>
-                !PluginManager.traces[p].sourceUrl.startsWith(VD_PROXY_PREFIX)
-                && !PluginManager.traces[p].sourceUrl.startsWith(BUNNY_PROXY_PREFIX)
-            );
-
-            if (!unproxiedPlugins.length) return null;
-
-            // TODO: Make this dismissable
-            return <Card style={{ marginVertical: 8, gap: 4 }}>
-                <Text variant="heading-lg/bold">Unproxied Plugins Detected</Text>
-                <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
-                <View style={{ marginTop: 8, flexDirection: "row" }}>
-                    <Button
-                        style={{ flexShrink: 1 }}
-                        size="sm"
-                        text="Review"
-                        variant="secondary"
-                        onPress={() => {
-                            navigation.push("BUNNY_CUSTOM_PAGE", {
-                                title: "Unproxied Plugins",
-                                render: () => {
-                                    return <FlashList
-                                        data={unproxiedPlugins}
-                                        contentContainerStyle={{ padding: 8 }}
-                                        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-                                        renderItem={({ item: id }: any) => <Card>
-                                            <Text variant="heading-md/semibold">{id}</Text>
-                                        </Card>}
-                                    />;
-                                }
-                            });
-                        }}
-                    />
-                </View>
-            </Card>;
-        }}
+        ListHeaderComponent={() => <HeaderComponent />}
         installAction={{
             label: "Install a plugin",
             fetchFn: async (url: string) => {
@@ -138,3 +102,55 @@ export default function Plugins() {
         }}
     />;
 }
+function HeaderComponent() {
+    const navigation = NavigationNative.useNavigation();
+    const unproxiedPlugins = PluginManager.getAllIds()
+        .filter(p => !PluginManager.traces[p].sourceUrl.startsWith(VD_PROXY_PREFIX)
+            && !PluginManager.traces[p].sourceUrl.startsWith(BUNNY_PROXY_PREFIX)
+        );
+
+    return <View style={{ marginVertical: 8, gap: 8 }}>
+        {!!Object.keys(PluginReporter.errors).length && <Card border="strong" style={{ gap: 4 }}>
+            <Text variant="heading-lg/bold">Failed to start some plugins</Text>
+            <Text variant="text-md/medium">Some plugins may have been disabled to prevent future crashing.</Text>
+            <View style={{ marginTop: 8, flexDirection: "row" }}>
+                <Button
+                    style={{ flexShrink: 1 }}
+                    size="sm"
+                    text="Review"
+                    onPress={() => {
+                        navigation.push("BUNNY_CUSTOM_PAGE", {
+                            title: "Plugin Errors",
+                            render: React.lazy(() => import("./pages/PluginErrors"))
+                        });
+                    }} />
+            </View>
+        </Card>}
+        {/* TODO: Consider making this dismissable */}
+        {!!unproxiedPlugins.length && <Card border="strong" style={{ gap: 4 }}>
+            <Text variant="heading-lg/bold">Unproxied Plugins Detected</Text>
+            <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
+            <View style={{ marginTop: 8, flexDirection: "row" }}>
+                <Button
+                    style={{ flexShrink: 1 }}
+                    size="sm"
+                    text="Review"
+                    onPress={() => {
+                        navigation.push("BUNNY_CUSTOM_PAGE", {
+                            title: "Unproxied Plugins",
+                            render: () => {
+                                return <FlashList
+                                    data={unproxiedPlugins}
+                                    contentContainerStyle={{ padding: 8 }}
+                                    ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+                                    renderItem={({ item: id }: any) => <Card>
+                                        <Text variant="heading-md/semibold">{id}</Text>
+                                    </Card>} />;
+                            }
+                        });
+                    } } />
+            </View>
+        </Card>}
+    </View>;
+}
+
