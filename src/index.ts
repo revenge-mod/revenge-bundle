@@ -3,6 +3,7 @@ import { initFetchI18nStrings } from "@core/i18n";
 import { logger } from "@core/logger";
 import { patchLogHook } from "@core/logger/debugger";
 import BunnySettings from "@core/storage/BunnySettings";
+import PluginReporter from "@core/ui/reporter/PluginReporter";
 import initRegisterSettings from "@core/ui/settings";
 import { initVendettaObject } from "@core/vendetta/api";
 import FontManager from "@lib/addons/fonts";
@@ -19,6 +20,7 @@ export default async () => {
     await ColorManager.prepare();
     await PluginManager.prepare();
     await FontManager.prepare();
+    await PluginReporter.prepare();
 
     // Load everything in parallel
     await Promise.all([

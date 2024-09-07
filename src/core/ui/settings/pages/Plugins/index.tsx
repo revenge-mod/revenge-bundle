@@ -110,46 +110,42 @@ function HeaderComponent() {
         );
 
     return <View style={{ marginVertical: 8, gap: 8 }}>
-        {!!Object.keys(PluginReporter.errors).length && <Card border="strong" style={{ gap: 4 }}>
-            <Text variant="heading-lg/bold">Failed to start some plugins</Text>
-            <Text variant="text-md/medium">Some plugins may have been disabled to prevent future crashing.</Text>
-            <View style={{ marginTop: 8, flexDirection: "row" }}>
-                <Button
-                    style={{ flexShrink: 1 }}
-                    size="sm"
-                    text="Review"
-                    onPress={() => {
-                        navigation.push("BUNNY_CUSTOM_PAGE", {
-                            title: "Plugin Errors",
-                            render: React.lazy(() => import("./pages/PluginErrors"))
-                        });
-                    }} />
-            </View>
+        {PluginReporter.hasErrors() && <Card border="strong" style={{ gap: 4 }}>
+            <Text variant="heading-lg/bold">Some plugins have been disabled</Text>
+            <Text variant="text-md/medium">These plugins have been disabled due to an error while starting it.</Text>
+            <Button
+                size="md"
+                text="Review"
+                style={{ marginTop: 8 }}
+                onPress={() => {
+                    navigation.push("BUNNY_CUSTOM_PAGE", {
+                        title: "Plugin Errors",
+                        render: React.lazy(() => import("./pages/PluginErrors"))
+                    });
+                }} />
         </Card>}
         {/* TODO: Consider making this dismissable */}
         {!!unproxiedPlugins.length && <Card border="strong" style={{ gap: 4 }}>
-            <Text variant="heading-lg/bold">Unproxied Plugins Detected</Text>
+            <Text variant="heading-lg/bold">Unproxied plugins detected</Text>
             <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
-            <View style={{ marginTop: 8, flexDirection: "row" }}>
-                <Button
-                    style={{ flexShrink: 1 }}
-                    size="sm"
-                    text="Review"
-                    onPress={() => {
-                        navigation.push("BUNNY_CUSTOM_PAGE", {
-                            title: "Unproxied Plugins",
-                            render: () => {
-                                return <FlashList
-                                    data={unproxiedPlugins}
-                                    contentContainerStyle={{ padding: 8 }}
-                                    ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-                                    renderItem={({ item: id }: any) => <Card>
-                                        <Text variant="heading-md/semibold">{id}</Text>
-                                    </Card>} />;
-                            }
-                        });
-                    } } />
-            </View>
+            <Button
+                size="md"
+                text="Review"
+                style={{ marginTop: 8 }}
+                onPress={() => {
+                    navigation.push("BUNNY_CUSTOM_PAGE", {
+                        title: "Unproxied Plugins",
+                        render: () => {
+                            return <FlashList
+                                data={unproxiedPlugins}
+                                contentContainerStyle={{ padding: 8 }}
+                                ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+                                renderItem={({ item: id }: any) => <Card>
+                                    <Text variant="heading-md/semibold">{id}</Text>
+                                </Card>} />;
+                        }
+                    });
+                } } />
         </Card>}
     </View>;
 }
