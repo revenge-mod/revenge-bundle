@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
-import PluginReporter from "@core/ui/reporter/PluginReporter";
+import PluginReporter from "@core/reporter/PluginReporter";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
 import PluginManager from "@lib/addons/plugins/PluginManager";
 import { Author } from "@lib/addons/types";

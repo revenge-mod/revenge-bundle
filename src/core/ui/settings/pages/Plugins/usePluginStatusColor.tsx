@@ -1,4 +1,5 @@
-import PluginReporter, { PluginDisableReason, PluginStage } from "@core/ui/reporter/PluginReporter";
+import PluginReporter, {  } from "@core/reporter/PluginReporter";
+import { PluginDisableReason, PluginStage } from "@core/reporter/PluginStage";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { tokens } from "@metro/common";

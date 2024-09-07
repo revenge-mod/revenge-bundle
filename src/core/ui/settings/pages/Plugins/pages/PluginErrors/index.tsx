@@ -1,4 +1,4 @@
-import PluginReporter from "@core/ui/reporter/PluginReporter";
+import PluginReporter from "@core/reporter/PluginReporter";
 import { FlatList, View } from "react-native";
 
 import PluginErrorCard from "./PluginErrorCard";

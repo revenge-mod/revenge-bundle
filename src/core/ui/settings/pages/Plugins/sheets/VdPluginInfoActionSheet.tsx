@@ -1,5 +1,5 @@
 import { formatString, Strings } from "@core/i18n";
-import PluginReporter from "@core/ui/reporter/PluginReporter";
+import PluginReporter from "@core/reporter/PluginReporter";
 import usePluginStatusColor from "@core/ui/settings/pages/Plugins/usePluginStatusColor";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import PluginManager from "@lib/addons/plugins/PluginManager";
