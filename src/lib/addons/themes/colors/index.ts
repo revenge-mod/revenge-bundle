@@ -5,7 +5,7 @@ import patchStorage from "./patches/storage";
 import { ColorManifest } from "./types";
 import { updateBunnyColor } from "./updater";
 
-export { default as ColorManager } from "./manager";
+export { default as ColorManager } from "./ColorManager";
 
 /** @internal */
 export default function initColors(manifest: ColorManifest | null) {

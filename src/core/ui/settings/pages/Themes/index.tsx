@@ -2,7 +2,7 @@ import { formatString, Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
-import ColorManager from "@lib/addons/themes/colors/manager";
+import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { updateBunnyColor } from "@lib/addons/themes/colors/updater";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";

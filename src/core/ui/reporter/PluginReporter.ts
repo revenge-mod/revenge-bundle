@@ -78,44 +78,43 @@ function convertToError(error: SerializedError) {
     return newErr;
 }
 
-export default new class PluginReporter {
-    stages = Observable.from({}) as Record<string, PluginStage>;
-
-    errors = createStorage<Record<string, SerializedError | string>>("plugins/reporter/last-errors.json");
-    disableReason = createStorage<Record<string, PluginDisableReason>>("plugins/reporter/disable-reason.json");
+export default {
+    stages: Observable.from({}) as Record<string, PluginStage>,
+    errors: createStorage<Record<string, SerializedError | string>>("plugins/reporter/last-errors.json"),
+    disableReason: createStorage<Record<string, PluginDisableReason>>("plugins/reporter/disable-reason.json"),
 
     useReporter() {
         useObservable(this.stages, this.disableReason, this.errors);
-    }
+    },
 
     prepare() {
         return awaitStorage(this.disableReason, this.errors);
-    }
+    },
 
     hasErrors() {
         return !!Object.keys(this.errors).length;
-    }
+    },
 
     getError(id: string): Error | string {
         const error = this.errors[id];
         if (typeof error === "string") return error;
         return convertToError(error);
-    }
+    },
 
     updateStage(id: string, stage: PluginStage) {
         this.stages[id] = stage;
         if (stage === PluginStage.STARTED && this.errors[id]) {
             delete this.errors[id];
         }
-    }
+    },
 
     reportPluginError(id: string, error: unknown) {
         this.errors[id] = toSerialized(error);
-    }
+    },
 
     reportPluginDisable(id: string, reason: PluginDisableReason) {
         this.disableReason[id] = reason;
-    }
+    },
 
     clearPluginReports(id: string, stage = false) {
         delete this.disableReason[id];

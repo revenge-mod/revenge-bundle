@@ -3,7 +3,7 @@ import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import PluginReporter from "@core/ui/reporter/PluginReporter";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
-import PluginManager from "@lib/addons/plugins/manager";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";

@@ -1,8 +1,8 @@
 import { formatString, Strings } from "@core/i18n";
 import { Observable } from "@gullerya/object-observer";
-import FontManager from "@lib/addons/fonts";
+import FontManager from "@lib/addons/fonts/FontManager";
 import { FontManifest, OldFontDefinition } from "@lib/addons/fonts/types";
-import ColorManager from "@lib/addons/themes/colors/manager";
+import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";

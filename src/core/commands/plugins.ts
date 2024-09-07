@@ -1,5 +1,5 @@
 import { Strings } from "@core/i18n";
-import PluginManager from "@lib/addons/plugins/manager";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { ApplicationCommand, ApplicationCommandOptionType } from "@lib/api/commands/types";
 import { messageUtil } from "@metro/common";
 

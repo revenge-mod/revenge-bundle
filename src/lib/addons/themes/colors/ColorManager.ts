@@ -1,5 +1,4 @@
 import BunnySettings from "@core/storage/BunnySettings";
-import AddonManager from "@lib/addons/AddonManager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { fileExists, removeFile, writeFile } from "@lib/api/native/fs";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
@@ -28,15 +27,15 @@ interface BunnyColorInfoStorage {
     }
 }
 
-export default new class ColorManager extends AddonManager<ColorManifest> {
-    preferences = createStorage<BunnyColorPreferencesStorage>(
+export default {
+    preferences: createStorage<BunnyColorPreferencesStorage>(
         "themes/colors/preferences.json",
         {
             dflt: { selected: null, per: {}, customBackground: null }
         }
-    );
+    ),
 
-    infos = createStorage<BunnyColorInfoStorage>("themes/colors/info.json");
+    infos: createStorage<BunnyColorInfoStorage>("themes/colors/info.json"),
 
     async prepare(): Promise<void> {
         await awaitStorage(this.preferences, this.infos);
@@ -57,11 +56,11 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         if (LOADER_IDENTITY.type === "bunny" && await fileExists("../vendetta_theme.json")) {
             await writeFile("../vendetta_theme.json", "null");
         }
-    }
+    },
 
     async initialize(): Promise<void> {
         this.updateAll();
-    }
+    },
 
     async migrate(oldKey: string) {
         return migrateToNewStorage(oldKey, async storage => {
@@ -80,11 +79,11 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
                 };
             }
         });
-    }
+    },
 
     sanitizeId(id: string) {
         return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-    }
+    },
 
     convertToVd(manifest: ColorManifest): VendettaThemeManifest {
         const semanticColors = {} as VendettaThemeManifest["semanticColors"] & {};
@@ -114,7 +113,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             background: manifest.spec === 2 ? manifest.background : manifest.background ? { ...omit(manifest.background, ["opacity"]), alpha: manifest.background.opacity } : undefined,
             ...(manifest.spec === 3 && manifest.extras)
         };
-    }
+    },
 
     checkColor(manifest: ColorManifest) {
         invariant(manifest.spec === 2 || manifest.spec === 3, "Invalid theme spec");
@@ -124,26 +123,26 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             parseColorManifest(manifest);
             return manifest;
         }
-    }
+    },
 
     getAllIds(): string[] {
         return Object.keys(this.infos);
-    }
+    },
 
     getId(manifest: ColorManifest, url: string) {
         return this.sanitizeId("id" in manifest ? manifest.id : url);
-    }
+    },
 
     getCurrentManifest(): ColorManifest | null {
         if (!this.preferences.selected) return null;
         return this.getManifest(this.preferences.selected);
-    }
+    },
 
     getManifest(id: string): ColorManifest {
         id = this.sanitizeId(id);
         if (!this.infos[id]) throw new Error(`${id} is not installed`);
         return createStorage(`themes/colors/data/${id}.json`);
-    }
+    },
 
     getDisplayInfo(id: string): BunnyPluginManifest["display"] & { id: string } {
         id = this.sanitizeId(id);
@@ -160,7 +159,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
                 authors: manifest.authors
             };
         }
-    }
+    },
 
     async writeForNative(manifest: ColorManifest | null) {
         manifest = manifest && this.convertToVd(manifest);
@@ -174,7 +173,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         } else {
             await writeFile("current-theme.json", "null");
         }
-    }
+    },
 
     async fetch(url: string) {
         let manifest: ColorManifest;
@@ -190,7 +189,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         await updateStorageAsync(`themes/colors/data/${id}.json`, manifest);
 
         return manifest;
-    }
+    },
 
     async refresh(id: string) {
         id = this.sanitizeId(id);
@@ -200,7 +199,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         if (this.preferences.selected === id) {
             updateBunnyColor(this.getCurrentManifest(), { update: true });
         }
-    }
+    },
 
     async select(id: string | null) {
         id &&= this.sanitizeId(id);
@@ -218,7 +217,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
             updateBunnyColor(null, { update: true });
             await this.writeForNative(null);
         }
-    }
+    },
 
     async install(url: string): Promise<void> {
         if (this.getAllIds().some(id => this.infos[id].sourceUrl === url)) {
@@ -230,7 +229,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
 
         this.preferences.per[id] = { autoUpdate: true };
         this.infos[id] = { sourceUrl: url, timeInstalled: new Date().toISOString() };
-    }
+    },
 
     async uninstall(id: string): Promise<void> {
         id = this.sanitizeId(id);
@@ -243,7 +242,7 @@ export default new class ColorManager extends AddonManager<ColorManifest> {
         delete this.preferences.per[id];
 
         await removeFile(`themes/colors/data/${id}.json`);
-    }
+    },
 
     async updateAll(): Promise<void> {
         const update = (id: string) => this.fetch(this.infos[id].sourceUrl);

@@ -2,7 +2,7 @@ import { formatString, Strings } from "@core/i18n";
 import PluginReporter from "@core/ui/reporter/PluginReporter";
 import usePluginStatusColor from "@core/ui/settings/pages/Plugins/usePluginStatusColor";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
-import PluginManager from "@lib/addons/plugins/manager";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { findAssetId } from "@lib/api/assets";
 import { purgeStorage } from "@lib/api/storage";
 import { Codeblock } from "@lib/ui/components";

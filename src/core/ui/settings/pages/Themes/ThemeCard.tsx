@@ -1,7 +1,7 @@
 import { formatString, Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
-import ColorManager from "@lib/addons/themes/colors/manager";
+import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
 import { clipboard } from "@metro/common";

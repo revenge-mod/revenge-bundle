@@ -1,7 +1,6 @@
 import { logger } from "@core/logger";
 import PluginReporter, { PluginDisableReason, PluginStage } from "@core/ui/reporter/PluginReporter";
 import { Observable } from "@gullerya/object-observer";
-import AddonManager from "@lib/addons/AddonManager";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync, useObservable } from "@lib/api/storage";
 import { BUNNY_PROXY_PREFIX,VD_PROXY_PREFIX } from "@lib/constants";
@@ -22,30 +21,31 @@ function assert<T>(condition: T, id: string, attempt: string): asserts condition
     if (!condition) throw new Error(`[${id}] Attempted to ${attempt}`);
 }
 
-export default new class PluginManager extends AddonManager<BunnyPluginManifest> {
-    settings = createStorage<PluginSettingsStorage>("plugins/settings.json");
-    traces = createStorage<PluginTracesStorage>("plugins/infos.json");
+const instances = Observable.from({}) as Record<string, PluginInstance | undefined>;
+const bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
 
-    #instances = Observable.from({}) as Record<string, PluginInstance | undefined>;
-    #bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
-    #updateAllPromise: Promise<void> = null!;
+let updateAllPromise: Promise<void>;
+
+export default {
+    settings: createStorage<PluginSettingsStorage>("plugins/settings.json"),
+    traces: createStorage<PluginTracesStorage>("plugins/infos.json"),
 
     async initialize() {
-        await this.#updateAllPromise;
+        await updateAllPromise;
 
         for (const id of this.getAllIds()) {
             if (this.settings[id].enabled) {
                 this.start(id, { throwOnPluginError: true });
             }
         }
-    }
+    },
 
     async prepare(): Promise<void> {
         await awaitStorage(this.settings, this.traces);
         await this.migrate("VENDETTA_PLUGINS");
         await Promise.all(this.getAllIds().map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
-        this.#updateAllPromise = this.updateAll();
-    }
+        updateAllPromise = this.updateAll();
+    },
 
     migrate(oldKey: string): Promise<void> {
         return migrateToNewStorage(oldKey, async storage => {
@@ -76,10 +76,10 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             }
         });
     }
-
+    ,
     usePlugins() {
-        useObservable(this.settings, this.traces, this.#instances);
-    }
+        useObservable(this.settings, this.traces, instances);
+    },
 
     convertToBn(source: string, vdManifest: VendettaPlugin["manifest"]): BunnyPluginManifest {
         return {
@@ -95,7 +95,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 ...omit(vdManifest, ["name", "description", "authors", "main", "hash"])
             }
         };
-    }
+    },
 
     convertToVd(manifest: BunnyPluginManifest) {
         return {
@@ -106,46 +106,46 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
             hash: manifest.hash,
             ...manifest.extras
         };
-    }
+    },
 
     sanitizeId(id: string) {
         if (isValidHttpUrl(id) && !id.endsWith("/")) id += "/";
         return id.replace(/[<>:"/\\|?*]/g, "-").replace(/-+/g, "-");
-    }
+    },
 
     getManifest(id: string): BunnyPluginManifest {
         id = this.sanitizeId(id);
         return createStorage(`plugins/manifests/${id}.json`);
-    }
+    },
 
     getAllIds(): string[] {
         return Object.keys(this.traces);
-    }
+    },
 
     getType(manifest: BunnyPluginManifest | VendettaPlugin["manifest"]) {
         if ("display" in manifest) return "bunny";
         if (["name", "main"].every(p => p in manifest)) return "vendetta";
         throw new Error("Invalid plugin manifest");
-    }
+    },
 
     isProxied(id: string) {
         const { sourceUrl } = this.traces[this.sanitizeId(id)];
         return sourceUrl.startsWith(VD_PROXY_PREFIX) || sourceUrl.startsWith(BUNNY_PROXY_PREFIX);
-    }
+    },
 
     getUnproxiedPlugins() {
         return this.getAllIds().filter(p => !this.isProxied(p));
-    }
+    },
 
     getSettingsComponent(id: string): (() => JSX.Element) | undefined {
-        return this.#instances[id]?.SettingsComponent;
-    }
+        return instances[id]?.SettingsComponent;
+    },
 
     async refetch(id: string) {
         id = this.sanitizeId(id);
         const { sourceUrl } = this.traces[id];
         await this.fetch(sourceUrl, { id });
-    }
+    },
 
     async fetch(url: string, { id = "" } = {}): Promise<BunnyPluginManifest> {
         if (!url.endsWith("/")) url += "/";
@@ -192,7 +192,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
         PluginReporter.updateStage(pluginManifest.id, PluginStage.FETCHED);
         return pluginManifest;
-    }
+    },
 
     async start(id: string, { throwOnPluginError = false, awaitPlugin = true } = {}): Promise<void> {
         id = this.sanitizeId(id);
@@ -201,7 +201,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         assert(manifest, id, "start a non-registered plugin");
         assert(id in this.settings, id, "start a non-installed plugin");
         assert(this.settings[id]?.enabled, id, "start a disabled plugin");
-        assert(!this.#instances[id], id, "start an already started plugin");
+        assert(!instances[id], id, "start an already started plugin");
 
         await preloadStorageIfExists(`plugins/storage/${id}.json`);
 
@@ -235,8 +235,8 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
 
                 if (!pluginInstance) throw new Error(`Plugin '${id}' does not export a valid plugin instance`);
 
-                this.#bunnyApiObjects.set(id, api);
-                this.#instances[id] = pluginInstance;
+                bunnyApiObjects.set(id, api);
+                instances[id] = pluginInstance;
                 PluginReporter.updateStage(id, PluginStage.INSTANTIATED);
             } catch (error) {
                 PluginReporter.reportPluginError(id, error);
@@ -286,7 +286,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                     SettingsComponent: rawInstance.settings
                 };
 
-                this.#instances[id] = pluginInstance;
+                instances[id] = pluginInstance;
                 PluginReporter.updateStage(id, PluginStage.INSTANTIATED);
             } catch (err) {
                 PluginReporter.reportPluginError(id, err);
@@ -314,11 +314,11 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 throw new Error("An error occured while starting the plugin", { cause: error });
             }
         }
-    }
+    },
 
     async stop(id: string, { throwOnPluginError = false, awaitPlugin = false } = {}) {
         id = this.sanitizeId(id);
-        const instance = this.#instances[id];
+        const instance = instances[id];
         assert(instance, id, "stop a non-started plugin");
 
         try {
@@ -331,11 +331,11 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
                 throw new Error("instance.stop() threw an error", { cause: err });
             }
         } finally {
-            const obj = this.#bunnyApiObjects.get(id);
+            const obj = bunnyApiObjects.get(id);
             obj?.disposers.forEach((d: Function) => d());
-            delete this.#instances[id];
+            delete instances[id];
         }
-    }
+    },
 
     async enable(id: string, { start = true } = {}) {
         id = this.sanitizeId(id);
@@ -344,16 +344,16 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         this.settings[id].enabled = true;
         PluginReporter.clearPluginReports(id);
         if (start) await this.start(id);
-    }
+    },
 
     async disable(id: string, { throwOnPluginError = false, reason = PluginDisableReason.REQUESTED } = {}) {
         id = this.sanitizeId(id);
         assert(this.settings[id], id, "disable a non-installed plugin");
 
-        this.#instances[id] && this.stop(id, { throwOnPluginError });
+        instances[id] && this.stop(id, { throwOnPluginError });
         this.settings[id].enabled = false;
         PluginReporter.reportPluginDisable(id, reason);
-    }
+    },
 
     async install(url: string, { start = true, enable = true } = {}) {
         if (!url.endsWith("/")) url += "/";
@@ -375,12 +375,12 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         };
 
         if (start) await this.start(manifest.id, { awaitPlugin: true, throwOnPluginError: true });
-    }
+    },
 
     async uninstall(id: string, { keepData = false } = {}) {
         id = this.sanitizeId(id);
 
-        if (this.#instances[id]) {
+        if (instances[id]) {
             await this.stop(id);
         }
 
@@ -392,7 +392,7 @@ export default new class PluginManager extends AddonManager<BunnyPluginManifest>
         await removeFile(`plugins/scripts/${id}.js`);
         await purgeStorage(`plugins/manifests/${id}.json`);
         if (!keepData) await purgeStorage(`plugins/storage/${id}.json`);
-    }
+    },
 
     async updateAll() {
         const pluginIds = this.getAllIds();

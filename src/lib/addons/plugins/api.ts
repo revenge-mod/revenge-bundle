@@ -3,7 +3,7 @@ import { patcher } from "@lib/api";
 import { registerCommand } from "@lib/api/commands";
 import { createStorage } from "@lib/api/storage";
 
-import PluginManager from "./manager";
+import PluginManager from "./PluginManager";
 import { BunnyPluginObject } from "./types";
 
 type DisposableFn = (...props: any[]) => () => unknown;

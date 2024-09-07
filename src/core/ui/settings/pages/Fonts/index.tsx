@@ -2,7 +2,7 @@ import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonPage from "@core/ui/components/AddonPage";
 import FontEditor from "@core/ui/settings/pages/Fonts/FontEditor";
-import FontManager from "@lib/addons/fonts";
+import FontManager from "@lib/addons/fonts/FontManager";
 import { FontManifest } from "@lib/addons/fonts/types";
 import { useObservable } from "@lib/api/storage";
 import { NavigationNative } from "@metro/common";

@@ -1,4 +1,4 @@
-import PluginManager from "@lib/addons/plugins/manager";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 
 import { UnifiedPluginModel } from "..";

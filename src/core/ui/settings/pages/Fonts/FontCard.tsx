@@ -1,7 +1,7 @@
 import { Strings } from "@core/i18n";
 import { CardWrapper } from "@core/ui/components/AddonCard";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
-import FontManager from "@lib/addons/fonts";
+import FontManager from "@lib/addons/fonts/FontManager";
 import { FontManifest } from "@lib/addons/fonts/types";
 import { findAssetId } from "@lib/api/assets";
 import { RTNBundleUpdaterManager } from "@lib/api/native/rn-modules";

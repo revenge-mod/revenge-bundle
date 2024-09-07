@@ -1,6 +1,6 @@
 import { formatString, Strings } from "@core/i18n";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
-import PluginManager from "@lib/addons/plugins/manager";
+import PluginManager from "@lib/addons/plugins/PluginManager";
 import { ColorManager } from "@lib/addons/themes/colors";
 import { findAssetId } from "@lib/api/assets";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";

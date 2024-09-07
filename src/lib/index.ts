@@ -3,7 +3,7 @@ import "../modules.d.ts"; // eslint-disable-line import-alias/import-alias
 
 import { logger } from "@core/logger/index.js";
 
-export * as fonts from "./addons/fonts";
+export * as fonts from "./addons/fonts/FontManager.js";
 export * as plugins from "./addons/plugins";
 export * as themes from "./addons/themes";
 export * as api from "./api";
