@@ -42,7 +42,7 @@ export default {
     }),
 
     async prepare() {
-        awaitStorage(this.general, this.developer, this.loader);
+        await awaitStorage(this.general, this.developer, this.loader);
         await migrateToNewStorage("VENDETTA_SETTINGS", (vdSettings: VendettaSettings) => {
             this.general.patchIsStaff = vdSettings.enableDiscordDeveloperSettings;
             this.general.safeModeEnabled = vdSettings.safeMode?.enabled ?? false;

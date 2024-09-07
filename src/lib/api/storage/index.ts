@@ -3,6 +3,7 @@ import { Emitter } from "@core/vendetta/Emitter";
 import { Observable } from "@gullerya/object-observer";
 import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { RTNMMKVManager } from "@lib/api/native/rn-modules";
+import { debounce } from "es-toolkit";
 
 const storageInitErrorSymbol = Symbol.for("bunny.storage.initError");
 const storagePromiseSymbol = Symbol.for("bunny.storage.promise");
@@ -18,12 +19,12 @@ function createFileBackend<T extends object>(filePath: string) {
                 throw new Error(`Failed to parse storage from '${filePath}'`, { cause: e });
             }
         },
-        set: async (data: T) => {
+        set: debounce(async (data: T) => {
             if (!data || typeof data !== "object") {
                 throw new Error("data needs to be an object");
             }
             await writeFile(filePath, JSON.stringify(data));
-        },
+        }, 500),
         exists: async () => {
             return await fileExists(filePath);
         }
@@ -41,7 +42,7 @@ export async function migrateToNewStorage(
     let resolvePromise: () => void;
 
     // @ts-expect-error - assigning to migrateToNewStorage._migrated
-    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".storage-v1-migrated", { dflt: [] });
+    const migratedKeys = migrateToNewStorage._migrated ??= await createStorageAsync<string[]>(".__vd_migrations", { dflt: [] });
 
     if (migratedKeys.includes(oldKey)) return;
 
@@ -131,18 +132,20 @@ export function createStorageAndCallback<T extends object = {}>(
     };
 
     const backend = createFileBackend<T>(path);
-    if (_loadedPath[path]) callback(_loadedPath[path]);
-    else {
+    if (_loadedPath[path]) {
+        callback(_loadedPath[path]);
+    } else {
         backend.exists().then(async exists => {
             if (!exists) {
                 if (nullIfEmpty) {
-                    callback(null);
+                    callback(_loadedPath[path] = null);
                 } else {
+                    _loadedPath[path] = dflt;
                     await backend.set(dflt);
                     callback(dflt);
                 }
             } else {
-                callback(await backend.get());
+                callback(_loadedPath[path] = await backend.get());
             }
         });
     }
