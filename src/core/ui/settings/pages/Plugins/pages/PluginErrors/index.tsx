@@ -5,7 +5,7 @@ import PluginErrorCard from "./PluginErrorCard";
 
 export default function PluginErrors() {
     return <FlatList
-        data={Object.keys(PluginReporter.lastErrors)}
+        data={Object.keys(PluginReporter.errors)}
         contentContainerStyle={{ padding: 8 }}
         ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
         renderItem={(props: { item: string }) => {

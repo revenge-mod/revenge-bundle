@@ -1,6 +1,5 @@
 import PluginManager from "@lib/addons/plugins/manager";
 import { BunnyPluginManifest } from "@lib/addons/plugins/types";
-import { useObservable } from "@lib/api/storage";
 
 import { UnifiedPluginModel } from "..";
 
@@ -15,8 +14,7 @@ export default function unifyVdPlugin(manifest: BunnyPluginManifest): UnifiedPlu
         isEnabled: () => PluginManager.settings[manifest.id].enabled,
         isInstalled: () => Boolean(PluginManager.settings[manifest.id]),
         usePluginState() {
-            useObservable(PluginManager.settings[manifest.id]);
-            useObservable(PluginManager.traces[manifest.id]);
+            PluginManager.usePlugins();
         },
         toggle(start: boolean) {
             start

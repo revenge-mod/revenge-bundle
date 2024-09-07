@@ -3,7 +3,7 @@ import { findAssetId } from "@lib/api/assets";
 import { clipboard, constants } from "@metro/common";
 import { Button, Card, Text } from "@metro/common/components";
 import { useState } from "react";
-import { Image, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
 
 import { INDEX_BUNDLE_FILE } from "./ErrorCard";
 
@@ -27,16 +27,7 @@ export default function ErrorStackCard(props: {
                 Call Stack
             </Text>
             <View style={{ gap: 4 }}>
-                {stack.map((s, id) => (
-                    <View key={id}>
-                        <Text style={{ fontFamily: constants.Fonts.CODE_BOLD }}>
-                            {s.methodName}
-                        </Text>
-                        <Text style={{ fontFamily: constants.Fonts.CODE_NORMAL }} ellipsizeMode="middle" numberOfLines={1}>
-                            <Text color="text-muted">{s.file === INDEX_BUNDLE_FILE ? "jsbundle" : s.file}:{s.lineNumber}:{s.column}</Text>
-                        </Text>
-                    </View>
-                ))}
+                {stack.map((f, id) => <Line id={id} frame={f} />)}
             </View>
             {collapsed && <Text>...</Text>}
             <View style={{ gap: 8, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
@@ -57,3 +48,16 @@ export default function ErrorStackCard(props: {
         </View>
     </Card>;
 }
+function Line(props: { id: number, frame: StackFrame }) {
+    const [collapsed, setCollapsed] = useState(true);
+
+    return <Pressable onPress={() => setCollapsed(v => !v)} key={props.id}>
+        <Text style={{ fontFamily: constants.Fonts.CODE_BOLD }}>
+            {props.frame.methodName}
+        </Text>
+        <Text style={{ fontFamily: constants.Fonts.CODE_NORMAL }} ellipsizeMode="middle" numberOfLines={collapsed ? 1 : undefined}>
+            <Text color="text-muted">{props.frame.file === INDEX_BUNDLE_FILE ? "jsbundle" : props.frame.file}:{props.frame.lineNumber}:{props.frame.column}</Text>
+        </Text>
+    </Pressable>;
+}
+

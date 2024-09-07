@@ -1,9 +1,13 @@
-import { awaitStorage, createStorage } from "@lib/api/storage";
+import { Observable } from "@gullerya/object-observer";
+import { awaitStorage, createStorage, useObservable } from "@lib/api/storage";
 
 export enum PluginStage {
     FETCHING = "FETCHING",
+    FETCHED = "FETCHED",
     PARSING = "PARSING",
+    PARSED = "PARSED",
     INSTANTIATING = "INSTANTIATING",
+    INSTANTIATED = "INSTANTIATED",
     STARTING = "STARTING",
     STARTED = "STARTED",
     STOPPING = "STOPPING",
@@ -75,34 +79,38 @@ function convertToError(error: SerializedError) {
 }
 
 export default new class PluginReporter {
-    stages = {} as Record<string, PluginStage>;
+    stages = Observable.from({}) as Record<string, PluginStage>;
 
+    errors = createStorage<Record<string, SerializedError | string>>("plugins/reporter/last-errors.json");
     disableReason = createStorage<Record<string, PluginDisableReason>>("plugins/reporter/disable-reason.json");
-    lastErrors = createStorage<Record<string, SerializedError | string>>("plugins/reporter/last-errors.json");
+
+    useReporter() {
+        useObservable(this.stages, this.disableReason, this.errors);
+    }
 
     prepare() {
-        return awaitStorage(this.disableReason, this.lastErrors);
+        return awaitStorage(this.disableReason, this.errors);
     }
 
     hasErrors() {
-        return !!Object.keys(this.lastErrors).length;
+        return !!Object.keys(this.errors).length;
     }
 
     getError(id: string): Error | string {
-        const error = this.lastErrors[id];
+        const error = this.errors[id];
         if (typeof error === "string") return error;
         return convertToError(error);
     }
 
     updateStage(id: string, stage: PluginStage) {
         this.stages[id] = stage;
-        if (stage === PluginStage.STARTED && this.lastErrors[id]) {
-            delete this.lastErrors[id];
+        if (stage === PluginStage.STARTED && this.errors[id]) {
+            delete this.errors[id];
         }
     }
 
     reportPluginError(id: string, error: unknown) {
-        this.lastErrors[id] = toSerialized(error);
+        this.errors[id] = toSerialized(error);
     }
 
     reportPluginDisable(id: string, reason: PluginDisableReason) {
@@ -111,7 +119,7 @@ export default new class PluginReporter {
 
     clearPluginReports(id: string, stage = false) {
         delete this.disableReason[id];
-        delete this.lastErrors[id];
+        delete this.errors[id];
         if (stage) delete this.stages[id];
     }
 };

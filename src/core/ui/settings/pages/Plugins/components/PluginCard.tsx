@@ -1,11 +1,12 @@
 import { CardWrapper } from "@core/ui/components/AddonCard";
 import { usePluginCardStyles } from "@core/ui/settings/pages/Plugins/usePluginCardStyles";
+import usePluginStatusColor from "@core/ui/settings/pages/Plugins/usePluginStatusColor";
 import { findAssetId } from "@lib/api/assets";
 import { NavigationNative, tokens } from "@metro/common";
 import { Card, IconButton, Stack, TableSwitch, Text } from "@metro/common/components";
 import { showSheet } from "@ui/sheets";
 import chroma from "chroma-js";
-import { createContext, memo, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { Image, View } from "react-native";
 
 import { UnifiedPluginModel } from "..";
@@ -20,6 +21,7 @@ function getHighlightColor(): import("react-native").ColorValue {
 function Title() {
     const styles = usePluginCardStyles();
     const { plugin, result } = useCardContext();
+    const statusColor = usePluginStatusColor(plugin.id);
 
     // could be empty if the plugin name is irrelevant!
     const highlightedNode = result[0].highlight((m, i) =>
@@ -45,6 +47,7 @@ function Title() {
             source={icon}
         />}
         {textNode}
+        <View style={{ borderRadius: 4, backgroundColor: statusColor, height: 8, width: 8 }} />
     </View>;
 }
 
@@ -92,7 +95,7 @@ function Description() {
     </Text>;
 }
 
-const Actions = memo(() => {
+function Actions() {
     const { plugin } = useCardContext();
     const navigation = NavigationNative.useNavigation();
 
@@ -118,7 +121,7 @@ const Actions = memo(() => {
             )}
         />
     </View>;
-});
+}
 
 export default function PluginCard({ result, item: plugin }: CardWrapper<UnifiedPluginModel>) {
     plugin.usePluginState();

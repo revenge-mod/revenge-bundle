@@ -53,6 +53,9 @@ export const FormCheckbox = findSingular("FormCheckbox");
 export const Card = findProp("Card");
 export const RedesignCompat = proxyLazy(() => findByProps("RedesignCompat").RedesignCompat);
 
+// Pile
+export const AvatarPile = findSingular("AvatarPile");
+
 // Misc.
 export const Stack = findProp("Stack") as t.Stack;
 

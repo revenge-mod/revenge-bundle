@@ -1,5 +1,6 @@
 import { Strings } from "@core/i18n";
 import { CardWrapper } from "@core/ui/components/AddonCard";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import FontManager from "@lib/addons/fonts";
 import { FontManifest } from "@lib/addons/fonts/types";
 import { findAssetId } from "@lib/api/assets";
@@ -10,7 +11,6 @@ import { findByProps } from "@metro";
 import { NavigationNative, tokens } from "@metro/common";
 import { Button, Card, IconButton, Stack, Text } from "@metro/common/components";
 import * as Skia from "@shopify/react-native-skia";
-import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import { TextStyleSheet } from "@ui/styles";
 import { useMemo } from "react";
 import { View } from "react-native";

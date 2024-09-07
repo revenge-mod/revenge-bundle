@@ -104,13 +104,11 @@ export default function Plugins() {
 }
 function HeaderComponent() {
     const navigation = NavigationNative.useNavigation();
-    const unproxiedPlugins = PluginManager.getAllIds()
-        .filter(p => !PluginManager.traces[p].sourceUrl.startsWith(VD_PROXY_PREFIX)
-            && !PluginManager.traces[p].sourceUrl.startsWith(BUNNY_PROXY_PREFIX)
-        );
+    const unproxiedPlugins = PluginManager.getUnproxiedPlugins();
 
     return <View style={{ marginVertical: 8, gap: 8 }}>
         {PluginReporter.hasErrors() && <Card border="strong" style={{ gap: 4 }}>
+            <Text color="text-danger" variant="eyebrow">Error</Text>
             <Text variant="heading-lg/bold">Some plugins have been disabled</Text>
             <Text variant="text-md/medium">These plugins have been disabled due to an error while starting it.</Text>
             <Button
@@ -126,6 +124,7 @@ function HeaderComponent() {
         </Card>}
         {/* TODO: Consider making this dismissable */}
         {!!unproxiedPlugins.length && <Card border="strong" style={{ gap: 4 }}>
+            <Text color="text-warning" variant="eyebrow">Warning</Text>
             <Text variant="heading-lg/bold">Unproxied plugins detected</Text>
             <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
             <Button

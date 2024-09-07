@@ -8,7 +8,7 @@ export default function PluginErrorCard(props: { id: string }) {
 
     if (error instanceof Error) {
         return <ErrorCard
-            header={<Text variant="heading-lg/bold">{props.id}</Text>}
+            header={<Text variant="eyebrow">{props.id}</Text>}
             error={error}
         />;
     } else {

@@ -1,5 +1,4 @@
 import { Strings } from "@core/i18n";
-import { findAssetId } from "@lib/api/assets";
 import { Codeblock } from "@lib/ui/components";
 import { showSheet } from "@lib/ui/sheets";
 import { Button, Card, Stack, Text, TwinButtons } from "@metro/common/components";
@@ -26,13 +25,13 @@ export default function ErrorCard(props: ErrorCardProps) {
             <TwinButtons>
                 {props.onRetryRender && <Button
                     variant="destructive"
-                    icon={findAssetId("RetryIcon")}
+                    // icon={findAssetId("RetryIcon")}
                     text={Strings.RETRY_RENDER}
                     onPress={props.onRetryRender}
                 />}
                 {props.error instanceof Error ? <Button
                     text={"Details"}
-                    icon={findAssetId("CircleInformationIcon-primary")}
+                    // icon={findAssetId("CircleInformationIcon-primary")}
                     onPress={() => showSheet(
                         "BunnyErrorDetailsActionSheet",
                         ErrorDetailsActionSheet,
