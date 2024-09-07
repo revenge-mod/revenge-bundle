@@ -11,7 +11,7 @@ import FontCard from "./FontCard";
 
 export default function Fonts() {
     BunnySettings.useSettings();
-    useObservable(FontManager.preferences, FontManager.traces);
+    useObservable([FontManager.preferences, FontManager.traces]);
 
     const navigation = NavigationNative.useNavigation();
 

@@ -129,6 +129,8 @@ export default function PluginCard({ result, item: plugin }: CardWrapper<Unified
     const navigation = NavigationNative.useNavigation();
     const cardContextValue = useMemo(() => ({ plugin, result }), [plugin, result]);
 
+    if (!plugin.isInstalled()) return null;
+
     return (
         <CardContext.Provider value={cardContextValue}>
             <Card onPress={() => void showSheet(

@@ -14,7 +14,7 @@ export default function unifyVdPlugin(manifest: BunnyPluginManifest): UnifiedPlu
         isEnabled: () => PluginManager.settings[manifest.id].enabled,
         isInstalled: () => Boolean(PluginManager.settings[manifest.id]),
         usePluginState() {
-            PluginManager.usePlugins();
+            PluginManager.usePlugin(manifest.id);
         },
         toggle(start: boolean) {
             start

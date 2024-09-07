@@ -12,8 +12,8 @@ import { showToast } from "@lib/ui/toasts";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { NavigationNative } from "@metro/common";
-import { Button, Card, FlashList, Text } from "@metro/common/components";
-import { ComponentProps } from "react";
+import { Button, Card, FlashList, Text, TwinButtons } from "@metro/common/components";
+import { ComponentProps, useState } from "react";
 import { View } from "react-native";
 
 import unifyVdPlugin from "./models/vendetta";
@@ -68,7 +68,7 @@ export default function Plugins() {
 
     return <PluginPage
         useItems={() => {
-            useObservable(PluginManager.settings);
+            useObservable([PluginManager.settings]);
             return PluginManager.getAllIds().map(id => PluginManager.getManifest(id));
         }}
         resolveItem={unifyVdPlugin}
@@ -77,24 +77,26 @@ export default function Plugins() {
             label: "Install a plugin",
             fetchFn: async (url: string) => {
                 if (!url.startsWith(VD_PROXY_PREFIX) && !url.startsWith(BUNNY_PROXY_PREFIX) && !BunnySettings.developer.enabled) {
-                    openAlert("bunny-plugin-unproxied-confirmation", <AlertModal
-                        title="Hold On!"
-                        content="You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?"
-                        extraContent={<Card><Text variant="text-md/bold">{url}</Text></Card>}
-                        actions={<AlertActions>
-                            <AlertActionButton text="Continue" variant="primary" onPress={() => {
-                                PluginManager.install(url)
-                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check")))
-                                    .catch(e => openAlert("bunny-plugin-install-failed", <AlertModal
-                                        title="Install Failed"
-                                        content={`Unable to install plugin from '${url}':`}
-                                        extraContent={<Card><Text variant="text-md/normal">{e instanceof Error ? e.message : String(e)}</Text></Card>}
-                                        actions={<AlertActionButton text="Okay" variant="primary" />}
-                                    />));
-                            }} />
-                            <AlertActionButton text="Cancel" variant="secondary" />
-                        </AlertActions>}
-                    />);
+                    openAlert("bunny-plugin-unproxied-confirmation",
+                        <AlertModal
+                            title="Hold On!"
+                            content="You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?"
+                            extraContent={<Card><Text variant="text-md/bold">{url}</Text></Card>}
+                            actions={<AlertActions>
+                                <AlertActionButton text="Continue" variant="primary" onPress={() => {
+                                    PluginManager.install(url)
+                                        .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check")))
+                                        .catch(e => openAlert("bunny-plugin-install-failed", <AlertModal
+                                            title="Install Failed"
+                                            content={`Unable to install plugin from '${url}':`}
+                                            extraContent={<Card><Text variant="text-md/normal">{e instanceof Error ? e.message : String(e)}</Text></Card>}
+                                            actions={<AlertActionButton text="Okay" variant="primary" />}
+                                        />));
+                                }} />
+                                <AlertActionButton text="Cancel" variant="secondary" />
+                            </AlertActions>}
+                        />
+                    );
                 } else {
                     return await PluginManager.install(url);
                 }
@@ -103,6 +105,7 @@ export default function Plugins() {
     />;
 }
 function HeaderComponent() {
+    const [dismissUnproxied, setDismissUnproxied] = useState(false);
     const navigation = NavigationNative.useNavigation();
     const unproxiedPlugins = PluginManager.getUnproxiedPlugins();
 
@@ -110,7 +113,7 @@ function HeaderComponent() {
         {PluginReporter.hasErrors() && <Card border="strong" style={{ gap: 4 }}>
             <Text color="text-danger" variant="eyebrow">Error</Text>
             <Text variant="heading-lg/bold">Some plugins have been disabled</Text>
-            <Text variant="text-md/medium">These plugins have been disabled due to an error while starting it.</Text>
+            <Text variant="text-md/medium">These plugins were disabled due to an error during startup.</Text>
             <Button
                 size="md"
                 text="Review"
@@ -122,29 +125,36 @@ function HeaderComponent() {
                     });
                 }} />
         </Card>}
-        {/* TODO: Consider making this dismissable */}
-        {!!unproxiedPlugins.length && <Card border="strong" style={{ gap: 4 }}>
+        {!!unproxiedPlugins.length && !dismissUnproxied && <Card border="strong" style={{ gap: 4 }}>
             <Text color="text-warning" variant="eyebrow">Warning</Text>
             <Text variant="heading-lg/bold">Unproxied plugins detected</Text>
-            <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
-            <Button
-                size="md"
-                text="Review"
-                style={{ marginTop: 8 }}
-                onPress={() => {
-                    navigation.push("BUNNY_CUSTOM_PAGE", {
-                        title: "Unproxied Plugins",
-                        render: () => {
-                            return <FlashList
-                                data={unproxiedPlugins}
-                                contentContainerStyle={{ padding: 8 }}
-                                ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-                                renderItem={({ item: id }: any) => <Card>
-                                    <Text variant="heading-md/semibold">{id}</Text>
-                                </Card>} />;
-                        }
-                    });
-                } } />
+            <Text variant="text-md/medium">Plugins installed from unproxied sources may run unreviewed code in this app without your awareness.</Text>
+            <View style={{ height: 8 }} />
+            <TwinButtons>
+                <Button
+                    size="md"
+                    text="Dismiss"
+                    variant="secondary"
+                    onPress={() => setDismissUnproxied(true)}
+                />
+                <Button
+                    size="md"
+                    text="Review"
+                    onPress={() => {
+                        navigation.push("BUNNY_CUSTOM_PAGE", {
+                            title: "Unproxied Plugins",
+                            render: () => {
+                                return <FlashList
+                                    data={unproxiedPlugins}
+                                    contentContainerStyle={{ padding: 8 }}
+                                    ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+                                    renderItem={({ item: id }: any) => <Card>
+                                        <Text variant="heading-md/semibold">{id}</Text>
+                                    </Card>} />;
+                            }
+                        });
+                    }} />
+            </TwinButtons>
         </Card>}
     </View>;
 }

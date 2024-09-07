@@ -53,7 +53,7 @@ export default {
     },
 
     useSettings() {
-        useObservable(this.general, this.developer, this.loader);
+        useObservable([this.general, this.developer, this.loader]);
     },
 
     isSafeMode() {

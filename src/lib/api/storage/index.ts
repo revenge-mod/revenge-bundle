@@ -1,6 +1,6 @@
 // New iteration of storage API, mostly yoinked from unreleased pyoncord (and sunrise?)
 import { Emitter } from "@core/vendetta/Emitter";
-import { Observable } from "@gullerya/object-observer";
+import { Observable, ObserverOptions } from "@gullerya/object-observer";
 import { fileExists, readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { RTNMMKVManager } from "@lib/api/native/rn-modules";
 import { debounce } from "es-toolkit";
@@ -65,7 +65,7 @@ export async function migrateToNewStorage(
     });
 }
 
-export function useObservable(...observables: Observable[]) {
+export function useObservable(observables: Observable[], opts?: ObserverOptions) {
     if (observables.some((o: any) => o?.[storageInitErrorSymbol])) throw new Error(
         "An error occured while initializing the storage",
     );
@@ -79,7 +79,7 @@ export function useObservable(...observables: Observable[]) {
     React.useEffect(() => {
         const listener = () => forceUpdate();
 
-        observables.forEach(o => Observable.observe(o, listener));
+        observables.forEach(o => Observable.observe(o, listener, opts));
 
         return () => {
             observables.forEach(o => Observable.unobserve(o, listener));

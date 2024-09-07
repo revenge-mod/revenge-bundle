@@ -76,10 +76,15 @@ export default {
                 };
             }
         });
-    }
-    ,
+    },
+
+    usePlugin(id: string) {
+        id = this.sanitizeId(id);
+        useObservable([this.settings, this.traces, instances], { pathsFrom: id });
+    },
+
     usePlugins() {
-        useObservable(this.settings, this.traces, instances);
+        useObservable([this.settings, this.traces, instances]);
     },
 
     convertToBn(source: string, vdManifest: VendettaPlugin["manifest"]): BunnyPluginManifest {
@@ -375,7 +380,10 @@ export default {
             autoUpdate: true
         };
 
-        if (start) await this.start(manifest.id, { awaitPlugin: true, throwOnPluginError: true });
+        if (start) await this.start(manifest.id, {
+            awaitPlugin: false,
+            throwOnPluginError: false
+        });
     },
 
     async uninstall(id: string, { keepData = false } = {}) {

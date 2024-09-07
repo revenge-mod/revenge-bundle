@@ -61,7 +61,7 @@ function FontPreview({ font }: { font: FontManifest; }) {
 }
 
 export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
-    useObservable(FontManager.preferences, FontManager.traces);
+    useObservable([FontManager.preferences, FontManager.traces]);
 
     const navigation = NavigationNative.useNavigation();
     const selected = FontManager.preferences.selected === font.id;

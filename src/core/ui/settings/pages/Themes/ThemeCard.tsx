@@ -11,7 +11,7 @@ import { showToast } from "@ui/toasts";
 type ColorDisplayInfo = ReturnType<typeof ColorManager.getDisplayInfo>;
 
 export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>) {
-    useObservable(ColorManager.preferences);
+    useObservable([ColorManager.preferences]);
 
     const { authors } = theme;
 

@@ -67,6 +67,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                     <Text variant="heading-xl/semibold">
                         {plugin.name}
                     </Text>
+                    {/* BEHOLD */}
                     {plugin.authors && <View style={{ flexDirection: "row", gap: 8, marginTop: -4, alignItems: "center" }}>
                         <AvatarPile size="xxsmall" names={[plugin.authors?.map(a => typeof a !== "string" ? a.name : a)]} totalCount={plugin.authors?.length}>
                             {plugin.authors.filter(a => typeof a === "object").map(a => <Avatar size="xxsmall" user={findByStoreName("UserStore").getUser(a.id)} />)}
@@ -95,9 +96,9 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
             </View>
             {PluginReporter.errors[plugin.id] && <Card style={{ gap: 8 }}>
                 <Text color="text-danger" variant="eyebrow">Error</Text>
-                <Text variant="heading-lg/semibold">An error occured while starting the plugin the last time</Text>
+                <Text variant="heading-md/normal">An error occured while starting the plugin.</Text>
                 <Codeblock selectable={true}>{String(PluginReporter.getError(plugin.id))}</Codeblock>
-                <Button style={{ marginTop: 4 }} text="See more" onPress={() => {}} />
+                {/* <Button style={{ marginTop: 4 }} text="See more" onPress={() => {}} /> */}
             </Card>}
             <Stack spacing={12}>
                 <ActionSheetRow.Group>

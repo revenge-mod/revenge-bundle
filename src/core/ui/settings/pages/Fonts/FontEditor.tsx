@@ -250,7 +250,7 @@ export default function FontEditor(props: { id?: string; }) {
         return Observable.from(props.id ? { ...FontManager.getManifest(props.id).main } : {});
     }, [props.id]);
 
-    useObservable(fontEntries);
+    useObservable([fontEntries]);
 
     const navigation = NavigationNative.useNavigation();
 

@@ -10,7 +10,7 @@ export default {
     disableReason: createStorage<Record<string, PluginDisableReason>>("plugins/reporter/disable-reason.json"),
 
     useReporter() {
-        useObservable(this.stages, this.disableReason, this.errors);
+        useObservable([this.stages, this.disableReason, this.errors]);
     },
 
     prepare() {

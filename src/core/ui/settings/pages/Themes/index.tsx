@@ -13,7 +13,7 @@ import { View } from "react-native";
 
 export default function Themes() {
     BunnySettings.useSettings();
-    useObservable(ColorManager.infos, ColorManager.preferences);
+    useObservable([ColorManager.infos, ColorManager.preferences]);
 
     return (
         <AddonPage<ReturnType<typeof ColorManager.getDisplayInfo>>
@@ -44,7 +44,7 @@ export default function Themes() {
             }}
             CardComponent={ThemeCard}
             OptionsActionSheetComponent={() => {
-                useObservable(ColorManager.preferences);
+                useObservable([ColorManager.preferences]);
 
                 return <ActionSheet>
                     <BottomSheetTitleHeader title="Options" />

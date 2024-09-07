@@ -15,7 +15,7 @@ const { MessagesWrapper } = lazyDestructure(() => findByProps("MessagesWrapper")
 export default function patchChatBackground() {
     const patches = [
         after("default", MessagesWrapperConnected, (_, ret) => {
-            useObservable(ColorManager.preferences);
+            useObservable([ColorManager.preferences]);
             if (!_colorRef.current || ColorManager.preferences.customBackground === "hidden") return ret;
 
             return <ImageBackground
