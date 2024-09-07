@@ -1,5 +1,5 @@
-import ErrorCard from "@core/ui/reporter/components/ErrorCard";
 import PluginReporter from "@core/reporter/PluginReporter";
+import ErrorCard from "@core/ui/reporter/components/ErrorCard";
 import { Codeblock } from "@lib/ui/components";
 import { Card, Text } from "@metro/common/components";
 

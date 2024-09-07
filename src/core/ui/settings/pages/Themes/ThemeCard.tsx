@@ -1,11 +1,11 @@
 import { formatString, Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
+import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
 import { clipboard } from "@metro/common";
-import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import { showToast } from "@ui/toasts";
 
 type ColorDisplayInfo = ReturnType<typeof ColorManager.getDisplayInfo>;

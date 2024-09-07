@@ -1,6 +1,6 @@
 import { logger } from "@core/logger";
-import PluginReporter, {  } from "@core/reporter/PluginReporter";
-import { PluginDisableReason, PluginStage } from "@core/reporter/PluginStage";
+import { PluginDisableReason, PluginStage } from "@core/reporter/enums";
+import PluginReporter from "@core/reporter/PluginReporter";
 import { Observable } from "@gullerya/object-observer";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync, useObservable } from "@lib/api/storage";
