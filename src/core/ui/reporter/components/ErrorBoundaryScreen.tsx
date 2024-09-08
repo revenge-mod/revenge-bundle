@@ -1,4 +1,5 @@
 import { toggleSafeMode } from "@core/debug/safeMode";
+import BunnySettings from "@core/storage/BunnySettings";
 import { hasStack, isComponentStack } from "@core/ui/reporter/utils/isStack";
 import { getDebugInfo } from "@lib/api/debug";
 import { RTNBundleUpdaterManager } from "@lib/api/native/rn-modules";
@@ -29,7 +30,7 @@ export default function ErrorBoundaryScreen(props: {
             </ScrollView>
             <Card style={{ gap: 6 }}>
                 <Button text="Reload Discord" onPress={() => RTNBundleUpdaterManager.reload()} />
-                <Button text="Reload in Safe Mode" onPress={() => toggleSafeMode({ to: true })} />
+                {!BunnySettings.isSafeMode() && <Button text="Reload in Safe Mode" onPress={() => toggleSafeMode()} />}
                 <Button variant ="destructive" text="Retry Render" onPress={() => props.rerender()} />
             </Card>
         </View>
