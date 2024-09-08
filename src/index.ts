@@ -41,9 +41,9 @@ export default async () => {
     window.bunny = lib;
 
     if (!BunnySettings.isSafeMode()) {
-        await ColorManager.initialize();
-        await PluginManager.initialize();
-        await FontManager.initialize();
+        ColorManager.initialize(),
+        PluginManager.initialize(),
+        FontManager.initialize();
     }
 
     // We good :)

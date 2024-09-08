@@ -24,28 +24,31 @@ function assert<T>(condition: T, id: string, attempt: string): asserts condition
 
 const instances = Observable.from({}) as Record<string, PluginInstance | undefined>;
 const bunnyApiObjects = new Map<string, ReturnType<typeof createBunnyPluginAPI>>();
-
-let updateAllPromise: Promise<void>;
+const updatePromiseMap = new Map<string, Promise<unknown>>();
 
 export default {
     settings: createStorage<PluginSettingsStorage>("plugins/settings.json"),
     traces: createStorage<PluginTracesStorage>("plugins/infos.json"),
 
     async initialize() {
-        await updateAllPromise;
-
-        for (const id of this.getAllIds()) {
+        this.getAllIds().map(async id => {
             if (this.settings[id].enabled) {
+                await updatePromiseMap.get(id);
                 this.start(id, { throwOnPluginError: true });
             }
-        }
+        });
     },
 
     async prepare(): Promise<void> {
         await awaitStorage(this.settings, this.traces);
         await this.migrate("VENDETTA_PLUGINS");
-        await Promise.all(this.getAllIds().map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
-        updateAllPromise = this.updateAll();
+
+        const pluginIds = this.getAllIds();
+
+        await Promise.all(pluginIds.map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
+        for (const id of pluginIds) {
+            updatePromiseMap.set(id, this.fetch(this.traces[id].sourceUrl, { id }));
+        }
     },
 
     migrate(oldKey: string): Promise<void> {
@@ -401,11 +404,5 @@ export default {
         await removeFile(`plugins/scripts/${id}.js`);
         await purgeStorage(`plugins/manifests/${id}.json`);
         if (!keepData) await purgeStorage(`plugins/storage/${id}.json`);
-    },
-
-    async updateAll() {
-        const pluginIds = this.getAllIds();
-        const update = (id: string) => this.fetch(this.traces[id].sourceUrl, { id });
-        await Promise.allSettled(pluginIds.map(update));
     }
 };
