@@ -287,8 +287,8 @@ export default {
                 const ret = typeof raw === "function" ? raw() : raw;
                 const rawInstance = ret?.default ?? ret ?? {};
                 pluginInstance = {
-                    start: rawInstance.onLoad,
-                    stop: rawInstance.onUnload,
+                    start: rawInstance.onLoad && (() => rawInstance.onLoad()),
+                    stop: rawInstance.onUnload && (() => rawInstance.onUnload()),
                     SettingsComponent: rawInstance.settings
                 };
 

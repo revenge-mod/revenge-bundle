@@ -9,5 +9,5 @@ export async function toggleSafeMode({
     const enabled = BunnySettings.general.safeModeEnabled = to;
     const currentColor = ColorManager.getCurrentManifest();
     await ColorManager.writeForNative(enabled ? null : currentColor);
-    if (reload) setTimeout(RTNBundleUpdaterManager.reload, 500);
+    if (reload) setTimeout(() => RTNBundleUpdaterManager.reload(), 500);
 }
