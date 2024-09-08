@@ -5,15 +5,13 @@ import { FontManifest, OldFontDefinition } from "@lib/addons/fonts/types";
 import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
 import { useObservable } from "@lib/api/storage";
+import { hideSheet, showSheet } from "@lib/ui/sheets";
 import { safeFetch } from "@lib/utils";
 import { NavigationNative } from "@metro/common";
 import { ActionSheet, BottomSheetTitleHeader, Button, IconButton, Stack, TableRow, TableRowGroup, Text, TextInput } from "@metro/common/components";
-import { findByPropsLazy } from "@metro/wrappers";
 import { ErrorBoundary } from "@ui/components";
 import { useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
-
-const actionSheet = findByPropsLazy("hideActionSheet");
 
 function guessFontName(urls: string[]) {
     const fileNames = urls.map(url => {
@@ -73,7 +71,7 @@ function RevengeFontsExtractor({ fonts, setName }: {
 
                     setName(fontName);
                     Object.assign(fonts, themeFonts);
-                    actionSheet.hideActionSheet();
+                    hideSheet("FontEditorActionSheet");
                 } catch (e) {
                     setError(String(e));
                 }
@@ -123,7 +121,7 @@ function JsonFontImporter({ fonts, setName, setId, setSource }: {
 
                     Object.assign(fonts, json.main);
                 })()
-                    .then(() => actionSheet.hideActionSheet())
+                    .then(() => hideSheet("FontEditorActionSheet"))
                     .catch(e => setError(String(e)))
                     .finally(() => setSaving(false));
 
@@ -172,14 +170,14 @@ function promptActionSheet(
     fontEntries: Record<string, string>,
     props: any
 ) {
-    actionSheet.openLazy(
+    showSheet(
+        "FontEditorActionSheet",
         () => <ErrorBoundary>
             <ActionSheet>
                 <BottomSheetTitleHeader title="Import Font" />
                 <Component fonts={fontEntries} {...props} />
             </ActionSheet>
-        </ErrorBoundary>,
-        "FontEditorActionSheet"
+        </ErrorBoundary>
     );
 }
 
