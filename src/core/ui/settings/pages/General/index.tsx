@@ -70,7 +70,7 @@ export default function General() {
                     <TableSwitchRow
                         label={Strings.DEVELOPER_SETTINGS}
                         icon={<TableRow.Icon source={findAssetId("ic_progress_wrench_24px")} />}
-                        value={BunnySettings.developer.enabled = true}
+                        value={BunnySettings.developer.enabled}
                         onValueChange={(v: boolean) => {
                             BunnySettings.developer.enabled = v;
                         }}
