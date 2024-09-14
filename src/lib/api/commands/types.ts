@@ -1,7 +1,7 @@
 export interface Argument {
-    type: ApplicationCommandOptionType,
-    name: string,
-    value: string,
+    type: ApplicationCommandOptionType;
+    name: string;
+    value: string;
     focused: undefined;
     options: Argument[];
 }
@@ -29,11 +29,11 @@ export interface BunnyApplicationCommand extends ApplicationCommand {
 }
 
 export enum ApplicationCommandInputType {
-    BUILT_IN,
-    BUILT_IN_TEXT,
-    BUILT_IN_INTEGRATION,
-    BOT,
-    PLACEHOLDER,
+    BUILT_IN = 0,
+    BUILT_IN_TEXT = 1,
+    BUILT_IN_INTEGRATION = 2,
+    BOT = 3,
+    PLACEHOLDER = 4,
 }
 
 export interface ApplicationCommandOption {
@@ -47,22 +47,22 @@ export interface ApplicationCommandOption {
 
 export enum ApplicationCommandOptionType {
     SUB_COMMAND = 1,
-    SUB_COMMAND_GROUP,
-    STRING,
-    INTEGER,
-    BOOLEAN,
-    USER,
-    CHANNEL,
-    ROLE,
-    MENTIONABLE,
-    NUMBER,
-    ATTACHMENT,
+    SUB_COMMAND_GROUP = 2,
+    STRING = 3,
+    INTEGER = 4,
+    BOOLEAN = 5,
+    USER = 6,
+    CHANNEL = 7,
+    ROLE = 8,
+    MENTIONABLE = 9,
+    NUMBER = 10,
+    ATTACHMENT = 11,
 }
 
 export enum ApplicationCommandType {
     CHAT = 1,
-    USER,
-    MESSAGE,
+    USER = 2,
+    MESSAGE = 3,
 }
 
 export interface CommandContext {

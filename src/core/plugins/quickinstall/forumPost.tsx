@@ -6,7 +6,13 @@ import { isThemeSupported } from "@lib/api/native/loader";
 import { after } from "@lib/api/patcher";
 import { useProxy } from "@lib/api/storage";
 import { useProxy as useNewProxy } from "@lib/api/storage";
-import { DISCORD_SERVER_ID, HTTP_REGEX_MULTI, PLUGINS_CHANNEL_ID, THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/constants";
+import {
+    DISCORD_SERVER_ID,
+    HTTP_REGEX_MULTI,
+    PLUGINS_CHANNEL_ID,
+    THEMES_CHANNEL_ID,
+    VD_PROXY_PREFIX,
+} from "@lib/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button } from "@metro/common/components";
 import { findByProps, findByPropsLazy } from "@metro/wrappers";
@@ -27,7 +33,7 @@ const postMap = {
         installOrRemove: (url: string) => {
             const isInstalled = !!postMap.Plugin.storage[url];
             return isInstalled ? PluginManager.uninstall(url) : PluginManager.install(url);
-        }
+        },
     },
     Theme: {
         storage: themes,
@@ -36,10 +42,14 @@ const postMap = {
             const isInstalled = postMap.Theme.storage[url];
             return isInstalled ? removeTheme(url) : installTheme(url);
         },
-    }
+    },
 };
 
-function useExtractThreadContent(thread: any, _firstMessage = null, actionSheet = false): ([PostType, string]) | void {
+function useExtractThreadContent(
+    thread: any,
+    _firstMessage = null,
+    actionSheet = false,
+): [PostType, string] | undefined {
     if (thread.guild_id !== DISCORD_SERVER_ID) return;
 
     // Determine what type of addon this is.
@@ -61,7 +71,11 @@ function useExtractThreadContent(thread: any, _firstMessage = null, actionSheet 
     return [postType, urls[0]];
 }
 
-function useInstaller(thread: any, firstMessage = null, actionSheet = false): [true] | [false, PostType, boolean, boolean, () => Promise<void>] {
+function useInstaller(
+    thread: any,
+    firstMessage = null,
+    actionSheet = false,
+): [true] | [false, PostType, boolean, boolean, () => Promise<void>] {
     const [postType, url] = useExtractThreadContent(thread, firstMessage, actionSheet) ?? [];
 
     useNewProxy(PluginManager.settings);
@@ -105,33 +119,36 @@ function useInstaller(thread: any, firstMessage = null, actionSheet = false): [t
 //     </ActionsSection>);
 // });
 
-const installButtonPatch = () => after("MostCommonForumPostReaction", forumReactions, ([{ thread, firstMessage }], res) => {
-    const [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
-    if (shouldReturn) return;
+const installButtonPatch = () =>
+    after("MostCommonForumPostReaction", forumReactions, ([{ thread, firstMessage }], res) => {
+        const [shouldReturn, _, installed, loading, installOrRemove] = useInstaller(thread, firstMessage, true);
+        if (shouldReturn) return;
 
-    return <>
-        {res}
-        <ErrorBoundary>
-            <Button
-                size="sm"
-                loading={loading}
-                disabled={loading}
-                // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
-                variant={installed ? "secondary" : "primary"}
-                text={installed ? Strings.UNINSTALL : Strings.INSTALL}
-                onPress={installOrRemove}
-                icon={findAssetId(installed ? "ic_message_delete" : "DownloadIcon")}
-                style={{ marginLeft: 8 }}
-            />
-        </ErrorBoundary>
-    </>;
-});
+        return (
+            <>
+                {res}
+                <ErrorBoundary>
+                    <Button
+                        size="sm"
+                        loading={loading}
+                        disabled={loading}
+                        // variant={installed ? "destructive" : "primary"} crashes older version because "destructive" was renamed from "danger" and there's no sane way for compat check horror
+                        variant={installed ? "secondary" : "primary"}
+                        text={installed ? Strings.UNINSTALL : Strings.INSTALL}
+                        onPress={installOrRemove}
+                        icon={findAssetId(installed ? "ic_message_delete" : "DownloadIcon")}
+                        style={{ marginLeft: 8 }}
+                    />
+                </ErrorBoundary>
+            </>
+        );
+    });
 
 export default () => {
     const patches = [
         // actionSheetPatch(),
-        installButtonPatch()
+        installButtonPatch(),
     ];
 
-    return () => patches.map(p => p());
+    return () => patches.map((p) => p());
 };

@@ -15,8 +15,7 @@ function getIndexedFind<A extends unknown[]>(filter: FilterFn<A>) {
     const modulesMap = getMetroCache().findIndex[filter.uniq];
     if (!modulesMap) return undefined;
 
-    for (const k in modulesMap)
-        if (k[0] !== "_") return Number(k);
+    for (const k in modulesMap) if (k[0] !== "_") return Number(k);
 }
 
 function subscribeLazyModule(proxy: any, callback: (exports: any) => void) {
@@ -29,7 +28,7 @@ function subscribeLazyModule(proxy: any, callback: (exports: any) => void) {
     });
 }
 
-export function getLazyContext<A extends unknown[]>(proxy: any): LazyModuleContext<A> | void {
+export function getLazyContext<A extends unknown[]>(proxy: any): LazyModuleContext<A> | undefined {
     return _lazyContexts.get(proxy) as unknown as LazyModuleContext<A>;
 }
 
@@ -58,14 +57,14 @@ export function createLazyModule<A extends unknown[]>(filter: FilterFn<A>) {
             cache ??= findExports(filter);
             if (!cache) throw new Error(`${filter.uniq} is ${typeof cache}! (id ${context.moduleId ?? "unknown"})`);
             return cache;
-        }
+        },
     };
 
     const proxy = proxyLazy(() => context.forceLoad(), {
         exemptedEntries: {
             [_lazyContextSymbol]: context,
-            [_patcherDelaySymbol]: (cb: (exports: any) => void) => context.getExports(cb)
-        }
+            [_patcherDelaySymbol]: (cb: (exports: any) => void) => context.getExports(cb),
+        },
     });
 
     _lazyContexts.set(proxy, context as LazyModuleContext<any>);

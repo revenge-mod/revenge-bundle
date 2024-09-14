@@ -1,5 +1,5 @@
 import { getPolyfillModuleCacher } from "@metro/internals/caches";
-import { LiteralUnion } from "type-fest";
+import type { LiteralUnion } from "type-fest";
 
 const redesignProps = new Set([
     "AlertActionButton",
@@ -94,7 +94,7 @@ const redesignProps = new Set([
     "useSegmentedControlState",
     "useStackNavigation",
     "useTabNavigation",
-    "useTooltip"
+    "useTooltip",
 ] as const);
 
 type Keys = LiteralUnion<typeof redesignProps extends Set<infer U> ? U : string, string>;

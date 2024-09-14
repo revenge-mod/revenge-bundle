@@ -6,7 +6,7 @@ import About from "@core/ui/settings/pages/General/About";
 import { findAssetId } from "@lib/api/assets";
 import { getDebugInfo } from "@lib/api/debug";
 import { DISCORD_SERVER, GITHUB } from "@lib/constants";
-import { NavigationNative, url } from "@metro/common";
+import { url, NavigationNative } from "@metro/common";
 import { Stack, TableRow, TableRowGroup, TableSwitchRow } from "@metro/common/components";
 import { NativeModules, ScrollView } from "react-native";
 
@@ -28,17 +28,21 @@ export default function General() {
                     <TableRow
                         label={"Discord"}
                         icon={<TableRow.Icon source={findAssetId("Discord")} />}
-                        trailing={<TableRow.TrailingText text={`${debugInfo.discord.version} (${debugInfo.discord.build})`} />}
+                        trailing={
+                            <TableRow.TrailingText text={`${debugInfo.discord.version} (${debugInfo.discord.build})`} />
+                        }
                     />
                     <TableRow
                         arrow
                         label={Strings.ABOUT}
                         icon={<TableRow.Icon source={findAssetId("CircleInformationIcon-primary")} />}
                         trailing={TableRow.Arrow}
-                        onPress={() => navigation.push("BUNNY_CUSTOM_PAGE", {
-                            title: Strings.ABOUT,
-                            render: () => <About />,
-                        })}
+                        onPress={() =>
+                            navigation.push("BUNNY_CUSTOM_PAGE", {
+                                title: Strings.ABOUT,
+                                render: () => <About />,
+                            })
+                        }
                     />
                 </TableRowGroup>
                 <TableRowGroup title={Strings.LINKS}>
@@ -63,7 +67,11 @@ export default function General() {
                     />
                     <TableRow
                         label={BunnySettings.isSafeMode() ? Strings.RELOAD_IN_NORMAL_MODE : Strings.RELOAD_IN_SAFE_MODE}
-                        subLabel={BunnySettings.isSafeMode() ? Strings.RELOAD_IN_NORMAL_MODE_DESC : Strings.RELOAD_IN_SAFE_MODE_DESC}
+                        subLabel={
+                            BunnySettings.isSafeMode()
+                                ? Strings.RELOAD_IN_NORMAL_MODE_DESC
+                                : Strings.RELOAD_IN_SAFE_MODE_DESC
+                        }
                         icon={<TableRow.Icon source={findAssetId("ic_privacy_24px")} />}
                         onPress={() => toggleSafeMode()}
                     />

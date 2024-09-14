@@ -52,7 +52,8 @@ export function findAsset(param: number | string | ((a: Asset) => boolean)) {
         if (typeof param === "string" && asset.name === param) {
             _nameToAssetCache[param] = asset;
             return asset;
-        } else if (typeof param === "function" && param(asset)) {
+        }
+        if (typeof param === "function" && param(asset)) {
             return asset;
         }
     }

@@ -1,22 +1,38 @@
 import { logger } from "@core/logger";
-import { PluginDisableReason, PluginStage } from "@core/reporter/enums";
 import PluginReporter from "@core/reporter/PluginReporter";
+import { PluginDisableReason, PluginStage } from "@core/reporter/enums";
 import { Observable } from "@gullerya/object-observer";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
-import { awaitStorage, createStorage, createStorageAsync, migrateToNewStorage, preloadStorageIfExists, purgeStorage, updateStorageAsync, useObservable } from "@lib/api/storage";
-import { BUNNY_PROXY_PREFIX,VD_PROXY_PREFIX } from "@lib/constants";
+import {
+    awaitStorage,
+    createStorage,
+    createStorageAsync,
+    migrateToNewStorage,
+    preloadStorageIfExists,
+    purgeStorage,
+    updateStorageAsync,
+    useObservable,
+} from "@lib/api/storage";
+import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/constants";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import safeFetch from "@lib/utils/safeFetch";
 import { omit } from "lodash";
 
 import { createBunnyPluginAPI } from "./api";
-import { BunnyPluginManifest, BunnyPluginObject, PluginInstance, PluginInstanceInternal, PluginSettingsStorage,PluginTracesStorage } from "./types";
+import type {
+    BunnyPluginManifest,
+    BunnyPluginObject,
+    PluginInstance,
+    PluginInstanceInternal,
+    PluginSettingsStorage,
+    PluginTracesStorage,
+} from "./types";
 
 type VendettaPlugin = any;
 
 const _fetch = (repoUrl: string, path: string) => safeFetch(new URL(path, repoUrl), { cache: "no-store" });
-const fetchJS = (repoUrl: string, path: string) => _fetch(repoUrl, path).then(r => r.text());
-const fetchJSON = (repoUrl: string, path: string) => _fetch(repoUrl, path).then(r => r.json());
+const fetchJS = (repoUrl: string, path: string) => _fetch(repoUrl, path).then((r) => r.text());
+const fetchJSON = (repoUrl: string, path: string) => _fetch(repoUrl, path).then((r) => r.json());
 
 function assert<T>(condition: T, id: string, attempt: string): asserts condition {
     if (!condition) throw new Error(`[${id}] Attempted to ${attempt}`);
@@ -31,7 +47,7 @@ export default {
     traces: createStorage<PluginTracesStorage>("plugins/infos.json"),
 
     async initialize() {
-        this.getAllIds().map(async id => {
+        this.getAllIds().map(async (id) => {
             if (this.settings[id].enabled) {
                 await updatePromiseMap.get(id);
                 this.start(id, { throwOnPluginError: true });
@@ -45,21 +61,21 @@ export default {
 
         const pluginIds = this.getAllIds();
 
-        await Promise.all(pluginIds.map(id => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
+        await Promise.all(pluginIds.map((id) => preloadStorageIfExists(`plugins/manifests/${id}.json`)));
         for (const id of pluginIds) {
             updatePromiseMap.set(id, this.fetch(this.traces[id].sourceUrl, { id }));
         }
     },
 
     migrate(oldKey: string): Promise<void> {
-        return migrateToNewStorage(oldKey, async storage => {
+        return migrateToNewStorage(oldKey, async (storage) => {
             for (const plugin of Object.values<VendettaPlugin>(storage)) {
                 const sanitizedId = this.sanitizeId(plugin.id);
                 const pluginStorage = await createStorageAsync(`../vd_mmkv/${sanitizedId}`, { nullIfEmpty: true });
 
                 await updateStorageAsync(
                     `plugins/manifests/${sanitizedId}.json`,
-                    this.convertToBn(plugin.id, plugin.manifest)
+                    this.convertToBn(plugin.id, plugin.manifest),
                 );
 
                 await writeFile(`plugins/scripts/${sanitizedId}.js`, plugin.js);
@@ -69,13 +85,13 @@ export default {
 
                 this.settings[sanitizedId] ??= {
                     enabled: plugin.enabled,
-                    autoUpdate: plugin.update
+                    autoUpdate: plugin.update,
                 };
 
                 this.traces[sanitizedId] ??= {
                     sourceUrl: plugin.id,
                     installTime: null,
-                    isVendetta: true
+                    isVendetta: true,
                 };
             }
         });
@@ -96,13 +112,13 @@ export default {
             display: {
                 name: vdManifest.name,
                 description: vdManifest.description,
-                authors: vdManifest.authors
+                authors: vdManifest.authors,
             },
             main: vdManifest.main,
             hash: vdManifest.hash,
             extras: {
-                ...omit(vdManifest, ["name", "description", "authors", "main", "hash"])
-            }
+                ...omit(vdManifest, ["name", "description", "authors", "main", "hash"]),
+            },
         };
     },
 
@@ -113,7 +129,7 @@ export default {
             authors: manifest.display.authors,
             main: manifest.main,
             hash: manifest.hash,
-            ...manifest.extras
+            ...manifest.extras,
         };
     },
 
@@ -133,7 +149,7 @@ export default {
 
     getType(manifest: BunnyPluginManifest | VendettaPlugin["manifest"]) {
         if ("display" in manifest) return "bunny";
-        if (["name", "main"].every(p => p in manifest)) return "vendetta";
+        if (["name", "main"].every((p) => p in manifest)) return "vendetta";
         throw new Error("Invalid plugin manifest");
     },
 
@@ -143,7 +159,7 @@ export default {
     },
 
     getUnproxiedPlugins() {
-        return this.getAllIds().filter(p => !this.isProxied(p));
+        return this.getAllIds().filter((p) => !this.isProxied(p));
     },
 
     getSettingsComponent(id: string): (() => JSX.Element) | undefined {
@@ -177,7 +193,7 @@ export default {
         assert(
             this.traces[pluginManifest.id] ? this.traces[pluginManifest.id].sourceUrl === url : true,
             pluginManifest.id ?? url,
-            "fetching a plugin already installed with another source"
+            "fetching a plugin already installed with another source",
         );
 
         let pluginJs: string | undefined;
@@ -185,7 +201,7 @@ export default {
         if (existingManifest?.hash !== pluginManifest.hash) {
             try {
                 pluginJs = await fetchJS(url, pluginManifest.main);
-            } catch { } // Empty catch, checked below
+            } catch {} // Empty catch, checked below
 
             if (pluginJs) {
                 try {
@@ -218,27 +234,29 @@ export default {
 
         if (!this.traces[id].isVendetta) {
             let instantiator: (
-                    bunny: BunnyPluginObject,
-                    definePlugin?: (p: PluginInstance) => PluginInstanceInternal
-                ) => PluginInstanceInternal;
+                bunny: BunnyPluginObject,
+                definePlugin?: (p: PluginInstance) => PluginInstanceInternal,
+            ) => PluginInstanceInternal;
 
             try {
                 PluginReporter.updateStage(id, PluginStage.PARSING);
                 const iife = await readFile(`plugins/scripts/${id}.js`);
                 instantiator = globalEvalWithSourceUrl(
                     `(bunny,definePlugin)=>{${iife};return plugin?.default ?? plugin;}`,
-                    `bunny-plugin/${id}-${manifest.hash}`
+                    `bunny-plugin/${id}-${manifest.hash}`,
                 );
                 PluginReporter.updateStage(id, PluginStage.PARSED);
             } catch (error) {
                 PluginReporter.reportPluginError(id, error);
-                throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", { cause: error });
+                throw new Error("An error occured while parsing plugin's code, possibly a syntax error?", {
+                    cause: error,
+                });
             }
 
             try {
                 PluginReporter.updateStage(id, PluginStage.INSTANTIATING);
                 const api = createBunnyPluginAPI(id);
-                pluginInstance = instantiator(api.object, p => {
+                pluginInstance = instantiator(api.object, (p) => {
                     return Object.assign(p, { manifest }) as PluginInstanceInternal;
                 });
 
@@ -260,7 +278,7 @@ export default {
 
                 instantiator = globalEvalWithSourceUrl(
                     `vendetta=>{return ${iife}}`,
-                    `vd-plugin/${id}-${manifest.hash}`
+                    `vd-plugin/${id}-${manifest.hash}`,
                 );
                 PluginReporter.updateStage(id, PluginStage.PARSED);
             } catch (err) {
@@ -268,9 +286,8 @@ export default {
 
                 if (throwOnPluginError) {
                     throw new Error("An error occured while parsing Vendetta plugin", { cause: err });
-                } else {
-                    return;
                 }
+                return;
             }
 
             try {
@@ -281,7 +298,9 @@ export default {
                     plugin: {
                         id: manifest.id,
                         manifest: this.convertToVd(manifest),
-                        storage: await createStorageAsync<Record<string, any>>(`plugins/storage/${this.sanitizeId(id)}.json`)
+                        storage: await createStorageAsync<Record<string, any>>(
+                            `plugins/storage/${this.sanitizeId(id)}.json`,
+                        ),
                     },
                     logger,
                 };
@@ -292,7 +311,7 @@ export default {
                 pluginInstance = {
                     start: rawInstance.onLoad && (() => rawInstance.onLoad()),
                     stop: rawInstance.onUnload && (() => rawInstance.onUnload()),
-                    SettingsComponent: rawInstance.settings
+                    SettingsComponent: rawInstance.settings,
                 };
 
                 instances[id] = pluginInstance;
@@ -303,9 +322,8 @@ export default {
 
                 if (throwOnPluginError) {
                     throw new Error("An error occured while instantiating Vendetta plugin", { cause: err });
-                } else {
-                    return;
                 }
+                return;
             }
         }
 
@@ -375,18 +393,19 @@ export default {
         this.traces[manifest.id] = {
             sourceUrl: url,
             installTime: new Date().toISOString(),
-            isVendetta: manifest.id.startsWith("https-")
+            isVendetta: manifest.id.startsWith("https-"),
         };
 
         this.settings[manifest.id] = {
             enabled: enable,
-            autoUpdate: true
+            autoUpdate: true,
         };
 
-        if (start) await this.start(manifest.id, {
-            awaitPlugin: false,
-            throwOnPluginError: false
-        });
+        if (start)
+            await this.start(manifest.id, {
+                awaitPlugin: false,
+                throwOnPluginError: false,
+            });
     },
 
     async uninstall(id: string, { keepData = false } = {}) {
@@ -404,5 +423,5 @@ export default {
         await removeFile(`plugins/scripts/${id}.js`);
         await purgeStorage(`plugins/manifests/${id}.json`);
         if (!keepData) await purgeStorage(`plugins/storage/${id}.json`);
-    }
+    },
 };

@@ -1,4 +1,4 @@
-import { UnifiedPluginModel } from "..";
+import type { UnifiedPluginModel } from "..";
 
 export interface PluginInfoActionSheetProps {
     plugin: UnifiedPluginModel;

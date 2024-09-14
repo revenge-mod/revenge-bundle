@@ -24,9 +24,7 @@ export default function Summary({ label, icon, noPadding = false, noAnimation = 
                     if (!noAnimation) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 }}
             />
-            {!hidden && <>
-                <View style={!noPadding && { paddingHorizontal: 15 }}>{children}</View>
-            </>}
+            {!hidden && <View style={!noPadding && { paddingHorizontal: 15 }}>{children}</View>}
         </>
     );
 }

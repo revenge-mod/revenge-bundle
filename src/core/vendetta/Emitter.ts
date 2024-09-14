@@ -12,17 +12,14 @@ export interface EmitterListenerData {
     parent?: any;
 }
 
-export type EmitterListener = (
-    event: EmitterEvent,
-    data: EmitterListenerData | any
-) => any;
+export type EmitterListener = (event: EmitterEvent, data: EmitterListenerData | any) => any;
 
-export type EmitterListeners = Record<string, Set<EmitterListener>>
+export type EmitterListeners = Record<string, Set<EmitterListener>>;
 
 export class Emitter {
     listeners = Object.values(Events).reduce<EmitterListeners>(
         (acc, val: string) => ((acc[val] = new Set<EmitterListener>()), acc),
-        {}
+        {},
     );
 
     on(event: EmitterEvent, listener: EmitterListener) {

@@ -43,11 +43,7 @@ function treeSearch(tree: SearchTree, filter: SearchFilter, opts: Required<FindI
 export default function findInTree(
     tree: SearchTree,
     filter: SearchFilter,
-    {
-        walkable = [],
-        ignore = [],
-        maxDepth = 100
-    }: FindInTreeOptions = {},
+    { walkable = [], ignore = [], maxDepth = 100 }: FindInTreeOptions = {},
 ): any | undefined {
     return treeSearch(tree, filter, { walkable, ignore, maxDepth }, 0);
 }

@@ -4,7 +4,7 @@ import { registerCommand } from "@lib/api/commands";
 import { createStorage } from "@lib/api/storage";
 
 import PluginManager from "./PluginManager";
-import { BunnyPluginObject } from "./types";
+import type { BunnyPluginObject } from "./types";
 
 type DisposableFn = (...props: any[]) => () => unknown;
 function shimDisposableFn<F extends DisposableFn>(unpatches: (() => void)[], f: F): F {
@@ -16,7 +16,7 @@ function shimDisposableFn<F extends DisposableFn>(unpatches: (() => void)[], f: 
 }
 
 export function createBunnyPluginAPI(id: string) {
-    const disposers = new Array<DisposableFn>;
+    const disposers = new Array<DisposableFn>();
 
     // proxying this would be a good idea
     const object = {
@@ -26,23 +26,23 @@ export function createBunnyPluginAPI(id: string) {
             patcher: {
                 before: shimDisposableFn(disposers, patcher.before),
                 after: shimDisposableFn(disposers, patcher.after),
-                instead: shimDisposableFn(disposers, patcher.instead)
+                instead: shimDisposableFn(disposers, patcher.instead),
             },
             commands: {
                 ...window.bunny.api.commands,
-                registerCommand: shimDisposableFn(disposers, registerCommand)
+                registerCommand: shimDisposableFn(disposers, registerCommand),
             },
             flux: {
                 ...window.bunny.api.flux,
-                intercept: shimDisposableFn(disposers, window.bunny.api.flux.intercept)
-            }
+                intercept: shimDisposableFn(disposers, window.bunny.api.flux.intercept),
+            },
         },
         // Added something in here? Make sure to also update BunnyPluginProperty in ./types
         plugin: {
             createStorage: () => createStorage(`plugins/storage/${id}.json`),
             manifest: PluginManager.getManifest(id),
-            logger
-        }
+            logger,
+        },
     } as unknown as BunnyPluginObject;
 
     return {

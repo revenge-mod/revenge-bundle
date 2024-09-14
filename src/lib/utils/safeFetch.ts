@@ -2,7 +2,7 @@
 export default async function safeFetch(input: RequestInfo | URL, options?: RequestInit, timeout = 10000) {
     const req = await fetch(input, {
         signal: timeoutSignal(timeout),
-        ...options
+        ...options,
     });
 
     if (!req.ok) throw new Error(`Request returned non-ok: ${req.status} ${req.statusText}`);

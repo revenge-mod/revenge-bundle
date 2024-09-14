@@ -12,7 +12,7 @@ type ModulesMap = {
 
 let _metroCache = null as unknown as ReturnType<typeof buildInitCache>;
 
-export const getMetroCache = window.__getMetroCache = () => _metroCache;
+export const getMetroCache = (window.__getMetroCache = () => _metroCache);
 
 function buildInitCache() {
     const cache = {
@@ -21,7 +21,7 @@ function buildInitCache() {
         _modulesCount: Object.keys(window.modules).length,
         flagsIndex: {} as Record<string, number>,
         findIndex: {} as Record<string, ModulesMap | undefined>,
-        polyfillIndex: {} as Record<string, ModulesMap | undefined>
+        polyfillIndex: {} as Record<string, ModulesMap | undefined>,
     } as const;
 
     // Force load all modules so useful modules are pre-cached. Delay by a second
@@ -92,7 +92,7 @@ export function indexAssetModuleFlag(id: number) {
 
 /** @internal */
 export function getCacherForUniq(uniq: string, allFind: boolean) {
-    const indexObject = _metroCache.findIndex[uniq] ??= {};
+    const indexObject = (_metroCache.findIndex[uniq] ??= {});
 
     return {
         cacheId(moduleId: number, exports: any) {
@@ -106,13 +106,13 @@ export function getCacherForUniq(uniq: string, allFind: boolean) {
             if (notFound) indexObject[`_${ModulesMapInternal.NOT_FOUND}`] = 1;
 
             saveCache();
-        }
+        },
     };
 }
 
 /** @internal */
 export function getPolyfillModuleCacher(name: string) {
-    const indexObject = _metroCache.polyfillIndex[name] ??= {};
+    const indexObject = (_metroCache.polyfillIndex[name] ??= {});
 
     return {
         getModules() {
@@ -125,6 +125,6 @@ export function getPolyfillModuleCacher(name: string) {
         finish() {
             indexObject[`_${ModulesMapInternal.FULL_LOOKUP}`] = 1;
             saveCache();
-        }
+        },
     };
 }

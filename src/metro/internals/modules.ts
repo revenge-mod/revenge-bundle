@@ -1,5 +1,5 @@
 import { getMetroCache, indexBlacklistFlag, indexExportsFlags } from "@metro/internals/caches";
-import { Metro } from "@metro/types";
+import type { Metro } from "@metro/types";
 
 import { ModuleFlags, ModulesMapInternal } from "./enums";
 
@@ -17,7 +17,7 @@ const functionToString = Function.prototype.toString;
 let patchedInspectSource = false;
 let patchedImportTracker = false;
 let patchedNativeComponentRegistry = false;
-let _importingModuleId: number = -1;
+let _importingModuleId = -1;
 
 for (const key in metroModules) {
     const id = Number(key);
@@ -36,14 +36,14 @@ for (const key in metroModules) {
 
             const { 1: metroRequire, 4: moduleObject } = args;
 
-            args[2 /* metroImportDefault */] = id => {
+            args[2 /* metroImportDefault */] = (id) => {
                 const exps = metroRequire(id);
-                return exps && exps.__esModule ? exps.default : exps;
+                return exps?.__esModule ? exps.default : exps;
             };
 
-            args[3 /* metroImportAll */] = id => {
+            args[3 /* metroImportAll */] = (id) => {
                 const exps = metroRequire(id);
-                if (exps && exps.__esModule) return exps;
+                if (exps?.__esModule) return exps;
 
                 const importAll: Record<string, any> = {};
                 if (exps) Object.assign(importAll, exps);
@@ -71,10 +71,12 @@ function blacklistModule(id: number) {
 }
 
 function isBadExports(exports: any) {
-    return !exports
-        || exports === window
-        || exports["<!@ pylix was here :fuyusquish: !@>"] === null
-        || (exports.__proto__ === Object.prototype && Reflect.ownKeys(exports).length === 0);
+    return (
+        !exports ||
+        exports === window ||
+        exports["<!@ pylix was here :fuyusquish: !@>"] === null ||
+        (exports.__proto__ === Object.prototype && Reflect.ownKeys(exports).length === 0)
+    );
 }
 
 function onModuleRequire(moduleExports: any, id: Metro.ModuleID) {
@@ -90,16 +92,18 @@ function onModuleRequire(moduleExports: any, id: Metro.ModuleID) {
     }
 
     // There are modules registering the same native component
-    if (!patchedNativeComponentRegistry && ["customBubblingEventTypes", "customDirectEventTypes", "register", "get"].every(x => moduleExports[x])) {
+    if (
+        !patchedNativeComponentRegistry &&
+        ["customBubblingEventTypes", "customDirectEventTypes", "register", "get"].every((x) => moduleExports[x])
+    ) {
         instead("register", moduleExports, (args: any, origFunc: any) => {
             try {
                 return origFunc(...args);
-            } catch { }
+            } catch {}
         });
 
         patchedNativeComponentRegistry = true;
     }
-
 
     // Hook DeveloperExperimentStore
     if (moduleExports?.default?.constructor?.displayName === "DeveloperExperimentStore") {
@@ -112,7 +116,7 @@ function onModuleRequire(moduleExports: any, id: Metro.ModuleID) {
                 }
 
                 return Reflect.get(target, property, receiver);
-            }
+            },
         });
     }
 
@@ -151,7 +155,7 @@ function onModuleRequire(moduleExports: any, id: Metro.ModuleID) {
 
     const subs = moduleSubscriptions.get(Number(id));
     if (subs) {
-        subs.forEach(s => s());
+        subs.forEach((s) => s());
         moduleSubscriptions.delete(Number(id));
     }
 }

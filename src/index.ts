@@ -31,10 +31,10 @@ export default async () => {
         initVendettaObject(),
         initFetchI18nStrings(),
         initRegisterSettings(),
-        patchErrorBoundary()
+        patchErrorBoundary(),
     ]).then(
         // Push them all to unloader
-        u => u.forEach(f => f && lib.unload.push(f))
+        (u) => u.forEach((f) => f && lib.unload.push(f)),
     );
 
     // Assign window object

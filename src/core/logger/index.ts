@@ -1,4 +1,3 @@
-
 function error(...args: any[]): void;
 function error(strings: TemplateStringsArray, ...args: any[]) {
     if (Array.isArray(strings) && "raw" in strings) {
@@ -10,5 +9,5 @@ function error(strings: TemplateStringsArray, ...args: any[]) {
 
 export const logger = {
     ...console,
-    error
+    error,
 };

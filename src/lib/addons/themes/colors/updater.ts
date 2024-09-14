@@ -2,7 +2,7 @@ import BunnySettings from "@core/storage/BunnySettings";
 import { findByProps, findByPropsLazy, findByStoreNameLazy } from "@metro";
 
 import { parseColorManifest } from "./parser";
-import { ColorManifest, InternalColorDefinition } from "./types";
+import type { ColorManifest, InternalColorDefinition } from "./types";
 
 const tokenRef = findByProps("SemanticColor");
 const origRawColor = { ...tokenRef.RawColor };
@@ -24,7 +24,7 @@ export const _colorRef: InternalColorRef = {
     current: null,
     key: `bn-theme-${_inc}`,
     origRaw: origRawColor,
-    lastSetDiscordTheme: "darker"
+    lastSetDiscordTheme: "darker",
 };
 
 export function updateBunnyColor(colorManifest: ColorManifest | null, { update = true }) {
@@ -36,17 +36,19 @@ export function updateBunnyColor(colorManifest: ColorManifest | null, { update =
         key: `bn-theme-${++_inc}`,
         lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-")
             ? ThemeStore.theme
-            : _colorRef.lastSetDiscordTheme
+            : _colorRef.lastSetDiscordTheme,
     });
 
     if (internalDef != null) {
         tokenRef.Theme[ref.key.toUpperCase()] = ref.key;
         FormDivider.DIVIDER_COLORS[ref.key] = FormDivider.DIVIDER_COLORS[ref.current!.reference];
 
-        Object.keys(tokenRef.Shadow).forEach(k => tokenRef.Shadow[k][ref.key] = tokenRef.Shadow[k][ref.current!.reference]);
-        Object.keys(tokenRef.SemanticColor).forEach(k => {
+        Object.keys(tokenRef.Shadow).forEach(
+            (k) => (tokenRef.Shadow[k][ref.key] = tokenRef.Shadow[k][ref.current!.reference]),
+        );
+        Object.keys(tokenRef.SemanticColor).forEach((k) => {
             tokenRef.SemanticColor[k][ref.key] = {
-                ...tokenRef.SemanticColor[k][ref.current!.reference]
+                ...tokenRef.SemanticColor[k][ref.current!.reference],
             };
         });
     }
@@ -56,4 +58,3 @@ export function updateBunnyColor(colorManifest: ColorManifest | null, { update =
         AppearanceManager.updateTheme(internalDef != null ? ref.key : ref.lastSetDiscordTheme);
     }
 }
-

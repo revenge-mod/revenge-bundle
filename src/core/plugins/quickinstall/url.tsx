@@ -1,4 +1,4 @@
-import { formatString, Strings } from "@core/i18n";
+import { Strings, formatString } from "@core/i18n";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import PluginManager from "@lib/addons/plugins/PluginManager";
 import { ColorManager } from "@lib/addons/themes/colors";
@@ -7,7 +7,7 @@ import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { after, instead } from "@lib/api/patcher";
 import { THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
-import { channels, url } from "@metro/common";
+import { url, channels } from "@metro/common";
 import { byMutableProp } from "@metro/filters";
 import { findExports } from "@metro/finders";
 import { findByProps, findByPropsLazy } from "@metro/wrappers";
@@ -22,7 +22,8 @@ const { getChannel } = lazyDestructure(() => findByProps("getChannel"));
 function typeFromUrl(url: string) {
     if (url.startsWith(VD_PROXY_PREFIX)) {
         return "plugin";
-    } else if (url.endsWith(".json") && LOADER_IDENTITY.features.themes) {
+    }
+    if (url.endsWith(".json") && LOADER_IDENTITY.features.themes) {
         return "theme";
     }
 }
@@ -41,7 +42,7 @@ export default () => {
     const patches = new Array<Function>();
 
     patches.push(
-        after("showSimpleActionSheet", showSimpleActionSheet, args => {
+        after("showSimpleActionSheet", showSimpleActionSheet, (args) => {
             if (args[0].key !== "LongPressUrl") return;
             const {
                 header: { title: url },
@@ -55,7 +56,7 @@ export default () => {
                 label: Strings.INSTALL_ADDON,
                 onPress: () => installWithToast(urlType, url),
             });
-        })
+        }),
     );
 
     patches.push(
@@ -66,7 +67,8 @@ export default () => {
             if (!urlType) return orig.apply(this, args);
 
             // Make clicking on theme links only work in #themes, should there be a theme proxy in the future, this can be removed.
-            if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID) return orig.apply(this, args);
+            if (urlType === "theme" && getChannel(getChannelId())?.parent_id !== THEMES_CHANNEL_ID)
+                return orig.apply(this, args);
 
             showConfirmationAlert({
                 title: Strings.HOLD_UP,
@@ -77,8 +79,8 @@ export default () => {
                 secondaryConfirmText: Strings.OPEN_IN_BROWSER,
                 onConfirmSecondary: () => openURL(url),
             });
-        })
+        }),
     );
 
-    return () => patches.forEach(p => p());
+    return () => patches.forEach((p) => p());
 };

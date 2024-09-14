@@ -6,7 +6,7 @@ const modifiedSym = Symbol.for("bunny.flux.modified");
 
 export const dispatcher = FluxDispatcher;
 
-type Intercept = (payload: Record<string, any> & { type: string; }) => any;
+type Intercept = (payload: Record<string, any> & { type: string }) => any;
 let intercepts: Intercept[] = [];
 
 /**
@@ -19,7 +19,6 @@ export function injectFluxInterceptor() {
 
             // nullish -> nothing, falsy -> block, object -> modify
             if (res == null) {
-                continue;
             } else if (!res) {
                 payload[blockedSym] = true;
             } else if (typeof res === "object") {
@@ -33,7 +32,7 @@ export function injectFluxInterceptor() {
 
     (dispatcher._interceptors ??= []).unshift(cb);
 
-    return () => dispatcher._interceptors &&= dispatcher._interceptors.filter(v => v !== cb);
+    return () => (dispatcher._interceptors &&= dispatcher._interceptors.filter((v) => v !== cb));
 }
 
 /**
@@ -44,6 +43,6 @@ export function intercept(cb: Intercept) {
     intercepts.push(cb);
 
     return () => {
-        intercepts = intercepts.filter(i => i !== cb);
+        intercepts = intercepts.filter((i) => i !== cb);
     };
 }

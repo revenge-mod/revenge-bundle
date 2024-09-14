@@ -1,4 +1,4 @@
-import * as t from "./types";
+import type * as t from "./types";
 
 const nmp = window.nativeModuleProxy;
 

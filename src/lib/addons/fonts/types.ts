@@ -1,4 +1,4 @@
-import { BunnyManifest } from "@lib/addons/types";
+import type { BunnyManifest } from "@lib/addons/types";
 
 type FontMap = Record<string, string>;
 
@@ -26,5 +26,5 @@ export interface FontTraces {
         sourceUrl: string | null;
         timeInstalled: string | null;
         lastEdited: string | null;
-    }
+    };
 }

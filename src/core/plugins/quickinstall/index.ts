@@ -10,12 +10,12 @@ export default defineCorePlugin({
         name: "QuickInstall",
         version: "1.0.0",
         description: "Quickly install Vendetta plugins and themes",
-        authors: ["pyoncord"]
+        authors: ["pyoncord"],
     },
     start() {
         patches = [patchForumPost(), patchUrl()];
     },
     stop() {
-        patches.forEach(p => p());
-    }
+        patches.forEach((p) => p());
+    },
 });

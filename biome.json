@@ -1,0 +1,64 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "useKeyWithClickEvents": {
+          "level": "off"
+        }
+      },
+      "style": {
+        "noNonNullAssertion": {
+          "level": "off"
+        }
+      },
+      "suspicious": {
+        "noAssignInExpressions": {
+          "level": "off"
+        },
+        "noExplicitAny": {
+          "level": "warn"
+        }
+      },
+      "correctness": {
+        "useExhaustiveDependencies": {
+          "level": "warn"
+        }
+      }
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
+    },
+    "parser": {
+      "allowComments": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true,
+      "lineEnding": "crlf",
+      "arrowParentheses": "always",
+      "indentStyle": "space",
+      "indentWidth": 4,
+      "lineWidth": 120,
+      "quoteProperties": "asNeeded",
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "include": ["*.js", "*.json", "*.ts", "*.tsx", "*.jsx", "*.mjs"],
+    "ignore": ["dist/**/*", "node_modules/**/*"]
+  }
+}

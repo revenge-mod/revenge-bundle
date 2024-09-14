@@ -46,43 +46,51 @@ export default function About() {
         {
             label: Strings.OPERATING_SYSTEM,
             version: `${debugInfo.os.name} ${debugInfo.os.version}`,
-            icon: "ic_cog_24px"
+            icon: "ic_cog_24px",
         },
-        ...(debugInfo.os.sdk ? [{
-            label: "SDK",
-            version: debugInfo.os.sdk,
-            icon: "pencil"
-        }] : []),
+        ...(debugInfo.os.sdk
+            ? [
+                  {
+                      label: "SDK",
+                      version: debugInfo.os.sdk,
+                      icon: "pencil",
+                  },
+              ]
+            : []),
         {
             label: Strings.MANUFACTURER,
             version: debugInfo.device.manufacturer,
-            icon: "ic_badge_staff"
+            icon: "ic_badge_staff",
         },
         {
             label: Strings.BRAND,
             version: debugInfo.device.brand,
-            icon: "ic_settings_boost_24px"
+            icon: "ic_settings_boost_24px",
         },
         {
             label: Strings.MODEL,
             version: debugInfo.device.model,
-            icon: "ic_phonelink_24px"
+            icon: "ic_phonelink_24px",
         },
         {
             label: Platform.select({ android: Strings.CODENAME, ios: Strings.MACHINE_ID })!,
             version: debugInfo.device.codename,
-            icon: "ic_compose_24px"
-        }
+            icon: "ic_compose_24px",
+        },
     ];
 
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 38 }}>
             <Stack style={{ paddingVertical: 24, paddingHorizontal: 12 }} spacing={24}>
                 <TableRowGroup title={Strings.VERSIONS}>
-                    {versions.map(v => <Version label={v.label} version={v.version} icon={v.icon} />)}
+                    {versions.map((v) => (
+                        <Version label={v.label} version={v.version} icon={v.icon} />
+                    ))}
                 </TableRowGroup>
                 <TableRowGroup title={Strings.PLATFORM}>
-                    {platformInfo.map(p => <Version label={p.label} version={p.version} icon={p.icon} />)}
+                    {platformInfo.map((p) => (
+                        <Version label={p.label} version={p.version} icon={p.icon} />
+                    ))}
                 </TableRowGroup>
             </Stack>
         </ScrollView>

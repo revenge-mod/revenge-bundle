@@ -1,7 +1,4 @@
-const {
-    __PYON_LOADER__: bnPayload,
-    __vendetta_loader: vdPayload
-} = globalThis as any;
+const { __PYON_LOADER__: bnPayload, __vendetta_loader: vdPayload } = globalThis as any;
 
 interface LoaderIdentity {
     type: "vendetta" | "bunny";
@@ -36,50 +33,61 @@ export const LOADER_IDENTITY: LoaderIdentity = (() => {
             version: bnPayload.loaderVersion,
             features: {
                 loaderConfig: {
-                    path: "loader.json"
+                    path: "loader.json",
                 },
                 themes: bnPayload.hasThemeSupport
                     ? {
-                        stored: bnPayload.storedTheme,
-                        storePath: "current-theme.json"
-                    }
+                          stored: bnPayload.storedTheme,
+                          storePath: "current-theme.json",
+                      }
                     : null,
                 rdt: {
                     version: window.__reactDevTools?.version,
-                    exports: window.__reactDevTools?.exports
+                    exports: window.__reactDevTools?.exports,
                 },
-                sysColors: bnPayload.isSysColorsSupported ? {
-                    palette: bnPayload.sysColors
-                } : null,
-                fonts: bnPayload.fontPatch ? {
-                    version: bnPayload.fontPatch,
-                } : null
-            }
-        };
-    } else {
-        return {
-            type: "vendetta",
-            name: vdPayload.name,
-            version: "N/A",
-            features: {
-                loaderConfig: {
-                    path: "../vendetta_loader.json"
-                },
-                themes: vdPayload.features.themes != null ? {
-                    stored: window[vdPayload.features.themes.prop] || null,
-                    storePath: "../vendetta_theme.json"
-                }: null,
-                rdt: vdPayload.features.devtools != null ? {
-                    exports: window[vdPayload.features.devtools.prop] || null,
-                    version: vdPayload.features.devtools.version
-                } : null,
-                sysColors: vdPayload.features.syscolors ? {
-                    palette: window[vdPayload!!.features.syscolors!!.prop] || null
-                }: null,
-                fonts: null
-            }
+                sysColors: bnPayload.isSysColorsSupported
+                    ? {
+                          palette: bnPayload.sysColors,
+                      }
+                    : null,
+                fonts: bnPayload.fontPatch
+                    ? {
+                          version: bnPayload.fontPatch,
+                      }
+                    : null,
+            },
         };
     }
+    return {
+        type: "vendetta",
+        name: vdPayload.name,
+        version: "N/A",
+        features: {
+            loaderConfig: {
+                path: "../vendetta_loader.json",
+            },
+            themes:
+                vdPayload.features.themes != null
+                    ? {
+                          stored: window[vdPayload.features.themes.prop] || null,
+                          storePath: "../vendetta_theme.json",
+                      }
+                    : null,
+            rdt:
+                vdPayload.features.devtools != null
+                    ? {
+                          exports: window[vdPayload.features.devtools.prop] || null,
+                          version: vdPayload.features.devtools.version,
+                      }
+                    : null,
+            sysColors: vdPayload.features.syscolors
+                ? {
+                      palette: window[vdPayload!.features.syscolors!.prop] || null,
+                  }
+                : null,
+            fonts: null,
+        },
+    };
 })();
 
 export function getVendettaLoaderIdentity() {
@@ -89,19 +97,25 @@ export function getVendettaLoaderIdentity() {
         name: bnPayload.loaderName,
         features: {
             loaderConfig: LOADER_IDENTITY.features.loaderConfig != null,
-            syscolors: LOADER_IDENTITY.features.sysColors != null ? {
-                prop: "__vendetta_syscolors"
-            } : undefined,
-            themes: LOADER_IDENTITY.features.themes != null ? {
-                prop: "__vendetta_theme"
-            } : undefined
-        }
+            syscolors:
+                LOADER_IDENTITY.features.sysColors != null
+                    ? {
+                          prop: "__vendetta_syscolors",
+                      }
+                    : undefined,
+            themes:
+                LOADER_IDENTITY.features.themes != null
+                    ? {
+                          prop: "__vendetta_theme",
+                      }
+                    : undefined,
+        },
     };
 
     if (LOADER_IDENTITY.features.sysColors != null) {
         Object.defineProperty(globalThis, "__vendetta_syscolors", {
             get: () => LOADER_IDENTITY.features.sysColors?.palette,
-            configurable: true
+            configurable: true,
         });
     }
 
@@ -117,19 +131,19 @@ export function getVendettaLoaderIdentity() {
                     return {
                         id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
                         data: ColorManager.convertToVd(manifest),
-                        selected: true
+                        selected: true,
                     };
                 } catch {
                     return LOADER_IDENTITY.features.themes?.stored;
                 }
             },
-            configurable: true
+            configurable: true,
         });
     }
 
     Object.defineProperty(globalThis, "__vendetta_loader", {
         get: () => loader,
-        configurable: true
+        configurable: true,
     });
 
     return loader;

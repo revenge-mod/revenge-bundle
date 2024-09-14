@@ -1,6 +1,6 @@
 import { constants, tokens } from "@metro/common";
 import { createStyles } from "@ui/styles";
-import { Platform, ScrollView, Text, TextInput, TextStyle, ViewStyle } from "react-native";
+import { Platform, ScrollView, Text, TextInput, type TextStyle, type ViewStyle } from "react-native";
 
 export interface CodeblockProps {
     selectable?: boolean;
@@ -26,22 +26,30 @@ const useStyles = createStyles({
 });
 
 // iOS doesn't support the selectable property on RN.Text...
-const InputBasedCodeblock = ({ style, children }: CodeblockProps) => <TextInput editable={false} multiline style={[useStyles().codeBlock, style && style]} value={children} />;
-const TextBasedCodeblock = ({ selectable, style, children }: CodeblockProps) => <Text selectable={selectable} style={[useStyles().codeBlock, style && style]}>{children}</Text>;
+const InputBasedCodeblock = ({ style, children }: CodeblockProps) => (
+    <TextInput editable={false} multiline style={[useStyles().codeBlock, style && style]} value={children} />
+);
+const TextBasedCodeblock = ({ selectable, style, children }: CodeblockProps) => (
+    <Text selectable={selectable} style={[useStyles().codeBlock, style && style]}>
+        {children}
+    </Text>
+);
 
 export default function Codeblock({ selectable, style, backgroundStyle, children }: CodeblockProps) {
     const styles = useStyles();
     if (!selectable) {
-        return <ScrollView style={[backgroundStyle, styles.background]}>
-            <TextBasedCodeblock style={style} children={children} />
-        </ScrollView>;
-    } else {
-        return <ScrollView style={[backgroundStyle, styles.background]}>
+        return (
+            <ScrollView style={[backgroundStyle, styles.background]}>
+                <TextBasedCodeblock style={style} children={children} />
+            </ScrollView>
+        );
+    }
+    return (
+        <ScrollView style={[backgroundStyle, styles.background]}>
             {Platform.select({
                 ios: <InputBasedCodeblock style={style} children={children} />,
                 default: <TextBasedCodeblock style={style} children={children} selectable />,
             })}
-        </ScrollView>;
-    }
-
+        </ScrollView>
+    );
 }

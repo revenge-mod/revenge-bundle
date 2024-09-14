@@ -1,10 +1,10 @@
-import { Nullish } from "@lib/utils/types";
-import { TextStyles, ThemeColors } from "@ui/types";
-import { MutableRefObject, ReactNode, RefObject } from "react";
+import type { Nullish } from "@lib/utils/types";
+import type { TextStyles, ThemeColors } from "@ui/types";
+import type { MutableRefObject, ReactNode, RefObject } from "react";
 import type * as RN from "react-native";
-import { ImageSourcePropType, PressableProps } from "react-native";
-import { SharedValue } from "react-native-reanimated";
-import { LiteralUnion } from "type-fest";
+import type { ImageSourcePropType, PressableProps } from "react-native";
+import type { SharedValue } from "react-native-reanimated";
+import type { LiteralUnion } from "type-fest";
 
 // Abandon all hope, ye who enter here
 type Style = RN.ViewStyle & RN.ImageStyle & RN.TextStyle;

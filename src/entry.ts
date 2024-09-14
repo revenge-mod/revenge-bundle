@@ -16,12 +16,14 @@ async function initializeBunny() {
         const stack = e instanceof Error ? e.stack : undefined;
 
         console.log(stack ?? e?.toString?.() ?? e);
-        alert([
-            "Failed to load Bunny!\n",
-            `Build Number: ${ClientInfoManager.Build}`,
-            `Bunny: ${version}`,
-            stack || e?.toString?.(),
-        ].join("\n"));
+        alert(
+            [
+                "Failed to load Bunny!\n",
+                `Build Number: ${ClientInfoManager.Build}`,
+                `Bunny: ${version}`,
+                stack || e?.toString?.(),
+            ].join("\n"),
+        );
     }
 }
 
@@ -48,15 +50,13 @@ if (typeof globalThis.__r !== "undefined") {
             unpatchHook();
             originalRequire(0);
 
-            callQueue.forEach(arg =>
-                batchedBridge.getCallableModule(arg[0])
-                && batchedBridge.__callFunction(...arg));
+            callQueue.forEach((arg) => batchedBridge.getCallableModule(arg[0]) && batchedBridge.__callFunction(...arg));
         };
 
         startDiscord();
     }
 
-    var _requireFunc: any; // We can't set properties to 'this' during __r set for some reason
+    let _requireFunc: any; // We can't set properties to 'this' during __r set for some reason
 
     Object.defineProperties(globalThis, {
         __r: {
@@ -70,7 +70,7 @@ if (typeof globalThis.__r !== "undefined") {
                         _requireFunc = v;
                     } else return v(a);
                 };
-            }
+            },
         },
         __d: {
             configurable: true,
@@ -81,7 +81,9 @@ if (typeof globalThis.__r !== "undefined") {
                 }
                 return this.value;
             },
-            set(v) { this.value = v; }
-        }
+            set(v) {
+                this.value = v;
+            },
+        },
     });
 }

@@ -15,20 +15,23 @@ function useIsFirstRender() {
     return firstRender;
 }
 
-export function patchTabsUI(unpatches: (() => void | boolean)[]) {
-    const getRows = () => Object.values(registeredSections)
-        .flatMap(sect => sect.map(row => ({
-            [row.key]: {
-                type: "pressable",
-                title: row.title,
-                icon: row.icon,
-                usePredicate: row.usePredicate,
-                onPress: wrapOnPress(row.onPress, null, row.render, row.title()),
-                withArrow: true,
-                ...row.rawTabsConfig
-            }
-        })))
-        .reduce((a, c) => Object.assign(a, c));
+export function patchTabsUI(unpatches: (() => undefined | boolean)[]) {
+    const getRows = () =>
+        Object.values(registeredSections)
+            .flatMap((sect) =>
+                sect.map((row) => ({
+                    [row.key]: {
+                        type: "pressable",
+                        title: row.title,
+                        icon: row.icon,
+                        usePredicate: row.usePredicate,
+                        onPress: wrapOnPress(row.onPress, null, row.render, row.title()),
+                        withArrow: true,
+                        ...row.rawTabsConfig,
+                    },
+                })),
+            )
+            .reduce((a, c) => Object.assign(a, c));
 
     const origRendererConfig = settingConstants.SETTING_RENDERER_CONFIG;
     let rendererConfigValue = settingConstants.SETTING_RENDERER_CONFIG;
@@ -43,20 +46,20 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
                 title: () => "Bunny",
                 screen: {
                     route: "VendettaCustomPage",
-                    getComponent: () => CustomPageRenderer
-                }
+                    getComponent: () => CustomPageRenderer,
+                },
             },
             BUNNY_CUSTOM_PAGE: {
                 type: "route",
                 title: () => "Bunny",
                 screen: {
                     route: "BUNNY_CUSTOM_PAGE",
-                    getComponent: () => CustomPageRenderer
-                }
+                    getComponent: () => CustomPageRenderer,
+                },
             },
-            ...getRows()
+            ...getRows(),
         }),
-        set: v => rendererConfigValue = v,
+        set: (v) => (rendererConfigValue = v),
     });
 
     unpatches.push(() => {
@@ -64,22 +67,24 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
             value: origRendererConfig,
             writable: true,
             get: undefined,
-            set: undefined
+            set: undefined,
         });
     });
 
-    unpatches.push(after("default", SettingsOverviewScreen, (_, ret) => {
-        if (useIsFirstRender()) return; // :shrug:
+    unpatches.push(
+        after("default", SettingsOverviewScreen, (_, ret) => {
+            if (useIsFirstRender()) return; // :shrug:
 
-        const { sections } = findInReactTree(ret, i => i.props?.sections).props;
-        let index = -~sections.findIndex((i: any) => i.label === i18n.Messages.ACCOUNT_SETTINGS) || 1;
+            const { sections } = findInReactTree(ret, (i) => i.props?.sections).props;
+            let index = -~sections.findIndex((i: any) => i.label === i18n.Messages.ACCOUNT_SETTINGS) || 1;
 
-        Object.keys(registeredSections).forEach(sect => {
-            sections.splice(index++, 0, {
-                label: sect,
-                title: sect,
-                settings: registeredSections[sect].map(a => a.key)
+            Object.keys(registeredSections).forEach((sect) => {
+                sections.splice(index++, 0, {
+                    label: sect,
+                    title: sect,
+                    settings: registeredSections[sect].map((a) => a.key),
+                });
             });
-        });
-    }));
+        }),
+    );
 }

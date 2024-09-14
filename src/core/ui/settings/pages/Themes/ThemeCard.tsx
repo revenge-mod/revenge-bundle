@@ -1,6 +1,6 @@
-import { formatString, Strings } from "@core/i18n";
+import { Strings, formatString } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
-import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
+import AddonCard, { type CardWrapper } from "@core/ui/components/AddonCard";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import { findAssetId } from "@lib/api/assets";
@@ -18,7 +18,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>
     return (
         <AddonCard
             headerLabel={theme.name}
-            headerSublabel={authors ? `by ${authors.map(i => i.name).join(", ")}` : ""}
+            headerSublabel={authors ? `by ${authors.map((i) => i.name).join(", ")}` : ""}
             descriptionLabel={theme.description ?? "No description."}
             toggleType={!BunnySettings.isSafeMode() ? "radio" : undefined}
             toggleValue={() => ColorManager.preferences.selected === theme.id}
@@ -31,11 +31,13 @@ export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>
                     icon: "ic_sync_24px",
                     label: Strings.REFETCH,
                     onPress: () => {
-                        ColorManager.refresh(theme.id).then(() => {
-                            showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                        }).catch(() => {
-                            showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
-                        });
+                        ColorManager.refresh(theme.id)
+                            .then(() => {
+                                showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                            })
+                            .catch(() => {
+                                showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
+                            });
                     },
                 },
                 {
@@ -44,24 +46,25 @@ export default function ThemeCard({ item: theme }: CardWrapper<ColorDisplayInfo>
                     onPress: () => {
                         clipboard.setString(ColorManager.infos[theme.id].sourceUrl);
                         showToast.showCopyToClipboard();
-                    }
+                    },
                 },
                 {
                     icon: "ic_message_delete",
                     label: Strings.DELETE,
                     isDestructive: true,
-                    onPress: () => showConfirmationAlert({
-                        title: Strings.HOLD_UP,
-                        content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.name }),
-                        confirmText: Strings.DELETE,
-                        cancelText: Strings.CANCEL,
-                        confirmColor: "red",
-                        onConfirm: () => {
-                            ColorManager.uninstall(theme.id).catch((e: Error) => {
-                                showToast(e.message, findAssetId("Small"));
-                            });
-                        }
-                    })
+                    onPress: () =>
+                        showConfirmationAlert({
+                            title: Strings.HOLD_UP,
+                            content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.name }),
+                            confirmText: Strings.DELETE,
+                            cancelText: Strings.CANCEL,
+                            confirmColor: "red",
+                            onConfirm: () => {
+                                ColorManager.uninstall(theme.id).catch((e: Error) => {
+                                    showToast(e.message, findAssetId("Small"));
+                                });
+                            },
+                        }),
                 },
             ]}
         />

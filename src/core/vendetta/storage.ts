@@ -1,7 +1,7 @@
 import { RTNFileManager, RTNMMKVManager } from "@lib/api/native/rn-modules";
 import { Platform } from "react-native";
 
-import { Emitter, EmitterEvent, EmitterListener, EmitterListenerData } from "./Emitter";
+import { Emitter, type EmitterEvent, type EmitterListener, type EmitterListenerData } from "./Emitter";
 
 const emitterSymbol = Symbol.for("vendetta.storage.emitter");
 const syncAwaitSymbol = Symbol.for("vendetta.storage.accessor");
@@ -13,10 +13,11 @@ export interface StorageBackend {
 
 const ILLEGAL_CHARS_REGEX = /[<>:"/\\|?*]/g;
 
-const filePathFixer = (file: string): string => Platform.select({
-    default: file,
-    ios: RTNFileManager.saveFileToGallery ? file : `Documents/${file}`,
-});
+const filePathFixer = (file: string): string =>
+    Platform.select({
+        default: file,
+        ios: RTNFileManager.saveFileToGallery ? file : `Documents/${file}`,
+    });
 
 const getMMKVPath = (name: string): string => {
     if (ILLEGAL_CHARS_REGEX.test(name)) {
@@ -42,36 +43,40 @@ export const createMMKVBackend = (store: string, defaultData = {}) => {
     const mmkvPath = getMMKVPath(store);
     const defaultStr = JSON.stringify(defaultData);
 
-    return createFileBackend(mmkvPath, defaultData, (async () => {
-        const path = `${RTNFileManager.getConstants().DocumentsDirPath}/${mmkvPath}`;
-        if (await RTNFileManager.fileExists(path)) return;
+    return createFileBackend(
+        mmkvPath,
+        defaultData,
+        (async () => {
+            const path = `${RTNFileManager.getConstants().DocumentsDirPath}/${mmkvPath}`;
+            if (await RTNFileManager.fileExists(path)) return;
 
-        let oldData = await RTNMMKVManager.getItem(store) ?? defaultStr;
+            let oldData = (await RTNMMKVManager.getItem(store)) ?? defaultStr;
 
-        // From the testing on Android, it seems to return this if the data is too large
-        if (oldData === "!!LARGE_VALUE!!") {
-            const cachePath = `${RTNFileManager.getConstants().CacheDirPath}/mmkv/${store}`;
-            if (await RTNFileManager.fileExists(cachePath)) {
-                oldData = await RTNFileManager.readFile(cachePath, "utf8");
-            } else {
-                console.log(`${store}: Experienced data loss :(`);
+            // From the testing on Android, it seems to return this if the data is too large
+            if (oldData === "!!LARGE_VALUE!!") {
+                const cachePath = `${RTNFileManager.getConstants().CacheDirPath}/mmkv/${store}`;
+                if (await RTNFileManager.fileExists(cachePath)) {
+                    oldData = await RTNFileManager.readFile(cachePath, "utf8");
+                } else {
+                    console.log(`${store}: Experienced data loss :(`);
+                    oldData = defaultStr;
+                }
+            }
+
+            try {
+                JSON.parse(oldData);
+            } catch {
+                console.error(`${store} had an unparseable data while migrating`);
                 oldData = defaultStr;
             }
-        }
 
-        try {
-            JSON.parse(oldData);
-        } catch {
-            console.error(`${store} had an unparseable data while migrating`);
-            oldData = defaultStr;
-        }
-
-        await RTNFileManager.writeFile("documents", filePathFixer(mmkvPath), oldData, "utf8");
-        if (await RTNMMKVManager.getItem(store) !== null) {
-            RTNMMKVManager.removeItem(store);
-            console.log(`Successfully migrated ${store} store from MMKV storage to fs`);
-        }
-    })());
+            await RTNFileManager.writeFile("documents", filePathFixer(mmkvPath), oldData, "utf8");
+            if ((await RTNMMKVManager.getItem(store)) !== null) {
+                RTNMMKVManager.removeItem(store);
+                console.log(`Successfully migrated ${store} store from MMKV storage to fs`);
+            }
+        })(),
+    );
 };
 
 export const createFileBackend = (file: string, defaultData = {}, migratePromise?: Promise<void>): StorageBackend => {
@@ -92,14 +97,14 @@ export const createFileBackend = (file: string, defaultData = {}, migratePromise
             await RTNFileManager.writeFile("documents", filePathFixer(file), JSON.stringify(defaultData), "utf8");
             return JSON.parse(await RTNFileManager.readFile(path, "utf8"));
         },
-        set: async data => {
+        set: async (data) => {
             await migratePromise;
             await RTNFileManager.writeFile("documents", filePathFixer(file), JSON.stringify(data), "utf8");
-        }
+        },
     };
 };
 
-export function createProxy(target: any = {}): { proxy: any; emitter: Emitter; } {
+export function createProxy(target: any = {}): { proxy: any; emitter: Emitter } {
     const emitter = new Emitter();
     const parentTarget = target;
 
@@ -183,7 +188,7 @@ export function useProxy<T>(storage: T): T {
     const emitter = (storage as any)?.[emitterSymbol] as Emitter;
     if (!emitter) throw new Error("storage?.[emitterSymbol] is undefined");
 
-    const [, forceUpdate] = React.useReducer(n => ~n, 0);
+    const [, forceUpdate] = React.useReducer((n) => ~n, 0);
 
     React.useEffect(() => {
         const listener: EmitterListener = (event: EmitterEvent, data: EmitterListenerData) => {
@@ -220,16 +225,16 @@ export function wrapSync<T extends Promise<any>>(store: T): Awaited<T> {
     const awaitQueue: (() => void)[] = [];
     const awaitInit = (cb: () => void) => (awaited ? cb() : awaitQueue.push(cb));
 
-    store.then(v => {
+    store.then((v) => {
         awaited = v;
-        awaitQueue.forEach(cb => cb());
+        awaitQueue.forEach((cb) => cb());
     });
 
     return new Proxy({} as Awaited<T>, {
         ...Object.fromEntries(
             Object.getOwnPropertyNames(Reflect)
                 // @ts-expect-error
-                .map(k => [k, (t: T, ...a: any[]) => Reflect[k](awaited ?? t, ...a)])
+                .map((k) => [k, (t: T, ...a: any[]) => Reflect[k](awaited ?? t, ...a)]),
         ),
         get(target, prop, recv) {
             if (prop === syncAwaitSymbol) return awaitInit;
@@ -239,7 +244,5 @@ export function wrapSync<T extends Promise<any>>(store: T): Awaited<T> {
 }
 
 export function awaitStorage(...stores: any[]) {
-    return Promise.all(
-        stores.map(store => new Promise<void>(res => store[syncAwaitSymbol](res)))
-    );
+    return Promise.all(stores.map((store) => new Promise<void>((res) => store[syncAwaitSymbol](res))));
 }

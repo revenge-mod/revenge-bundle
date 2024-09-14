@@ -1,14 +1,16 @@
 import ErrorCard from "@core/ui/reporter/components/ErrorCard";
-import { Nullish } from "@lib/utils/types";
+import type { Nullish } from "@lib/utils/types";
 import { React } from "@metro/common";
-import { createLegacyClassComponentStyles, ThemeContext } from "@ui/styles";
+import { ThemeContext, createLegacyClassComponentStyles } from "@ui/styles";
 
-type ErrorBoundaryState = {
-    hasErr: false;
-} | {
-    hasErr: true;
-    error: Error;
-};
+type ErrorBoundaryState =
+    | {
+          hasErr: false;
+      }
+    | {
+          hasErr: true;
+          error: Error;
+      };
 
 export interface ErrorBoundaryProps {
     children: JSX.Element | Nullish | (JSX.Element | Nullish)[];
@@ -40,8 +42,6 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
         const styles = getStyles(this.context);
         if (!this.state.hasErr) return this.props.children;
 
-        return (
-            <ErrorCard error={this.state.error} onRetryRender={() => this.setState({ hasErr: false })} />
-        );
+        return <ErrorCard error={this.state.error} onRetryRender={() => this.setState({ hasErr: false })} />;
     }
 }

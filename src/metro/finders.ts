@@ -1,20 +1,12 @@
 import { getCacherForUniq } from "./internals/caches";
 import { getModules, requireModule } from "./internals/modules";
-import { FilterFn } from "./types";
+import type { FilterFn } from "./types";
 
-function filterExports<A extends unknown[]>(
-    moduleExports: any,
-    moduleId: number,
-    filter: FilterFn<A>,
-) {
-    if (
-        moduleExports.default &&
-        moduleExports.__esModule &&
-        filter(moduleExports.default, moduleId, true)
-    ) {
+function filterExports<A extends unknown[]>(moduleExports: any, moduleId: number, filter: FilterFn<A>) {
+    if (moduleExports.default && moduleExports.__esModule && filter(moduleExports.default, moduleId, true)) {
         return {
             exports: filter.raw ? moduleExports : moduleExports.default,
-            defaultExport: !filter.raw
+            defaultExport: !filter.raw,
         };
     }
 
@@ -33,11 +25,7 @@ export function findModule<A extends unknown[]>(filter: FilterFn<A>) {
     const { cacheId, finish } = getCacherForUniq(filter.uniq, false);
 
     for (const [id, moduleExports] of getModules(filter.uniq, false)) {
-        const { exports: testedExports, defaultExport } = filterExports(
-            moduleExports,
-            id,
-            filter,
-        );
+        const { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
         if (testedExports !== undefined) {
             cacheId(id, testedExports);
             return { id, defaultExport };
@@ -72,14 +60,10 @@ export function findExports<A extends unknown[]>(filter: FilterFn<A>) {
  */
 export function findAllModule<A extends unknown[]>(filter: FilterFn<A>) {
     const { cacheId, finish } = getCacherForUniq(filter.uniq, true);
-    const foundExports: {id: number, defaultExport: boolean}[] = [];
+    const foundExports: { id: number; defaultExport: boolean }[] = [];
 
     for (const [id, moduleExports] of getModules(filter.uniq, true)) {
-        const { exports: testedExports, defaultExport } = filterExports(
-            moduleExports,
-            id,
-            filter,
-        );
+        const { exports: testedExports, defaultExport } = filterExports(moduleExports, id, filter);
         if (testedExports !== undefined && typeof defaultExport === "boolean") {
             foundExports.push({ id, defaultExport });
             cacheId(id, testedExports);
@@ -95,7 +79,7 @@ export function findAllModule<A extends unknown[]>(filter: FilterFn<A>) {
  * @param filter findAll calls filter once for each enumerable module's exports, adding the exports to the returned array when filter returns a thruthy value.
  */
 export function findAllModuleId<A extends unknown[]>(filter: FilterFn<A>) {
-    return findAllModule(filter).map(e => e.id);
+    return findAllModule(filter).map((e) => e.id);
 }
 
 /**
@@ -103,7 +87,7 @@ export function findAllModuleId<A extends unknown[]>(filter: FilterFn<A>) {
  * @param filter findAll calls filter once for each enumerable module's exports, adding the exports to the returned array when filter returns a thruthy value.
  */
 export function findAllExports<A extends unknown[]>(filter: FilterFn<A>) {
-    return findAllModule(filter).map(ret => {
+    return findAllModule(filter).map((ret) => {
         if (!ret.id) return;
 
         const { id, defaultExport } = ret;

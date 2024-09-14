@@ -1,6 +1,6 @@
-import { logger } from "@core/logger";
-import { BunnyManifest } from "@lib/addons/types";
-import { createStorage } from "@lib/api/storage";
+import type { logger } from "@core/logger";
+import type { BunnyManifest } from "@lib/addons/types";
+import type { createStorage } from "@lib/api/storage";
 
 export interface PluginRepo {
     [id: string]: {
@@ -27,7 +27,7 @@ export interface PluginTracesStorage {
         sourceUrl: string;
         installTime: string | null;
         isVendetta?: boolean;
-    }
+    };
 }
 
 export interface BunnyPluginManifest extends BunnyManifest {

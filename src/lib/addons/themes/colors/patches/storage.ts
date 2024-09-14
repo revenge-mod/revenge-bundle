@@ -17,7 +17,7 @@ export default function patchStorage() {
         after("get", mmkvStorage, ([key], ret) => {
             if (!_colorRef.current || !patchedKeys.has(key)) return;
 
-            const state = findInTree(ret._state, s => typeof s.theme === "string");
+            const state = findInTree(ret._state, (s) => typeof s.theme === "string");
             if (state) state.theme = _colorRef.key;
         }),
         before("set", mmkvStorage, ([key, value]) => {
@@ -25,14 +25,11 @@ export default function patchStorage() {
 
             const json = JSON.stringify(value);
             const lastSetDiscordTheme = _colorRef.lastSetDiscordTheme ?? "darker";
-            const replaced = json.replace(
-                /"theme":"bn-theme-\d+"/,
-                `"theme":${JSON.stringify(lastSetDiscordTheme)}`
-            );
+            const replaced = json.replace(/"theme":"bn-theme-\d+"/, `"theme":${JSON.stringify(lastSetDiscordTheme)}`);
 
             return [key, JSON.parse(replaced)];
-        })
+        }),
     ];
 
-    return () => patches.forEach(p => p());
+    return () => patches.forEach((p) => p());
 }

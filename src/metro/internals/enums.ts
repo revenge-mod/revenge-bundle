@@ -5,6 +5,6 @@ export enum ModuleFlags {
 }
 
 export enum ModulesMapInternal {
-    FULL_LOOKUP,
-    NOT_FOUND
+    FULL_LOOKUP = 0,
+    NOT_FOUND = 1,
 }

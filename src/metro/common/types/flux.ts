@@ -1,6 +1,6 @@
 export interface Dispatcher {
     _actionHandlers: unknown;
-    _interceptors?: ((payload: any) => void | boolean)[];
+    _interceptors?: ((payload: any) => undefined | boolean)[];
     _currentDispatchActionType: undefined | string;
     _processingWaitQueue: boolean;
     _subscriptions: Record<string, Set<(payload: any) => void>>;
@@ -10,8 +10,12 @@ export interface Dispatcher {
     dispatch(payload: any): Promise<void>;
     flushWaitQueue(): void;
     isDispatching(): boolean;
-    register(name: string, actionHandler: Record<string, (e: any) => void>, storeDidChange: (e: any) => boolean): string;
-    setInterceptor(interceptor?: (payload: any) => void | boolean): void;
+    register(
+        name: string,
+        actionHandler: Record<string, (e: any) => void>,
+        storeDidChange: (e: any) => boolean,
+    ): string;
+    setInterceptor(interceptor?: (payload: any) => undefined | boolean): void;
     subscribe(actionType: string, callback: (payload: any) => void): void;
     unsubscribe(actionType: string, callback: (payload: any) => void): void;
     wait(cb: () => void): void;

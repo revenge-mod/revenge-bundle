@@ -14,13 +14,13 @@ const _disposer = [] as Array<() => unknown>;
 export function unload() {
     for (const d of _disposer) if (typeof d === "function") d();
     // @ts-expect-error
-    delete window.bunny;
+    window.bunny = undefined;
 }
 
 /**
  * For internal use only, do not use!
  * @internal
  */
-unload.push = (fn: typeof _disposer[number]) => {
+unload.push = (fn: (typeof _disposer)[number]) => {
     _disposer.push(fn);
 };

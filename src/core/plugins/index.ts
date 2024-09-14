@@ -1,4 +1,4 @@
-import { PluginInstanceInternal } from "@lib/addons/plugins/types";
+import type { PluginInstanceInternal } from "@lib/addons/plugins/types";
 
 interface CorePlugin {
     default: PluginInstanceInternal;
@@ -7,7 +7,7 @@ interface CorePlugin {
 
 // Called from @lib/plugins
 export const getCorePlugins = (): Record<string, CorePlugin> => ({
-    "bunny.quickinstall": require("./quickinstall")
+    "bunny.quickinstall": require("./quickinstall"),
 });
 
 /**

@@ -7,10 +7,18 @@ import { findAssetId } from "@lib/api/assets";
 import { LOADER_IDENTITY } from "@lib/api/native/loader";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative, tokens } from "@metro/common";
-import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
+import {
+    Button,
+    LegacyFormText,
+    Stack,
+    TableRow,
+    TableRowGroup,
+    TableSwitchRow,
+    TextInput,
+} from "@metro/common/components";
 import { findByProps } from "@metro/wrappers";
 import { ErrorBoundary } from "@ui/components";
-import { createStyles, TextStyleSheet } from "@ui/styles";
+import { TextStyleSheet, createStyles } from "@ui/styles";
 import { ScrollView, StyleSheet } from "react-native";
 
 const { hideActionSheet } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet"));
@@ -22,7 +30,7 @@ const useStyles = createStyles({
     leadingText: {
         ...TextStyleSheet["heading-md/semibold"],
         color: tokens.colors.TEXT_MUTED,
-        marginRight: -4
+        marginRight: -4,
     },
 });
 
@@ -44,7 +52,7 @@ export default function Developer() {
                         size="md"
                         leadingIcon={() => <LegacyFormText style={styles.leadingText}>ws://</LegacyFormText>}
                         defaultValue={BunnySettings.developer.debuggerUrl}
-                        onChange={(v: string) => BunnySettings.developer.debuggerUrl = v}
+                        onChange={(v: string) => (BunnySettings.developer.debuggerUrl = v)}
                     />
                     <TableRowGroup title={Strings.DEBUG}>
                         <TableRow
@@ -52,18 +60,20 @@ export default function Developer() {
                             icon={<TableRow.Icon source={findAssetId("copy")} />}
                             onPress={() => connectToDebugger(BunnySettings.developer.debuggerUrl)}
                         />
-                        {LOADER_IDENTITY.features.rdt && <>
+                        {LOADER_IDENTITY.features.rdt && (
                             <TableRow
                                 label={Strings.CONNECT_TO_REACT_DEVTOOLS}
                                 icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
-                                onPress={() => LOADER_IDENTITY.features.rdt?.exports?.connectToDevTools({
-                                    host: BunnySettings.developer.debuggerUrl.split(":")?.[0],
-                                    resolveRNStyle: StyleSheet.flatten,
-                                })}
+                                onPress={() =>
+                                    LOADER_IDENTITY.features.rdt?.exports?.connectToDevTools({
+                                        host: BunnySettings.developer.debuggerUrl.split(":")?.[0],
+                                        resolveRNStyle: StyleSheet.flatten,
+                                    })
+                                }
                             />
-                        </>}
+                        )}
                     </TableRowGroup>
-                    {LOADER_IDENTITY.features.loaderConfig && <>
+                    {LOADER_IDENTITY.features.loaderConfig && (
                         <TableRowGroup title="Loader config">
                             <TableSwitchRow
                                 label={Strings.LOAD_FROM_CUSTOM_URL}
@@ -74,44 +84,68 @@ export default function Developer() {
                                     BunnySettings.loader.customLoadUrl.enabled = v;
                                 }}
                             />
-                            {BunnySettings.loader.customLoadUrl.enabled && <TableRow label={<TextInput
-                                defaultValue={BunnySettings.loader.customLoadUrl.url}
-                                size="md"
-                                onChange={(v: string) => BunnySettings.loader.customLoadUrl.url = v}
-                                placeholder="http://localhost:4040/vendetta.js"
-                                label={Strings.BUNNY_URL}
-                            />} />}
+                            {BunnySettings.loader.customLoadUrl.enabled && (
+                                <TableRow
+                                    label={
+                                        <TextInput
+                                            defaultValue={BunnySettings.loader.customLoadUrl.url}
+                                            size="md"
+                                            onChange={(v: string) => (BunnySettings.loader.customLoadUrl.url = v)}
+                                            placeholder="http://localhost:4040/vendetta.js"
+                                            label={Strings.BUNNY_URL}
+                                        />
+                                    }
+                                />
+                            )}
                         </TableRowGroup>
-                    </>}
+                    )}
                     <TableRowGroup title="Other">
                         <TableRow
                             arrow
                             label={Strings.ASSET_BROWSER}
                             icon={<TableRow.Icon source={findAssetId("ic_image")} />}
                             trailing={TableRow.Arrow}
-                            onPress={() => navigation.push("BUNNY_CUSTOM_PAGE", {
-                                title: Strings.ASSET_BROWSER,
-                                render: AssetBrowser,
-                            })}
+                            onPress={() =>
+                                navigation.push("BUNNY_CUSTOM_PAGE", {
+                                    title: Strings.ASSET_BROWSER,
+                                    render: AssetBrowser,
+                                })
+                            }
                         />
                         <TableRow
                             arrow
                             label={Strings.ERROR_BOUNDARY_TOOLS_LABEL}
                             icon={<TableRow.Icon source={findAssetId("ic_warning_24px")} />}
-                            onPress={() => showSimpleActionSheet({
-                                key: "ErrorBoundaryTools",
-                                header: {
-                                    title: "Which ErrorBoundary do you want to trip?",
-                                    icon: <TableRow.Icon style={{ marginRight: 8 }} source={findAssetId("ic_warning_24px")} />,
-                                    onClose: () => hideActionSheet(),
-                                },
-                                options: [
-                                    // @ts-expect-error
-                                    // Of course, to trigger an error, we need to do something incorrectly. The below will do!
-                                    { label: Strings.BUNNY, onPress: () => navigation.push("BUNNY_CUSTOM_PAGE", { render: () => <undefined /> }) },
-                                    { label: "Discord", isDestructive: true, onPress: () => navigation.push("BUNNY_CUSTOM_PAGE", { noErrorBoundary: true }) },
-                                ],
-                            })}
+                            onPress={() =>
+                                showSimpleActionSheet({
+                                    key: "ErrorBoundaryTools",
+                                    header: {
+                                        title: "Which ErrorBoundary do you want to trip?",
+                                        icon: (
+                                            <TableRow.Icon
+                                                style={{ marginRight: 8 }}
+                                                source={findAssetId("ic_warning_24px")}
+                                            />
+                                        ),
+                                        onClose: () => hideActionSheet(),
+                                    },
+                                    options: [
+                                        // @ts-expect-error
+                                        // Of course, to trigger an error, we need to do something incorrectly. The below will do!
+                                        {
+                                            label: Strings.BUNNY,
+                                            onPress: () =>
+                                                navigation.push("BUNNY_CUSTOM_PAGE", { render: () => <undefined /> }),
+                                        },
+                                        {
+                                            label: "Discord",
+                                            isDestructive: true,
+                                            onPress: () =>
+                                                navigation.push("BUNNY_CUSTOM_PAGE", { noErrorBoundary: true }),
+                                        },
+                                    ],
+                                })
+                            }
                         />
                         <TableRow
                             label={Strings.INSTALL_REACT_DEVTOOLS}
@@ -131,7 +165,9 @@ export default function Developer() {
                                             fs.removeFile("preloads/reactDevtools.js");
                                         }
                                     }}
-                                    icon={findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon")}
+                                    icon={findAssetId(
+                                        rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon",
+                                    )}
                                     style={{ marginLeft: 8 }}
                                 />
                             }

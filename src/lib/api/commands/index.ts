@@ -1,5 +1,10 @@
 import { logger } from "@core/logger";
-import { ApplicationCommand, ApplicationCommandInputType, ApplicationCommandType, BunnyApplicationCommand } from "@lib/api/commands/types";
+import {
+    type ApplicationCommand,
+    ApplicationCommandInputType,
+    ApplicationCommandType,
+    type BunnyApplicationCommand,
+} from "@lib/api/commands/types";
 import { after, instead } from "@lib/api/patcher";
 import { commands as commandsModule, messageUtil } from "@metro/common";
 
@@ -10,18 +15,20 @@ let commands: ApplicationCommand[] = [];
  */
 export function patchCommands() {
     const unpatch = after("getBuiltInCommands", commandsModule, ([type], res: ApplicationCommand[]) => {
-        return [...res, ...commands.filter(c =>
-            (type instanceof Array ? type.includes(c.type) : type === c.type)
-            && c.__bunny?.shouldHide?.() !== false)
+        return [
+            ...res,
+            ...commands.filter(
+                (c) =>
+                    (Array.isArray(type) ? type.includes(c.type) : type === c.type) &&
+                    c.__bunny?.shouldHide?.() !== false,
+            ),
         ];
     });
 
     // Register core commands
-    [
-        require("@core/commands/eval"),
-        require("@core/commands/debug"),
-        require("@core/commands/plugins")
-    ].forEach(r => registerCommand(r.default()));
+    [require("@core/commands/eval"), require("@core/commands/debug"), require("@core/commands/plugins")].forEach((r) =>
+        registerCommand(r.default()),
+    );
 
     return () => {
         commands = [];
@@ -38,16 +45,18 @@ export function registerCommand(command: BunnyApplicationCommand): () => void {
         builtInCommands = commandsModule.getBuiltInCommands(Object.values(ApplicationCommandType), true, false);
     }
 
-    builtInCommands.sort((a: ApplicationCommand, b: ApplicationCommand) => parseInt(b.id!) - parseInt(a.id!));
+    builtInCommands.sort(
+        (a: ApplicationCommand, b: ApplicationCommand) => Number.parseInt(b.id!) - Number.parseInt(a.id!),
+    );
 
     const lastCommand = builtInCommands[builtInCommands.length - 1];
 
     // Override the new command's id to the last command id - 1
-    command.id = (parseInt(lastCommand.id!, 10) - 1).toString();
+    command.id = (Number.parseInt(lastCommand.id!, 10) - 1).toString();
 
     // Fill optional args
     command.__bunny = {
-        shouldHide: command.shouldHide
+        shouldHide: command.shouldHide,
     };
 
     command.applicationId ??= "-1";
@@ -58,21 +67,22 @@ export function registerCommand(command: BunnyApplicationCommand): () => void {
     command.displayDescription ??= command.description;
     command.untranslatedDescription ??= command.description;
 
-    if (command.options) for (const opt of command.options) {
-        opt.displayName ??= opt.name;
-        opt.displayDescription ??= opt.description;
-    }
+    if (command.options)
+        for (const opt of command.options) {
+            opt.displayName ??= opt.name;
+            opt.displayDescription ??= opt.description;
+        }
 
     instead("execute", command, (args, orig) => {
-        Promise.resolve(
-            orig.apply(command, args)
-        ).then(ret => {
-            if (ret && typeof ret === "object") {
-                messageUtil.sendMessage(args[1].channel.id, ret);
-            }
-        }).catch(err => {
-            logger.error("Failed to execute command", err);
-        });
+        Promise.resolve(orig.apply(command, args))
+            .then((ret) => {
+                if (ret && typeof ret === "object") {
+                    messageUtil.sendMessage(args[1].channel.id, ret);
+                }
+            })
+            .catch((err) => {
+                logger.error("Failed to execute command", err);
+            });
     });
 
     // Add it to the commands array

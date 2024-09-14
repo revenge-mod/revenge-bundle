@@ -1,10 +1,10 @@
+import { readFile } from "node:fs/promises";
+import http from "node:http";
+import os from "node:os";
+import readline from "node:readline";
+import url from "node:url";
 // @ts-nocheck
 import chalk from "chalk";
-import { readFile } from "fs/promises";
-import http from "http";
-import os from "os";
-import readline from "readline";
-import url from "url";
 import yargs from "yargs-parser";
 
 import { forceStopAppFromADB, getPackageName, isADBAvailableAndAppInstalled, restartAppFromADB } from "./adb.mjs";
@@ -21,11 +21,7 @@ export function serve(options) {
             try {
                 const { config, context, timeTook } = await buildBundle();
 
-                printBuildSuccess(
-                    context.hash,
-                    args.production,
-                    timeTook
-                );
+                printBuildSuccess(context.hash, args.production, timeTook);
 
                 res.writeHead(200, { "Content-Type": "application/javascript" });
                 res.end(await readFile(config.outfile, "utf-8"));
@@ -74,7 +70,7 @@ if (args.adb && isADBAvailableAndAppInstalled()) {
     process.stdin.on("keypress", (ch, key) => {
         if (!key) return;
 
-        if (key.name === "q" || key.ctrl && key.name === "c") {
+        if (key.name === "q" || (key.ctrl && key.name === "c")) {
             process.exit(0);
         }
 
@@ -82,14 +78,14 @@ if (args.adb && isADBAvailableAndAppInstalled()) {
             console.info(chalk.yellow(`${chalk.bold("↻ Reloading")} ${packageName}`));
             restartAppFromADB(server.port)
                 .then(() => console.info(chalk.greenBright(`${chalk.bold("✔ Executed")} reload command`)))
-                .catch(e => console.error(e));
+                .catch((e) => console.error(e));
         }
 
         if (key.name === "s") {
             console.info(chalk.yellow(`${chalk.bold("⎊ Force stopping")} ${packageName}`));
             forceStopAppFromADB()
                 .then(() => console.info(chalk.greenBright(`${chalk.bold("✔ Executed")} force stop command`)))
-                .catch(e => console.error(e));
+                .catch((e) => console.error(e));
         }
     });
 } else if (args.adb) {

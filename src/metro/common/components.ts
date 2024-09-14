@@ -4,11 +4,11 @@ import { createFilterDefinition } from "@metro/factories";
 import { findExports } from "@metro/finders";
 import { findByDisplayNameLazy, findByNameLazy, findByProps, findByPropsLazy } from "@metro/wrappers";
 
-import * as t from "./types/components";
+import type * as t from "./types/components";
 
 const bySingularProp = createFilterDefinition<[string]>(
     ([prop], m) => m[prop] && Object.keys(m).length === 1,
-    prop => `bunny.metro.common.components.bySingularProp(${prop})`
+    (prop) => `bunny.metro.common.components.bySingularProp(${prop})`,
 );
 
 const findSingular = (prop: string) => proxyLazy(() => findExports(bySingularProp(prop))?.[prop]);
@@ -65,7 +65,9 @@ export const TextInput = findSingular("TextInput") as t.TextInput;
 // SegmentedControl
 export const SegmentedControl = findProp("SegmentedControl") as t.SegmentedControl;
 export const SegmentedControlPages = findProp("SegmentedControlPages") as t.SegmentedControlPages;
-export const useSegmentedControlState = findSingular("useSegmentedControlState") as (arg: t.SegmentedControlStateArgs) => t.SegmentedControlState;
+export const useSegmentedControlState = findSingular("useSegmentedControlState") as (
+    arg: t.SegmentedControlStateArgs,
+) => t.SegmentedControlState;
 export const CompatSegmentedControl = findProp("CompatSegmentedControl") as t.CompatSegmentedControl;
 
 export const FloatingActionButton = findProp("FloatingActionButton") as t.FloatingActionButton;
@@ -103,7 +105,7 @@ export const {
     FormSwitchRow: LegacyFormSwitchRow,
     FormTernaryCheckBox: LegacyFormTernaryCheckBox,
     FormText: LegacyFormText,
-    FormTitle: LegacyFormTitle
+    FormTitle: LegacyFormTitle,
 } = lazyDestructure(() => Forms);
 
 export const FlashList = findProp("FlashList");

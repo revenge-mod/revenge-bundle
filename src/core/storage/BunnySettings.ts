@@ -17,7 +17,7 @@ interface GeneralSettings {
 }
 
 interface DeveloperSettings {
-    enabled: boolean
+    enabled: boolean;
     debuggerUrl: string;
     evalCommandEnabled: boolean;
 }
@@ -36,9 +36,9 @@ export default {
         dflt: {
             customLoadUrl: {
                 enabled: false,
-                url: "http://localhost:4040/bunny.js"
-            }
-        }
+                url: "http://localhost:4040/bunny.js",
+            },
+        },
     }),
 
     async prepare() {

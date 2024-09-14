@@ -6,5 +6,5 @@ export const usePluginCardStyles = createStyles({
         tintColor: tokens.colors.LOGO_PRIMARY,
         height: 18,
         width: 18,
-    }
+    },
 });

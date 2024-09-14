@@ -1,8 +1,8 @@
 import { Strings } from "@core/i18n";
-import { CardWrapper } from "@core/ui/components/AddonCard";
+import type { CardWrapper } from "@core/ui/components/AddonCard";
 import { showConfirmationAlert } from "@core/vendetta/ui/alerts";
 import FontManager from "@lib/addons/fonts/FontManager";
-import { FontManifest } from "@lib/addons/fonts/types";
+import type { FontManifest } from "@lib/addons/fonts/types";
 import { findAssetId } from "@lib/api/assets";
 import { RTNBundleUpdaterManager } from "@lib/api/native/rn-modules";
 import { useObservable } from "@lib/api/storage";
@@ -19,7 +19,7 @@ import FontEditor from "./FontEditor";
 
 const { useToken } = lazyDestructure(() => findByProps("useToken"));
 
-function FontPreview({ font }: { font: FontManifest; }) {
+function FontPreview({ font }: { font: FontManifest }) {
     const TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
     const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     const fontFamily = fontFamilyList!.split(/,/g)[0];
@@ -32,14 +32,15 @@ function FontPreview({ font }: { font: FontManifest; }) {
         const fMgr = SkiaApi.TypefaceFontProvider.Make();
         fMgr.registerFont(typeface, fontFamily);
 
-
         return SkiaApi.ParagraphBuilder.Make({}, fMgr)
             .pushStyle({
                 color: SkiaApi.Color(TEXT_NORMAL),
                 fontFamilies: [fontFamily],
                 fontSize,
             })
-            .addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+            .addText(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            )
             .pop()
             .build();
     }, [typeface]);
@@ -47,15 +48,17 @@ function FontPreview({ font }: { font: FontManifest; }) {
     return (
         // This does not work, actually :woeis:
         <View style={{ height: 64 }}>
-            {typeface
-                ? <Skia.Canvas style={{ height: 64 }}>
+            {typeface ? (
+                <Skia.Canvas style={{ height: 64 }}>
                     <Skia.Paragraph paragraph={paragraph} x={0} y={0} width={300} />
                 </Skia.Canvas>
-                : <View style={{ justifyContent: "center", alignItems: "center" }}>
+            ) : (
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
                     <Text color="text-muted" variant="heading-lg/semibold">
                         Loading...
                     </Text>
-                </View>}
+                </View>
+            )}
         </View>
     );
 }
@@ -71,9 +74,7 @@ export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
             <Stack spacing={16}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View>
-                        <Text variant="heading-lg/semibold">
-                            {font.display.name}
-                        </Text>
+                        <Text variant="heading-lg/semibold">{font.display.name}</Text>
                         {/* TODO: Text wrapping doesn't work well */}
                         {/* <Text color="text-muted" variant="text-sm/semibold">
                             {font.description}
@@ -85,7 +86,7 @@ export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
                                 onPress={() => {
                                     navigation.push("BUNNY_CUSTOM_PAGE", {
                                         title: "Edit Font",
-                                        render: () => <FontEditor id={font.id} />
+                                        render: () => <FontEditor id={font.id} />,
                                     });
                                 }}
                                 size="sm"
@@ -105,7 +106,7 @@ export default function FontCard({ item: font }: CardWrapper<FontManifest>) {
                                         confirmText: Strings.RELOAD,
                                         cancelText: Strings.CANCEL,
                                         confirmColor: "red",
-                                        onConfirm: RTNBundleUpdaterManager.reload
+                                        onConfirm: RTNBundleUpdaterManager.reload,
                                     });
                                 }}
                             />

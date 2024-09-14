@@ -4,8 +4,8 @@ const actionSheet = findByPropsLazy("openLazy", "hideActionSheet");
 
 export function showSheet<T extends React.ComponentType<any>>(
     key: string,
-    lazyImport: T | Promise<{ default: T; }>,
-    props?: React.ComponentProps<T>
+    lazyImport: T | Promise<{ default: T }>,
+    props?: React.ComponentProps<T>,
 ) {
     if (!("then" in lazyImport)) lazyImport = Promise.resolve({ default: lazyImport });
     actionSheet.openLazy(lazyImport, key, props ?? {});

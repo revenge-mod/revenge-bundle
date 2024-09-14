@@ -1,7 +1,7 @@
 import { NavigationNative } from "@metro/common";
 import { findByPropsLazy } from "@metro/wrappers";
 import { ErrorBoundary } from "@ui/components";
-import { RowConfig } from "@ui/settings";
+import type { RowConfig } from "@ui/settings";
 
 const tabsNavigationRef = findByPropsLazy("getRootNavigationRef");
 
@@ -13,7 +13,11 @@ export const CustomPageRenderer = React.memo(() => {
 
     React.useEffect(() => void navigation.setOptions({ ...args }), []);
 
-    return <ErrorBoundary><PageComponent /></ErrorBoundary>;
+    return (
+        <ErrorBoundary>
+            <PageComponent />
+        </ErrorBoundary>
+    );
 });
 
 export function wrapOnPress(
@@ -26,7 +30,7 @@ export function wrapOnPress(
     return async () => {
         if (onPress) return void onPress();
 
-        const Component = await renderPromise!!().then(m => m.default);
+        const Component = await renderPromise!().then((m) => m.default);
 
         if (typeof screenOptions === "string") {
             screenOptions = { title: screenOptions };
@@ -35,8 +39,7 @@ export function wrapOnPress(
         navigation ??= tabsNavigationRef.getRootNavigationRef();
         navigation.navigate("BUNNY_CUSTOM_PAGE", {
             ...screenOptions,
-            render: () => <Component {...props} />
+            render: () => <Component {...props} />,
         });
     };
 }
-

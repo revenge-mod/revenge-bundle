@@ -1,4 +1,3 @@
-
 export enum PluginStage {
     FETCHING = "FETCHING",
     FETCHED = "FETCHED",
@@ -9,10 +8,10 @@ export enum PluginStage {
     STARTING = "STARTING",
     STARTED = "STARTED",
     STOPPING = "STOPPING",
-    STOPPED = "STOPPED"
+    STOPPED = "STOPPED",
 }
 
 export enum PluginDisableReason {
     REQUESTED = "REQUESTED",
-    ERROR = "ERROR"
+    ERROR = "ERROR",
 }

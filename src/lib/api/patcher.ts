@@ -1,8 +1,4 @@
-const {
-    after: _after,
-    before: _before,
-    instead: _instead
-} = require("spitroast");
+const { after: _after, before: _before, instead: _instead } = require("spitroast");
 
 /** @internal */
 export const _patcherDelaySymbol = Symbol.for("bunny.api.patcher.delay");
@@ -26,9 +22,9 @@ function create(fn: Function) {
             const delayCallback: DelayCallback = args[1][_patcherDelaySymbol];
 
             let cancel = false;
-            let unpatch = () => cancel = true;
+            let unpatch = () => (cancel = true);
 
-            delayCallback(target => {
+            delayCallback((target) => {
                 if (cancel) return;
                 args[1] = target;
                 unpatch = fn.apply(this, args);
@@ -45,9 +41,9 @@ function create(fn: Function) {
         if (!thenable || !("then" in thenable)) throw new Error("target is not a then-able object");
 
         let cancel = false;
-        let unpatch = () => cancel = true;
+        let unpatch = () => (cancel = true);
 
-        thenable.then(target => {
+        thenable.then((target) => {
             if (cancel) return;
             args[1] = target;
             unpatch = patchFn.apply(this, args);

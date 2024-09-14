@@ -13,7 +13,7 @@ export interface RTNMMKVManager {
     /**
      * Deletes the value for the given `key`
      * @param key The key to delete
-    */
+     */
     removeItem: (key: string) => void;
     /**
      * Sets the value of `key` to `value`
@@ -54,7 +54,12 @@ export interface RTNFileManager {
      * @param encoding Set to `base64` if `data` is base64 encoded.
      * @returns Promise that resolves to path of the file once it got written
      */
-    writeFile(storageDir: "cache" | "documents", path: string, data: string, encoding: "base64" | "utf8"): Promise<string>;
+    writeFile(
+        storageDir: "cache" | "documents",
+        path: string,
+        data: string,
+        encoding: "base64" | "utf8",
+    ): Promise<string>;
     /**
      * Removes a file from the path given.
      * (!) On Android, this always returns false, regardless if it fails or not!

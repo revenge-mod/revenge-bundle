@@ -4,12 +4,12 @@ import { omit } from "es-toolkit";
 import { Platform, processColor } from "react-native";
 
 import { ColorManager } from ".";
-import { ColorManifest, InternalColorDefinition } from "./types";
+import type { ColorManifest, InternalColorDefinition } from "./types";
 
 const tokenRef = findByProps("SemanticColor");
 
 export function parseColorManifest(manifest: ColorManifest): InternalColorDefinition {
-    const resolveType = (type = "dark") => (ColorManager.preferences.type ?? type) === "dark" ? "darker" : "light";
+    const resolveType = (type = "dark") => ((ColorManager.preferences.type ?? type) === "dark" ? "darker" : "light");
 
     if (manifest.spec === 3) {
         const semanticColorDefinitions: InternalColorDefinition["semantic"] = {};
@@ -53,21 +53,25 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
             raw: manifest.raw ?? {},
             background: manifest.background,
         };
-    } else if (manifest.spec === 2) { // is Vendetta theme
+    }
+    if (manifest.spec === 2) {
+        // is Vendetta theme
         const semanticDefinitions: InternalColorDefinition["semantic"] = {};
-        const background: InternalColorDefinition["background"] | undefined = manifest.background ? {
-            ...omit(manifest.background, ["alpha"]),
-            opacity: manifest.background.alpha
-        } : undefined;
+        const background: InternalColorDefinition["background"] | undefined = manifest.background
+            ? {
+                  ...omit(manifest.background, ["alpha"]),
+                  opacity: manifest.background.alpha,
+              }
+            : undefined;
 
         if (manifest.semanticColors) {
             for (const key in manifest.semanticColors) {
-                const values = manifest.semanticColors[key].map(c => c || undefined).slice(0, 2);
+                const values = manifest.semanticColors[key].map((c) => c || undefined).slice(0, 2);
                 if (!values[0]) continue;
 
                 semanticDefinitions[key] = {
                     value: normalizeToHex(values[resolveType() === "light" ? 1 : 0])!,
-                    opacity: 1
+                    opacity: 1,
                 };
             }
         }
@@ -82,12 +86,11 @@ export function parseColorManifest(manifest: ColorManifest): InternalColorDefini
             if (Platform.OS === "android") applyAndroidAlphaKeys(manifest.rawColors);
         }
 
-
         return {
             reference: resolveType(),
             semantic: semanticDefinitions,
             raw: manifest.rawColors ?? {},
-            background
+            background,
         };
     }
 
@@ -99,14 +102,14 @@ export function applyAndroidAlphaKeys(rawColors?: Record<string, string>) {
 
     // these are native Discord Android keys
     const alphaMap: Record<string, [string, number]> = {
-        "BLACK_ALPHA_60": ["BLACK", 0.6],
-        "BRAND_NEW_360_ALPHA_20": ["BRAND_360", 0.2],
-        "BRAND_NEW_360_ALPHA_25": ["BRAND_360", 0.25],
-        "BRAND_NEW_500_ALPHA_20": ["BRAND_500", 0.2],
-        "PRIMARY_DARK_500_ALPHA_20": ["PRIMARY_500", 0.2],
-        "PRIMARY_DARK_700_ALPHA_60": ["PRIMARY_700", 0.6],
-        "STATUS_GREEN_500_ALPHA_20": ["GREEN_500", 0.2],
-        "STATUS_RED_500_ALPHA_20": ["RED_500", 0.2],
+        BLACK_ALPHA_60: ["BLACK", 0.6],
+        BRAND_NEW_360_ALPHA_20: ["BRAND_360", 0.2],
+        BRAND_NEW_360_ALPHA_25: ["BRAND_360", 0.25],
+        BRAND_NEW_500_ALPHA_20: ["BRAND_500", 0.2],
+        PRIMARY_DARK_500_ALPHA_20: ["PRIMARY_500", 0.2],
+        PRIMARY_DARK_700_ALPHA_60: ["PRIMARY_700", 0.6],
+        STATUS_GREEN_500_ALPHA_20: ["GREEN_500", 0.2],
+        STATUS_RED_500_ALPHA_20: ["RED_500", 0.2],
     };
 
     for (const key in alphaMap) {
@@ -124,11 +127,12 @@ export function normalizeToHex(colorString: string | undefined): string | undefi
 
     const color = Number(processColor(colorString));
 
-    return chroma.rgb(
-        color >> 16 & 0xff, // red
-        color >> 8 & 0xff, // green
-        color & 0xff, // blue
-        color >> 24 & 0xff // alpha
-    ).hex();
+    return chroma
+        .rgb(
+            (color >> 16) & 0xff, // red
+            (color >> 8) & 0xff, // green
+            color & 0xff, // blue
+            (color >> 24) & 0xff, // alpha
+        )
+        .hex();
 }
-

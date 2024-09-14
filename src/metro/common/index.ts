@@ -25,5 +25,5 @@ export const Flux = findByPropsLazy("connectStores");
 export const FluxDispatcher = findByProps("_interceptors") as Dispatcher;
 
 // React
-export const React = window.React = findByPropsLazy("createElement") as typeof import("react");
-export const ReactNative = window.ReactNative = findByPropsLazy("AppRegistry") as typeof import("react-native");
+export const React = (window.React = findByPropsLazy("createElement") as typeof import("react"));
+export const ReactNative = (window.ReactNative = findByPropsLazy("AppRegistry") as typeof import("react-native"));

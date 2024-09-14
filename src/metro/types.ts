@@ -95,7 +95,7 @@ export namespace Metro {
         /** Only available on Discord's development environment, will never be defined on release builds */
         verboseName?: string | undefined,
         /** Only available on Discord's development environment, will never be defined on release builds */
-        inverseDependencies?: InverseDependencyMap | undefined
+        inverseDependencies?: InverseDependencyMap | undefined,
     ) => void;
 
     export type ModuleDefiner = (moduleId: ModuleID) => void;
@@ -105,7 +105,7 @@ export namespace Metro {
     export type RegisterSegmentFn = (
         segmentId: number,
         moduleDefiner: ModuleDefiner,
-        moduleIds: Readonly<ModuleID[]> | Nullish
+        moduleIds: Readonly<ModuleID[]> | Nullish,
     ) => void;
 
     export interface Require extends RequireFn {
@@ -126,13 +126,12 @@ export namespace Metro {
     }
 }
 
-
 export type ModuleExports = any;
 export type FilterCheckDef<A extends unknown[]> = (
     args: A,
     module: any,
     modulesId: number,
-    defaultCheck: boolean
+    defaultCheck: boolean,
 ) => boolean;
 
 export interface FilterFn<A extends unknown[]> {

@@ -12,20 +12,22 @@ const ERROR_PROPERTIES = [
     { property: "cause", enumerable: false },
 ] as const;
 
-export function convertToSerialized(error: unknown, flow = [] as Array<{ cause?: unknown; }>) {
-    const newError = error instanceof Error
-        ? <SerializedError>{
-            name: error.name,
-            stack: error.stack,
-            message: error.message,
-            cause: error.cause ? String(error.cause) : undefined
-        }
-        : String(error);
+export function convertToSerialized(error: unknown, flow = [] as Array<{ cause?: unknown }>) {
+    const newError =
+        error instanceof Error
+            ? <SerializedError>{
+                  name: error.name,
+                  stack: error.stack,
+                  message: error.message,
+                  cause: error.cause ? String(error.cause) : undefined,
+              }
+            : String(error);
 
-    if (typeof newError === "object"
-        && error instanceof Error
-        && error.cause instanceof Error
-        && !flow.includes(error) // in case it's recursive
+    if (
+        typeof newError === "object" &&
+        error instanceof Error &&
+        error.cause instanceof Error &&
+        !flow.includes(error) // in case it's recursive
     ) {
         newError.cause = convertToSerialized(error.cause, [...flow, error]);
     }

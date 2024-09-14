@@ -9,10 +9,7 @@
  * // type of `value`` has been narrowed to `Person`
  * ```
  */
-export default function invariant(
-    condition: any,
-    message?: string | (() => string),
-): asserts condition {
+export default function invariant(condition: any, message?: string | (() => string)): asserts condition {
     if (condition) return;
 
     const resolvedMessage: string | undefined = typeof message === "function" ? message() : message;

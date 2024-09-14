@@ -1,8 +1,8 @@
 import { Observable } from "@gullerya/object-observer";
 import { awaitStorage, createStorage, useObservable } from "@lib/api/storage";
 
-import { PluginDisableReason, PluginStage } from "./enums";
-import { convertToError, convertToSerialized, SerializedError } from "./errorConverter";
+import { type PluginDisableReason, PluginStage } from "./enums";
+import { type SerializedError, convertToError, convertToSerialized } from "./errorConverter";
 
 export default {
     stages: Observable.from({}) as Record<string, PluginStage>,
@@ -46,5 +46,5 @@ export default {
         delete this.disableReason[id];
         delete this.errors[id];
         if (stage) delete this.stages[id];
-    }
+    },
 };

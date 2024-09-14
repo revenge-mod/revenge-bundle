@@ -44,8 +44,8 @@ export function getDebugInfo() {
             version: version,
             loader: {
                 name: LOADER_IDENTITY.name,
-                version: LOADER_IDENTITY.version
-            }
+                version: LOADER_IDENTITY.version,
+            },
         },
         discord: {
             version: RTNClientInfoManager.Version,
@@ -53,49 +53,47 @@ export function getDebugInfo() {
         },
         react: {
             version: React.version,
-            nativeVersion: hermesVer.startsWith(padding) ? hermesVer.substring(padding.length) : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`,
+            nativeVersion: hermesVer.startsWith(padding)
+                ? hermesVer.substring(padding.length)
+                : `${rnVer.major}.${rnVer.minor}.${rnVer.patch}`,
         },
         hermes: {
             version: hermesVer,
             buildType: hermesProps.Build,
             bytecodeVersion: hermesProps["Bytecode Version"],
         },
-        ...Platform.select(
-            {
-                android: {
-                    os: {
-                        name: "Android",
-                        version: PlatformConstants.Release,
-                        sdk: PlatformConstants.Version
-                    },
+        ...Platform.select({
+            android: {
+                os: {
+                    name: "Android",
+                    version: PlatformConstants.Release,
+                    sdk: PlatformConstants.Version,
                 },
-                ios: {
-                    os: {
-                        name: PlatformConstants.systemName,
-                        version: PlatformConstants.osVersion
-                    },
-                }
-            }
-        )!,
-        ...Platform.select(
-            {
-                android: {
-                    device: {
-                        manufacturer: PlatformConstants.Manufacturer,
-                        brand: PlatformConstants.Brand,
-                        model: PlatformConstants.Model,
-                        codename: RTNDeviceManager.device
-                    }
+            },
+            ios: {
+                os: {
+                    name: PlatformConstants.systemName,
+                    version: PlatformConstants.osVersion,
                 },
-                ios: {
-                    device: {
-                        manufacturer: RTNDeviceManager.deviceManufacturer,
-                        brand: RTNDeviceManager.deviceBrand,
-                        model: RTNDeviceManager.deviceModel,
-                        codename: RTNDeviceManager.device
-                    }
-                }
-            }
-        )!
+            },
+        })!,
+        ...Platform.select({
+            android: {
+                device: {
+                    manufacturer: PlatformConstants.Manufacturer,
+                    brand: PlatformConstants.Brand,
+                    model: PlatformConstants.Model,
+                    codename: RTNDeviceManager.device,
+                },
+            },
+            ios: {
+                device: {
+                    manufacturer: RTNDeviceManager.deviceManufacturer,
+                    brand: RTNDeviceManager.deviceBrand,
+                    model: RTNDeviceManager.deviceModel,
+                    codename: RTNDeviceManager.device,
+                },
+            },
+        })!,
     };
 }

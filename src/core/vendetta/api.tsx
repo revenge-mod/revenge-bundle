@@ -7,7 +7,7 @@ import ColorManager from "@lib/addons/themes/colors/ColorManager";
 import * as assets from "@lib/api/assets";
 import * as commands from "@lib/api/commands";
 import * as debug from "@lib/api/debug";
-import { getVendettaLoaderIdentity, LOADER_IDENTITY } from "@lib/api/native/loader";
+import { LOADER_IDENTITY, getVendettaLoaderIdentity } from "@lib/api/native/loader";
 import patcher from "@lib/api/patcher";
 import { isSemanticColor, resolveSemanticColor } from "@lib/ui/styles";
 import * as utils from "@lib/utils";
@@ -29,28 +29,43 @@ import * as storage from "./storage";
 function createPluginsObject() {
     // Making it mutating-compatible requires too much effort, so the need for it has to be looked into before implementing (ehem CloudSync)
     const makeObject = memoize(
-        () => PluginManager.getAllIds()
-            .reduce((obj, id) => Object.assign(obj, {
-                [PluginManager.traces[id].sourceUrl]: {
-                    id: PluginManager.traces[id].sourceUrl,
-                    manifest: PluginManager.convertToVd(PluginManager.getManifest(id)),
-                    get enabled() { return PluginManager.settings[id].enabled; },
-                    get update() { return PluginManager.settings[id].autoUpdate; },
-                    // TODO: can something be done about this?
-                    get js() { return "()=>{}"; },
-                }
-            }), {}),
-        () => PluginManager.getAllIds().length
+        () =>
+            PluginManager.getAllIds().reduce(
+                (obj, id) =>
+                    Object.assign(obj, {
+                        [PluginManager.traces[id].sourceUrl]: {
+                            id: PluginManager.traces[id].sourceUrl,
+                            manifest: PluginManager.convertToVd(PluginManager.getManifest(id)),
+                            get enabled() {
+                                return PluginManager.settings[id].enabled;
+                            },
+                            get update() {
+                                return PluginManager.settings[id].autoUpdate;
+                            },
+                            // TODO: can something be done about this?
+                            get js() {
+                                return "()=>{}";
+                            },
+                        },
+                    }),
+                {},
+            ),
+        () => PluginManager.getAllIds().length,
     );
 
     return {
-        plugins: storage.createProxy(new Proxy({}, {
-            ...Object.fromEntries(
-                Object.getOwnPropertyNames(Reflect)
-                    // @ts-expect-error
-                    .map(k => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)])
+        plugins: storage.createProxy(
+            new Proxy(
+                {},
+                {
+                    ...Object.fromEntries(
+                        Object.getOwnPropertyNames(Reflect)
+                            // @ts-expect-error
+                            .map((k) => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)]),
+                    ),
+                },
             ),
-        })).proxy,
+        ).proxy,
         fetchPlugin: (source: string) => PluginManager.fetch(source),
         installPlugin: (source: string, enabled = true) => PluginManager.install(source, { enable: enabled }),
         startPlugin: (id: string) => PluginManager.start(id),
@@ -58,34 +73,43 @@ function createPluginsObject() {
             disable ? PluginManager.stop(id) : PluginManager.disable(id);
         },
         removePlugin: (id: string) => PluginManager.uninstall(id, { keepData: false }),
-        getSettings: (id: string) => PluginManager.getSettingsComponent(id)
+        getSettings: (id: string) => PluginManager.getSettingsComponent(id),
     };
 }
 
 function createThemesObject() {
     const makeObject = memoize(
-        () => ColorManager.getAllIds()
-            .reduce((obj, id) => Object.assign(obj, {
-                [ColorManager.infos[id].sourceUrl]: {
-                    id: ColorManager.infos[id].sourceUrl,
-                    get selected() {
-                        return ColorManager.preferences.selected === id;
-                    },
-                    data: ColorManager.convertToVd(ColorManager.getManifest(id))
-                }
-            }), {}),
-        () => ColorManager.getAllIds().length
+        () =>
+            ColorManager.getAllIds().reduce(
+                (obj, id) =>
+                    Object.assign(obj, {
+                        [ColorManager.infos[id].sourceUrl]: {
+                            id: ColorManager.infos[id].sourceUrl,
+                            get selected() {
+                                return ColorManager.preferences.selected === id;
+                            },
+                            data: ColorManager.convertToVd(ColorManager.getManifest(id)),
+                        },
+                    }),
+                {},
+            ),
+        () => ColorManager.getAllIds().length,
     );
 
     return {
-        themes: storage.createProxy(new Proxy({}, {
-            ...Object.fromEntries(
-                Object.getOwnPropertyNames(Reflect)
-                    // @ts-expect-error
-                    .map(k => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)])
+        themes: storage.createProxy(
+            new Proxy(
+                {},
+                {
+                    ...Object.fromEntries(
+                        Object.getOwnPropertyNames(Reflect)
+                            // @ts-expect-error
+                            .map((k) => [k, (t: unknown, ...a: any[]) => Reflect[k](makeObject(), ...a)]),
+                    ),
+                },
             ),
-        })).proxy,
-        fetchTheme: (id: string, selected?: boolean) => selected ? ColorManager.refresh(id) : ColorManager.fetch(id),
+        ).proxy,
+        fetchTheme: (id: string, selected?: boolean) => (selected ? ColorManager.refresh(id) : ColorManager.fetch(id)),
         installTheme: (id: string) => ColorManager.install(id),
         selectTheme: (id: string) => ColorManager.select(id === "default" ? null : id),
         removeTheme: (id: string) => ColorManager.uninstall(id),
@@ -97,10 +121,10 @@ function createThemesObject() {
             return {
                 id: ColorManager.getId(manifest, ColorManager.infos[selected].sourceUrl),
                 data: ColorManager.convertToVd(manifest),
-                selected: true
+                selected: true,
             };
         },
-        updateThemes: () => ColorManager.updateAll()
+        updateThemes: () => ColorManager.updateAll(),
     };
 }
 
@@ -114,11 +138,11 @@ export const initVendettaObject = (): any => {
         };
     };
 
-    const api = window.vendetta = {
+    const api = (window.vendetta = {
         patcher: {
             before: patcher.before,
             after: patcher.after,
-            instead: patcher.instead
+            instead: patcher.instead,
         },
         metro: {
             modules: window.modules,
@@ -141,9 +165,15 @@ export const initVendettaObject = (): any => {
                             ...module,
                             ActionSheetTitleHeader: module.BottomSheetTitleHeader,
                             ActionSheetContentContainer: ({ children }: any) => {
-                                useEffect(() => logger.warn("Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View"), []);
+                                useEffect(
+                                    () =>
+                                        logger.warn(
+                                            "Discord has removed 'ActionSheetContentContainer', please move into something else. This has been temporarily replaced with View",
+                                        ),
+                                    [],
+                                );
                                 return createElement(View, null, children);
-                            }
+                            },
                         };
                     }
                 }
@@ -159,11 +189,13 @@ export const initVendettaObject = (): any => {
 
                 return metro.findByName(name, defaultExp ?? true);
             },
-            findByNameAll: (name: string, defaultExp: boolean = true) => metro.findByNameAll(name, defaultExp),
-            findByDisplayName: (displayName: string, defaultExp: boolean = true) => metro.findByDisplayName(displayName, defaultExp),
-            findByDisplayNameAll: (displayName: string, defaultExp: boolean = true) => metro.findByDisplayNameAll(displayName, defaultExp),
-            findByTypeName: (typeName: string, defaultExp: boolean = true) => metro.findByTypeName(typeName, defaultExp),
-            findByTypeNameAll: (typeName: string, defaultExp: boolean = true) => metro.findByTypeNameAll(typeName, defaultExp),
+            findByNameAll: (name: string, defaultExp = true) => metro.findByNameAll(name, defaultExp),
+            findByDisplayName: (displayName: string, defaultExp = true) =>
+                metro.findByDisplayName(displayName, defaultExp),
+            findByDisplayNameAll: (displayName: string, defaultExp = true) =>
+                metro.findByDisplayNameAll(displayName, defaultExp),
+            findByTypeName: (typeName: string, defaultExp = true) => metro.findByTypeName(typeName, defaultExp),
+            findByTypeNameAll: (typeName: string, defaultExp = true) => metro.findByTypeNameAll(typeName, defaultExp),
             findByStoreName: (name: string) => metro.findByStoreName(name),
             common: {
                 constants: common.constants,
@@ -179,12 +211,12 @@ export const initVendettaObject = (): any => {
                                 get(target, prop, receiver) {
                                     const res = Reflect.get(target, prop, receiver);
                                     return isSemanticColor(res) ? resolveSemanticColor(res) : res;
-                                }
+                                },
                             });
                         }
 
                         return sheet;
-                    }
+                    },
                 },
                 clipboard: common.clipboard,
                 assets: common.assets,
@@ -200,29 +232,32 @@ export const initVendettaObject = (): any => {
                 moment: require("moment"),
                 chroma: require("chroma-js"),
                 lodash: require("lodash"),
-                util: require("util")
-            }
+                util: require("util"),
+            },
         },
         constants: {
             DISCORD_SERVER: "https://discord.gg/n9QQ4XhhJP",
             GITHUB: "https://github.com/vendetta-mod",
             PROXY_PREFIX: "https://vd-plugins.github.io/proxy",
-            HTTP_REGEX: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
-            HTTP_REGEX_MULTI: /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
+            HTTP_REGEX:
+                /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+            HTTP_REGEX_MULTI:
+                /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
             DISCORD_SERVER_ID: "1015931589865246730",
             PLUGINS_CHANNEL_ID: "1091880384561684561",
             THEMES_CHANNEL_ID: "1091880434939482202",
         },
         utils: {
-            findInReactTree: (tree: { [key: string]: any; }, filter: any) => utils.findInReactTree(tree, filter),
+            findInReactTree: (tree: { [key: string]: any }, filter: any) => utils.findInReactTree(tree, filter),
             findInTree: (tree: any, filter: any, options: any) => utils.findInTree(tree, filter, options),
-            safeFetch: (input: RequestInfo | URL, options?: RequestInit | undefined, timeout?: number | undefined) => utils.safeFetch(input, options, timeout),
-            unfreeze: (obj: object) => Object.isFrozen(obj) ? ({ ...obj }) : obj,
-            without: (object: any, ...keys: any) => omit(object, keys)
+            safeFetch: (input: RequestInfo | URL, options?: RequestInit | undefined, timeout?: number | undefined) =>
+                utils.safeFetch(input, options, timeout),
+            unfreeze: (obj: object) => (Object.isFrozen(obj) ? { ...obj } : obj),
+            without: (object: any, ...keys: any) => omit(object, keys),
         },
         debug: {
             connectToDebugger: (url: string) => connectToDebugger(url),
-            getDebugInfo: () => debug.getDebugInfo()
+            getDebugInfo: () => debug.getDebugInfo(),
         },
         ui: {
             components: {
@@ -235,49 +270,53 @@ export const initVendettaObject = (): any => {
                 Summary: components.Summary,
                 ErrorBoundary: components.ErrorBoundary,
                 Codeblock: components.Codeblock,
-                Search: components.Search
+                Search: components.Search,
             },
             toasts: {
-                showToast: (content: string, asset?: number) => toasts.showToast(content, asset)
+                showToast: (content: string, asset?: number) => toasts.showToast(content, asset),
             },
             alerts: {
                 showConfirmationAlert: (options: any) => alerts.showConfirmationAlert(options),
-                showCustomAlert: (component: React.ComponentType<any>, props: any) => alerts.showCustomAlert(component, props),
-                showInputAlert: (options: any) => alerts.showInputAlert(options)
+                showCustomAlert: (component: React.ComponentType<any>, props: any) =>
+                    alerts.showCustomAlert(component, props),
+                showInputAlert: (options: any) => alerts.showInputAlert(options),
             },
             assets: {
-                all: new Proxy<any>({}, {
-                    get(cache, p) {
-                        if (typeof p !== "string") return undefined;
-                        if (cache[p]) return cache[p];
+                all: new Proxy<any>(
+                    {},
+                    {
+                        get(cache, p) {
+                            if (typeof p !== "string") return undefined;
+                            if (cache[p]) return cache[p];
 
-                        for (const asset of assets.iterateAssets()) {
-                            if (asset.name) return cache[p] = asset;
-                        }
+                            for (const asset of assets.iterateAssets()) {
+                                if (asset.name) return (cache[p] = asset);
+                            }
+                        },
+                        ownKeys(cache) {
+                            const keys = new Set<string>();
+
+                            for (const asset of assets.iterateAssets()) {
+                                cache[asset.name] = asset;
+                                keys.add(asset.name);
+                            }
+
+                            return [...keys];
+                        },
                     },
-                    ownKeys(cache) {
-                        const keys = new Set<string>();
-
-                        for (const asset of assets.iterateAssets()) {
-                            cache[asset.name] = asset;
-                            keys.add(asset.name);
-                        }
-
-                        return [...keys];
-                    },
-                }),
+                ),
                 find: (filter: (a: any) => boolean) => assets.findAsset(filter),
                 getAssetByName: (name: string) => assets.findAsset(name),
                 getAssetByID: (id: number) => assets.findAsset(id),
-                getAssetIDByName: (name: string) => assets.findAssetId(name)
+                getAssetIDByName: (name: string) => assets.findAssetId(name),
             },
             semanticColors: common.tokens.colors,
-            rawColors: common.tokens.unsafe_rawColors
+            rawColors: common.tokens.unsafe_rawColors,
         },
         plugins: createPluginsObject(),
         themes: createThemesObject(),
         commands: {
-            registerCommand: commands.registerCommand
+            registerCommand: commands.registerCommand,
         },
         storage: {
             createProxy: (target: any) => storage.createProxy(target),
@@ -293,14 +332,24 @@ export const initVendettaObject = (): any => {
                 }
 
                 return storage.createFileBackend(file);
-            }
+            },
         },
         settings: {
-            get debuggerUrl() { return BunnySettings.developer.debuggerUrl; },
-            get developerSettings() { return BunnySettings.developer.enabled; },
-            get enableDiscordDeveloperSettings() { return BunnySettings.general.patchIsStaff; },
-            get safeMode() { return { enabled: BunnySettings.isSafeMode() }; },
-            get enableEvalCommand() { return BunnySettings.developer.evalCommandEnabled; }
+            get debuggerUrl() {
+                return BunnySettings.developer.debuggerUrl;
+            },
+            get developerSettings() {
+                return BunnySettings.developer.enabled;
+            },
+            get enableDiscordDeveloperSettings() {
+                return BunnySettings.general.patchIsStaff;
+            },
+            get safeMode() {
+                return { enabled: BunnySettings.isSafeMode() };
+            },
+            get enableEvalCommand() {
+                return BunnySettings.developer.evalCommandEnabled;
+            },
         },
         loader: {
             identity: getVendettaLoaderIdentity() ?? void 0,
@@ -313,13 +362,13 @@ export const initVendettaObject = (): any => {
             error: (...message: any) => console.error(...message),
             time: (...message: any) => console.time(...message),
             trace: (...message: any) => console.trace(...message),
-            verbose: (...message: any) => console.log(...message)
+            verbose: (...message: any) => console.log(...message),
         },
         version: debug.getDebugInfo().vendetta.version,
         unload: () => {
-            delete window.vendetta;
+            window.vendetta = undefined;
         },
-    };
+    });
 
     return () => api.unload();
 };

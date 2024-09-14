@@ -1,7 +1,7 @@
 import { logger } from "@core/logger";
 import { FluxDispatcher } from "@metro/common";
 import { findByNameLazy } from "@metro/wrappers";
-import { PrimitiveType } from "intl-messageformat";
+import type { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
 
@@ -15,17 +15,20 @@ let _lastSetLocale: string | null = null;
 const _loadedLocale = new Set<string>();
 const _loadedStrings = {} as Record<string, typeof langDefault>;
 
-export const Strings = new Proxy({}, {
-    get: (_t, prop: keyof typeof langDefault) => {
-        if (_currentLocale && _loadedStrings[_currentLocale]?.[prop]) {
-            return _loadedStrings[_currentLocale]?.[prop];
-        }
-        return langDefault[prop];
-    }
-}) as Record<I18nKey, string>;
+export const Strings = new Proxy(
+    {},
+    {
+        get: (_t, prop: keyof typeof langDefault) => {
+            if (_currentLocale && _loadedStrings[_currentLocale]?.[prop]) {
+                return _loadedStrings[_currentLocale]?.[prop];
+            }
+            return langDefault[prop];
+        },
+    },
+) as Record<I18nKey, string>;
 
 export function initFetchI18nStrings() {
-    const cb = ({ locale }: { locale: string; }) => {
+    const cb = ({ locale }: { locale: string }) => {
         const languageMap = {
             "es-ES": "es",
             "es-419": "es_419",
@@ -33,10 +36,10 @@ export function initFetchI18nStrings() {
             "zh-CN": "zh-Hans",
             "pt-PT": "pt",
             "pt-BR": "pt_BR",
-            "sv-SE": "sv"
+            "sv-SE": "sv",
         } as Record<string, string>;
 
-        const resolvedLocale = _lastSetLocale = languageMap[locale] ?? locale;
+        const resolvedLocale = (_lastSetLocale = languageMap[locale] ?? locale);
 
         if (resolvedLocale.startsWith("en-")) {
             _currentLocale = null;
@@ -47,10 +50,10 @@ export function initFetchI18nStrings() {
             _loadedLocale.add(resolvedLocale);
 
             fetch(`https://raw.githubusercontent.com/pyoncord/i18n/main/resources/${resolvedLocale}/bunny.json`)
-                .then(r => r.json())
-                .then(strings => _loadedStrings[resolvedLocale] = strings)
+                .then((r) => r.json())
+                .then((strings) => (_loadedStrings[resolvedLocale] = strings))
                 .then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale))
-                .catch(e => logger.error`An error occured while fetching strings for ${resolvedLocale}: ${e}`);
+                .catch((e) => logger.error`An error occured while fetching strings for ${resolvedLocale}: ${e}`);
         } else {
             _currentLocale = resolvedLocale;
         }

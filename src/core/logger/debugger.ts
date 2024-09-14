@@ -34,14 +34,14 @@ export function connectToDebugger(url: string) {
  * @internal
  */
 export function patchLogHook() {
-    const unpatch = after("nativeLoggingHook", globalThis, args => {
+    const unpatch = after("nativeLoggingHook", globalThis, (args) => {
         if (socket?.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ message: args[0], level: args[1] }));
         }
     });
 
     return () => {
-        socket && socket.close();
+        socket?.close();
         unpatch();
     };
 }

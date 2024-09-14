@@ -12,15 +12,12 @@ export default function AssetBrowser() {
     return (
         <ErrorBoundary>
             <View style={{ flex: 1 }}>
-                <Search
-                    style={{ margin: 10 }}
-                    onChangeText={(v: string) => setSearch(v)}
-                />
+                <Search style={{ margin: 10 }} onChangeText={(v: string) => setSearch(v)} />
                 <FlatList
-                    data={all.filter(a => a.name.includes(search) || a.id.toString() === search)}
+                    data={all.filter((a) => a.name.includes(search) || a.id.toString() === search)}
                     renderItem={({ item }) => <AssetDisplay asset={item} />}
                     ItemSeparatorComponent={LegacyFormDivider}
-                    keyExtractor={item => item.name}
+                    keyExtractor={(item) => item.name}
                 />
             </View>
         </ErrorBoundary>
