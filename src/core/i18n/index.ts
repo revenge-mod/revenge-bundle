@@ -5,7 +5,7 @@ import type { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
 
-const IntlMessageFormat = findByNameLazy("MessageFormat") as typeof import("intl-messageformat");
+const IntlMessageFormat = findByNameLazy("IntlMessageFormat") as typeof import("intl-messageformat");
 
 type I18nKey = keyof typeof langDefault;
 

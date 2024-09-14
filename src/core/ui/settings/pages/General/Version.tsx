@@ -14,7 +14,7 @@ export default function Version({ label, version, icon }: VersionProps) {
         <TableRow
             label={label}
             icon={<TableRow.Icon source={findAssetId(icon)} />}
-            trailing={version}
+            trailing={<TableRow.TrailingText>{version}</TableRow.TrailingText>}
             onPress={() => {
                 clipboard.setString(`${label} - ${version}`);
                 showToast.showCopyToClipboard();
