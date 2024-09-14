@@ -1,5 +1,5 @@
-export const DISCORD_SERVER = "https://discord.gg/XjYgWXHb9Q";
-export const GITHUB = "https://github.com/pyoncord";
+export const DISCORD_SERVER = "https://discord.com/invite/ddcQf3s2Uq";
+export const GITHUB = "https://github.com/revenge-mod";
 export const HTTP_REGEX =
     /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 export const HTTP_REGEX_MULTI =
