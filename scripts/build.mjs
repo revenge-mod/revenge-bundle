@@ -25,7 +25,7 @@ let context = null;
 const config = {
     entryPoints: ["src/entry.ts"],
     bundle: true,
-    outfile: "dist/bunny.js",
+    outfile: "dist/revenge.js",
     format: "iife",
     splitting: false,
     external: [],
@@ -35,7 +35,7 @@ const config = {
         "const-and-let": false,
     },
     footer: {
-        js: "//# sourceURL=bunny",
+        js: "//# sourceURL=revenge",
     },
     loader: {
         ".png": "dataurl",

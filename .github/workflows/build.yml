@@ -7,20 +7,12 @@ on:
 
 jobs:
     build:
-        name: Build and push
+        name: Build and release
         runs-on: ubuntu-latest
 
         steps:
           - name: Checkout
             uses: actions/checkout@v4
-
-          - name: Checkout builds
-            uses: actions/checkout@v4
-            with:
-                repository: "pyoncord/bunny-builds"
-                path: "builds"
-                token: ${{ secrets.BUILDS_TOKEN }}
-                ref: ${{ github.ref_name }}
 
           - uses: actions/setup-node@v4
             with:
@@ -36,18 +28,35 @@ jobs:
           
           # TODO: Check for linting?
 
-          - name: Push builds
-            run: |
-                rm $GITHUB_WORKSPACE/builds/* || true
-                cp -r dist/* $GITHUB_WORKSPACE/builds || true
-                cd $GITHUB_WORKSPACE/builds
-                git config --local user.email "actions@github.com"
-                git config --local user.name "GitHub Actions"
-                git add .
-                git commit -m "Build $GITHUB_SHA" || exit 0
-                git push
+          - name: Get file hash
+            id: hash
+            run: echo "hash=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
 
-          - name: Purge CDN cache
-            run: |
-                curl https://purge.jsdelivr.net/gh/pyoncord/bunny-build-infos@${{ github.ref_name }}/bunny.js
-                
+          - name: Create draft release
+            id: create_release
+            uses: actions/create-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              tag_name: ${{ steps.hash.outputs.hash }}
+              release_name: Revenge ${{ steps.hash.outputs.hash }}
+              draft: true
+              prerelease: false
+      
+          - name: Upload dist
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create_release.outputs.upload_url }}
+              asset_path: ./dist/revenge.js
+              asset_name: revenge.js
+              asset_content_type: text/javascript
+      
+          - name: Publish release
+            uses: eregon/publish-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              release_id: ${{ steps.create_release.outputs.id }}
+
