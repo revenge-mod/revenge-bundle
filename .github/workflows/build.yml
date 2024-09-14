@@ -9,6 +9,8 @@ jobs:
     build:
         name: Build and release
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
         steps:
           - name: Checkout
