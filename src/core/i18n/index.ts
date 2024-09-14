@@ -68,5 +68,5 @@ type FormatStringRet<T> = T extends PrimitiveType ? string : string | T | (strin
 export function formatString<T = void>(key: I18nKey, val: Record<string, T>): FormatStringRet<T> {
     const str = Strings[key];
     // @ts-ignore
-    return new IntlMessageFormat.IntlMessageFormat(str).format(val);
+    return IntlMessageFormat.IntlMessageFormat(str).format(val);
 }
