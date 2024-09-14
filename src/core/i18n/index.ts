@@ -1,11 +1,11 @@
 import { logger } from "@core/logger";
 import { FluxDispatcher } from "@metro/common";
-import { findByNameLazy } from "@metro/wrappers";
+import { findByPropsLazy } from "@metro/wrappers";
 import type { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
 
-const IntlMessageFormat = findByNameLazy("IntlMessageFormat") as typeof import("intl-messageformat");
+const IntlMessageFormat = findByPropsLazy("IntlMessageFormat") as typeof import("intl-messageformat");
 
 type I18nKey = keyof typeof langDefault;
 
