@@ -21,7 +21,7 @@ jobs:
           - name: Install pnpm and dependencies
             run: |
                 npm i -g pnpm
-                pnpm i\
+                pnpm i
 
           - name: Build
             run: pnpm build --release-branch=${{ github.ref_name }} --build-minify
