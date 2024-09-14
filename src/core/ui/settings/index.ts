@@ -1,4 +1,4 @@
-import PyoncordIcon from "@assets/icons/pyoncord.png";
+import PyoncordIcon from "@assets/icons/revenge.png";
 import { Strings } from "@core/i18n";
 import BunnySettings from "@core/storage/BunnySettings";
 import { findAssetId } from "@lib/api/assets";

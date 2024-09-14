@@ -1,6 +1,6 @@
 import { findAssetId } from "@lib/api/assets";
 import { clipboard } from "@metro/common";
-import { LegacyFormText, TableRow } from "@metro/common/components";
+import { TableRow } from "@metro/common/components";
 import { showToast } from "@ui/toasts";
 
 interface VersionProps {
@@ -14,7 +14,7 @@ export default function Version({ label, version, icon }: VersionProps) {
         <TableRow
             label={label}
             icon={<TableRow.Icon source={findAssetId(icon)} />}
-            trailing={<LegacyFormText>{version}</LegacyFormText>}
+            trailing={version}
             onPress={() => {
                 clipboard.setString(`${label} - ${version}`);
                 showToast.showCopyToClipboard();
