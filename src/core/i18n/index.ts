@@ -1,11 +1,11 @@
 import { logger } from "@core/logger";
 import { FluxDispatcher } from "@metro/common";
-import { findByPropsLazy } from "@metro/wrappers";
-import type { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
+import { findByProps } from "@metro";
 
-const IntlMessageFormat = findByPropsLazy("IntlMessageFormat") as typeof import("intl-messageformat");
+// Pylix wanted to use Discord's built-in modules, but it just does not work :/
+import IntlMessageFormat from "intl-messageformat";
 
 type I18nKey = keyof typeof langDefault;
 
@@ -28,7 +28,7 @@ export const Strings = new Proxy(
 ) as Record<I18nKey, string>;
 
 export function initFetchI18nStrings() {
-    const cb = ({ locale }: { locale: string }) => {
+    const cb = ({ locale }: { locale: string; }) => {
         const languageMap = {
             "es-ES": "es",
             "es-419": "es_419",
@@ -63,10 +63,6 @@ export function initFetchI18nStrings() {
     return () => FluxDispatcher.unsubscribe("I18N_LOAD_SUCCESS", cb);
 }
 
-type FormatStringRet<T> = T extends PrimitiveType ? string : string | T | (string | T)[];
-
-export function formatString<T = void>(key: I18nKey, val: Record<string, T>): FormatStringRet<T> {
-    const str = Strings[key];
-    // @ts-ignore
-    return IntlMessageFormat.IntlMessageFormat(str).format(val);
+export function formatString(key: I18nKey, val: Record<string, any>): string {
+    return new IntlMessageFormat(Strings[key]).format(val)
 }

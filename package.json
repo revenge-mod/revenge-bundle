@@ -21,6 +21,7 @@
     "chalk": "^5.3.0",
     "esbuild": "^0.20.2",
     "esbuild-plugin-globals": "^0.2.0",
+    "react-intl": "^6.6.8",
     "typescript": "^5.6.2",
     "yargs-parser": "^21.1.1"
   },
