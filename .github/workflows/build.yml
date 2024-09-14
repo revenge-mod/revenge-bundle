@@ -1,9 +1,8 @@
 name: Build
 on:
     push:
-        branches: [main, dev]
-        paths-ignore:
-            - "**/*.md"
+        tags: 
+            - "v*"
 
 jobs:
     build:
@@ -16,6 +15,12 @@ jobs:
           - name: Checkout
             uses: actions/checkout@v4
 
+          - name: Set env
+            id: env
+            run: |
+                echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+                echo "hash=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+
           - uses: actions/setup-node@v4
             with:
                 node-version: 20
@@ -27,12 +32,6 @@ jobs:
 
           - name: Build
             run: pnpm build --release-branch=${{ github.ref_name }} --build-minify
-          
-          # TODO: Check for linting?
-
-          - name: Get file hash
-            id: hash
-            run: echo "hash=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
 
           - name: Create draft release
             id: create_release
@@ -40,8 +39,8 @@ jobs:
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
-              tag_name: ${{ steps.hash.outputs.hash }}
-              release_name: Revenge ${{ steps.hash.outputs.hash }}
+              tag_name: ${{ steps.env.outputs.tag }}
+              release_name: Revenge ${{ steps.env.outputs.tag }}
               draft: true
               prerelease: false
       
