@@ -5,7 +5,7 @@ import type { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
 
-const IntlMessageFormat = findByNameLazy("MessageFormat") as typeof import("intl-messageformat").default;
+const IntlMessageFormat = findByNameLazy("MessageFormat") as typeof import("intl-messageformat");
 
 type I18nKey = keyof typeof langDefault;
 
@@ -68,5 +68,5 @@ type FormatStringRet<T> = T extends PrimitiveType ? string : string | T | (strin
 export function formatString<T = void>(key: I18nKey, val: Record<string, T>): FormatStringRet<T> {
     const str = Strings[key];
     // @ts-ignore
-    return new IntlMessageFormat(str).format(val);
+    return new IntlMessageFormat.IntlMessageFormat(str).format(val);
 }
