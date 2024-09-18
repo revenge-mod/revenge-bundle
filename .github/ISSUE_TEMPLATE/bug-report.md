@@ -27,9 +27,9 @@ If applicable, add screenshots to help explain your problem.
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
  - Discord Version [e.g. 222111]
- - Bunny Version [e.g e19e89c-main]
+ - Revenge Version [e.g e19e89c-main]
 
 **Checklists**
 - [ ] I understand that this is a bug report and not a place to request new features or plugins
 - [ ] I understand that this is no place to report bugs produced by a plugin
-- [ ] I can reproduce this bug in Bunny's safe mode AND unable to reproduce it in vanilla/unmodded Discord
+- [ ] I can reproduce this bug in Revenge's safe mode AND unable to reproduce it in vanilla/unmodded Discord
