@@ -1,5 +1,5 @@
 # Revenge [![Discord](https://img.shields.io/discord/1205207689832038522?style=social&logo=discord&label=Revenge)]([https://discord.gg/24Ue3pzaum])
-A modification for Discord's mobile apps, a fork of [Bunny](https://github.com/pyoncord/Bunny).
+A client modification for Discord's mobile app, a fork of [Bunny](https://github.com/pyoncord/Bunny).
 
 ## Installing
 
