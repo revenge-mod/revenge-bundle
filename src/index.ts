@@ -31,7 +31,7 @@ export default async () => {
             }
             initThemes();
         } catch (e) {
-            console.error("[Bunny] Failed to initialize themes...", e);
+            console.error("[Revenge] Failed to initialize themes...", e);
         }
     }
 
@@ -66,5 +66,5 @@ export default async () => {
     updateFonts();
 
     // We good :)
-    logger.log("Bunny is ready!");
+    logger.log("Revenge is ready!");
 };
