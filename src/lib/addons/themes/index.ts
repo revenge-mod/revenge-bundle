@@ -2,13 +2,13 @@
  * Theming system in Bunny is currently a prototype, expect an unreadable theme implementation below
  */
 
+import { awaitStorage, createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@core/vendetta/storage";
+import { Author } from "@lib/addons/types";
 import { getStoredTheme, getThemeFilePath } from "@lib/api/native/loader";
 import { ThemeManager } from "@lib/api/native/modules";
 import { after, before, instead } from "@lib/api/patcher";
-import { awaitStorage, createFileBackend, createMMKVBackend, createStorage, wrapSync } from "@lib/api/storage";
 import { findInReactTree, safeFetch } from "@lib/utils";
 import { lazyDestructure, proxyLazy } from "@lib/utils/lazy";
-import { Author } from "@lib/utils/types";
 import { byMutableProp } from "@metro/filters";
 import { createLazyModule } from "@metro/lazy";
 import { findByNameLazy, findByProps, findByPropsLazy, findByStoreNameLazy } from "@metro/wrappers";

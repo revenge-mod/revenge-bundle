@@ -1,6 +1,6 @@
 import { getCorePlugins } from "@core/plugins";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
-import { awaitStorage, createStorage, getPreloadedStorage, preloadStorageIfExists, updateStorageAsync } from "@lib/api/storage/new";
+import { awaitStorage, createStorage, getPreloadedStorage, preloadStorageIfExists, updateStorage } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";
 import { OFFICIAL_PLUGINS_REPO_URL } from "@lib/utils/constants";
 import { semver } from "@metro/common";
@@ -51,6 +51,10 @@ function isExternalPlugin(manifest: t.BunnyPluginManifest): manifest is t.BunnyP
     return "parentRepository" in manifest;
 }
 
+export function isCorePlugin(id: string) {
+    return corePluginInstances.has(id);
+}
+
 export function getId<T extends t.BunnyPluginManifest>(manifest: T): string {
     const id = manifestToId.get(manifest);
     assert(id, manifest?.name ?? "unknown", "getting ID from an unregistered/invalid manifest");
@@ -93,7 +97,7 @@ export async function updateAndWritePlugin(repoUrl: string, id: string, fetchScr
         await writeFile(manifest.jsPath, js);
     }
 
-    await updateStorageAsync(`plugins/manifests/${id}.json`, manifest);
+    await updateStorage(`plugins/manifests/${id}.json`, manifest);
 
     if (registeredPlugins.has(id)) {
         const existingManifest = registeredPlugins.get(id)!;
@@ -347,9 +351,24 @@ export function stopPlugin(id: string) {
     pluginInstances.delete(id);
 }
 
-export async function checkAndRegisterUpdates() {
+async function updateAllRepository() {
+    try {
+        await updateRepository(OFFICIAL_PLUGINS_REPO_URL);
+    } catch (error) {
+        console.error("Failed to update official plugins repository", error);
+    }
+
+    await Promise.allSettled(Object.keys(pluginRepositories).map(async repo => {
+        if (repo !== OFFICIAL_PLUGINS_REPO_URL) {
+            await updateRepository(repo);
+        }
+    }));
+}
+
+export async function updatePlugins() {
     await awaitStorage(pluginRepositories, pluginSettings);
 
+    // Register core plugins
     const corePlugins = getCorePlugins();
     for (const id in corePlugins) {
         const {
@@ -367,12 +386,7 @@ export async function checkAndRegisterUpdates() {
         corePluginInstances.set(id, instance);
     }
 
-    // await updateRepository(OFFICIAL_PLUGINS_REPO_URL);
-    // await Promise.allSettled(Object.keys(pluginRepositories).map(async repo => {
-    //     if (repo !== OFFICIAL_PLUGINS_REPO_URL) {
-    //         await updateRepository(repo);
-    //     }
-    // }));
+    await updateAllRepository();
 }
 
 /**

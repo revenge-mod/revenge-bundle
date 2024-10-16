@@ -1,4 +1,3 @@
-import { Nullish } from "@lib/utils/types";
 import { DiscordTextStyles } from "@ui/types";
 import { MutableRefObject, ReactNode, RefObject } from "react";
 import type * as RN from "react-native";
@@ -25,6 +24,7 @@ interface ButtonProps {
     scaleAmountInPx?: number;
     icon?: ImageSourcePropType | ReactNode;
     style?: Style;
+    grow?: boolean;
 }
 
 export type Button = React.ForwardRefExoticComponent<ButtonProps>;
@@ -103,7 +103,7 @@ interface TextInputProps extends Omit<RN.TextInputProps, "onChange" | "onChangeT
     trailingIcon?: React.FC<any>;
     trailingPressableProps?: PressableProps;
     trailingText?: string;
-    value?: string | Nullish;
+    value?: string | RN.Falsy;
 }
 
 export type TextInput = React.FC<TextInputProps>;

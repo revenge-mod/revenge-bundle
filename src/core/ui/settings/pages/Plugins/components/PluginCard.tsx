@@ -5,12 +5,12 @@ import { NavigationNative, tokens } from "@metro/common";
 import { Card, IconButton, Stack, TableSwitch, Text } from "@metro/common/components";
 import { showSheet } from "@ui/sheets";
 import chroma from "chroma-js";
-import { createContext, memo, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { Image, View } from "react-native";
 
 import { UnifiedPluginModel } from "..";
 
-const CardContext = createContext<{ plugin: UnifiedPluginModel, result: Fuzzysort.KeysResult<UnifiedPluginModel> }>(null!);
+const CardContext = createContext<{ plugin: UnifiedPluginModel, result: Fuzzysort.KeysResult<UnifiedPluginModel>; }>(null!);
 const useCardContext = () => useContext(CardContext);
 
 function getHighlightColor(): import("react-native").ColorValue {
@@ -92,7 +92,7 @@ function Description() {
     </Text>;
 }
 
-const Actions = memo(() => {
+const Actions = () => {
     const { plugin } = useCardContext();
     const navigation = NavigationNative.useNavigation();
 
@@ -118,7 +118,7 @@ const Actions = memo(() => {
             )}
         />
     </View>;
-});
+};
 
 export default function PluginCard({ result, item: plugin }: CardWrapper<UnifiedPluginModel>) {
     plugin.usePluginState();

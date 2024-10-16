@@ -1,6 +1,6 @@
 import { findByNameLazy } from "@metro/wrappers";
 
-export type LoggerFunction = (...messages: any[]) => void;
+type LoggerFunction = (...messages: any[]) => void;
 export interface Logger {
     log: LoggerFunction;
     info: LoggerFunction;

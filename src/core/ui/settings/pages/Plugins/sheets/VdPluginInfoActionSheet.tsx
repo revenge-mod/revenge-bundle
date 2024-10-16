@@ -1,11 +1,10 @@
 import { formatString, Strings } from "@core/i18n";
+import { showConfirmationAlert } from "@core/vendetta/alerts";
 import { VdPluginManager } from "@core/vendetta/plugins";
+import { purgeStorage } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
-import { purgeStorage } from "@lib/api/storage";
-import { ButtonColors } from "@lib/utils/types";
 import { clipboard } from "@metro/common";
 import { ActionSheet, ActionSheetRow, Button, TableRow, Text } from "@metro/common/components";
-import { showConfirmationAlert } from "@ui/alerts";
 import { hideSheet } from "@ui/sheets";
 import { showToast } from "@ui/toasts";
 import { ScrollView, View } from "react-native";
@@ -85,7 +84,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", { name: plugin.name }),
                         confirmText: Strings.CLEAR,
                         cancelText: Strings.CANCEL,
-                        confirmColor: ButtonColors.RED,
+                        confirmColor: "red",
                         onConfirm: async () => {
                             if (vdPlugin.enabled) VdPluginManager.stopPlugin(plugin.id, false);
 
@@ -122,7 +121,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", { name: plugin.name }),
                         confirmText: Strings.DELETE,
                         cancelText: Strings.CANCEL,
-                        confirmColor: ButtonColors.RED,
+                        confirmColor: "red",
                         onConfirm: () => {
                             try {
                                 VdPluginManager.removePlugin(plugin.id);

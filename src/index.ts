@@ -3,37 +3,36 @@ import { initFetchI18nStrings } from "@core/i18n";
 import initSettings from "@core/ui/settings";
 import { initVendettaObject } from "@core/vendetta/api";
 import { VdPluginManager } from "@core/vendetta/plugins";
+import { updateFonts } from "@lib/addons/fonts";
+import { initPlugins, updatePlugins } from "@lib/addons/plugins";
+import { initThemes, patchChatBackground } from "@lib/addons/themes";
 import { patchCommands } from "@lib/api/commands";
 import { patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
-import { removeFile, writeFile } from "@lib/api/native/fs";
+import { writeFile } from "@lib/api/native/fs";
 import { isPyonLoader, isThemeSupported } from "@lib/api/native/loader";
-import { FileManager } from "@lib/api/native/modules";
-import { updateFonts } from "@lib/fonts";
-import { initPlugins } from "@lib/plugins";
-import { initThemes, patchChatBackground } from "@lib/themes";
+import { patchJsx } from "@lib/api/react/jsx";
 import { logger } from "@lib/utils/logger";
 import initSafeMode from "@ui/safeMode";
 import { patchSettings } from "@ui/settings";
 
 import * as lib from "./lib";
 
-export default async () => {
-    // Themes
-    if (isThemeSupported()) {
-        try {
-            if (isPyonLoader()) {
-                if (FileManager.removeFile != null) {
-                    removeFile("vendetta_theme.json", "");
-                } else {
-                    writeFile("vendetta_theme.json", "null", "");
-                }
-            }
-            initThemes();
-        } catch (e) {
-            console.error("[Revenge] Failed to initialize themes...", e);
+function maybeLoadThemes() {
+    if (!isThemeSupported()) return;
+
+    try {
+        if (isPyonLoader()) {
+            writeFile("../vendetta_theme.json", "null");
         }
+        initThemes();
+    } catch (e) {
+        console.error("Failed to initialize themes", e);
     }
+}
+
+export default async () => {
+    maybeLoadThemes();
 
     // Load everything in parallel
     await Promise.all([
@@ -42,11 +41,13 @@ export default async () => {
         patchLogHook(),
         patchCommands(),
         patchChatBackground(),
+        patchJsx(),
         initVendettaObject(),
         initFetchI18nStrings(),
         initSettings(),
         initFixes(),
-        initSafeMode()
+        initSafeMode(),
+        updatePlugins()
     ]).then(
         // Push them all to unloader
         u => u.forEach(f => f && lib.unload.push(f))
@@ -60,6 +61,7 @@ export default async () => {
         .then(u => lib.unload.push(u))
         .catch(() => alert("Failed to initialize Vendetta plugins"));
 
+    // And then, load Bunny plugins
     initPlugins();
 
     // Update the fonts

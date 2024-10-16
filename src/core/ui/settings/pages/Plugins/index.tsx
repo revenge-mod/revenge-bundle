@@ -2,26 +2,29 @@ import { Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import PluginCard from "@core/ui/settings/pages/Plugins/components/PluginCard";
 import { VdPluginManager } from "@core/vendetta/plugins";
+import { useProxy } from "@core/vendetta/storage";
+import { isCorePlugin, isPluginInstalled, pluginSettings, registeredPlugins } from "@lib/addons/plugins";
+import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
+import { useObservable } from "@lib/api/storage";
 import { showToast } from "@lib/ui/toasts";
 import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
-import { Author } from "@lib/utils/types";
 import { findByProps } from "@metro";
 import { NavigationNative } from "@metro/common";
-import { Button, Card, FlashList, Text } from "@metro/common/components";
+import { Card, FlashList, IconButton, Text } from "@metro/common/components";
 import { ComponentProps } from "react";
 import { View } from "react-native";
 
+import unifyBunnyPlugin from "./models/bunny";
 import unifyVdPlugin from "./models/vendetta";
 
 export interface UnifiedPluginModel {
     id: string;
     name: string;
     description?: string;
-    authors?: Array<Author | string>;
+    authors?: Author[];
     icon?: string;
 
     isEnabled(): boolean;
@@ -34,13 +37,6 @@ export interface UnifiedPluginModel {
 
 const { openAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
 const { AlertModal, AlertActions, AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions"));
-
-function navigateToPluginBrowser(navigation: any) {
-    navigation.push("BUNNY_CUSTOM_PAGE", {
-        title: "Plugin Browser",
-        render: React.lazy(() => import("../PluginBrowser")),
-    });
-}
 
 interface PluginPageProps extends Partial<ComponentProps<typeof AddonPage<UnifiedPluginModel>>> {
     useItems: () => unknown[];
@@ -74,40 +70,54 @@ export default function Plugins() {
     const navigation = NavigationNative.useNavigation();
 
     return <PluginPage
-        useItems={() => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins)}
-        resolveItem={unifyVdPlugin}
+        useItems={() => {
+            useProxy(VdPluginManager.plugins);
+            useObservable([pluginSettings]);
+
+            const vdPlugins = Object.values(VdPluginManager.plugins).map(unifyVdPlugin);
+            const bnPlugins = [...registeredPlugins.values()].filter(p => isPluginInstalled(p.id) && !isCorePlugin(p.id)).map(unifyBunnyPlugin);
+
+            return [...vdPlugins, ...bnPlugins];
+        }}
         ListHeaderComponent={() => {
             const unproxiedPlugins = Object.values(VdPluginManager.plugins).filter(p => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
             if (!unproxiedPlugins.length) return null;
 
-            // TODO: Make this dismissable
-            return <Card style={{ marginVertical: 8, gap: 4 }}>
-                <Text variant="heading-lg/bold">Unproxied Plugins Detected</Text>
-                <Text variant="text-md/medium">Installed plugins from unproxied sources may execute unreviewed code in this app without your knowledge.</Text>
-                <View style={{ marginTop: 8, flexDirection: "row" }}>
-                    <Button
-                        style={{ flexShrink: 1 }}
-                        size="sm"
-                        text="Review"
-                        variant="secondary"
-                        onPress={() => {
-                            navigation.push("BUNNY_CUSTOM_PAGE", {
-                                title: "Unproxied Plugins",
-                                render: () => {
-                                    return <FlashList
-                                        data={unproxiedPlugins}
-                                        contentContainerStyle={{ padding: 8 }}
-                                        ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-                                        renderItem={({ item: p }: any) => <Card>
-                                            <Text variant="heading-md/semibold">{p.id}</Text>
-                                        </Card>}
-                                    />;
-                                }
-                            });
-                        }}
-                    />
-                </View>
-            </Card>;
+            return <View style={{ marginVertical: 12, marginHorizontal: 10 }}>
+                <Card border="strong">
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+                        <View style={{ gap: 6, flexShrink: 1 }}>
+                            <Text variant="heading-md/bold">Unproxied Plugins Found</Text>
+                            <Text variant="text-sm/medium" color="text-muted">
+                                Plugins installed from unproxied sources may run unverified code in this app without your awareness.
+                            </Text>
+                        </View>
+                        <View style={{ marginLeft: "auto" }}>
+                            <IconButton
+                                size="sm"
+                                variant="secondary"
+                                icon={findAssetId("CircleInformationIcon-primary")}
+                                style={{ marginLeft: 8 }}
+                                onPress={() => {
+                                    navigation.push("BUNNY_CUSTOM_PAGE", {
+                                        title: "Unproxied Plugins",
+                                        render: () => {
+                                            return <FlashList
+                                                data={unproxiedPlugins}
+                                                contentContainerStyle={{ padding: 8 }}
+                                                ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+                                                renderItem={({ item: p }: any) => <Card>
+                                                    <Text variant="heading-md/semibold">{p.id}</Text>
+                                                </Card>}
+                                            />;
+                                        }
+                                    });
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Card>
+            </View>;
         }}
         installAction={{
             label: "Install a plugin",
@@ -137,61 +147,4 @@ export default function Plugins() {
             }
         }}
     />;
-
-    // const navigation = NavigationNative.useNavigation();
-    // const { width: pageWidth } = useWindowDimensions();
-
-    // const state = useSegmentedControlState({
-    //     pageWidth,
-    //     items: [
-    //         {
-    //             label: "Vendetta",
-    //             id: "vendetta-plugins",
-    //             page: (
-    //                 <PluginPage
-    //                     useItems={() => useProxy(VdPluginManager.plugins) && Object.values(VdPluginManager.plugins)}
-    //                     resolveItem={unifyVdPlugin}
-    //                     fetchFunction={(url: string) => VdPluginManager.installPlugin(url)}
-    //                 />
-    //             )
-    //         },
-    //         {
-    //             label: "Bunny",
-    //             id: "bunny-plugins",
-    //             page: (
-    //                 <PluginPage
-    //                     useItems={() => (useNewProxy(pluginSettings), [...registeredPlugins.values()].filter(p => isPluginInstalled(p.id)))}
-    //                     resolveItem={unifyBunnyPlugin}
-    //                     ListHeaderComponent={() => (
-    //                         <View style={{ marginBottom: 10 }}>
-    //                             <HelpMessage messageType={0}>
-    //                                 Bunny plugin system is in no way ready, try not getting yourself burnt ⚠️
-    //                             </HelpMessage>
-    //                         </View>
-    //                     )}
-    //                     ListFooterComponent={() => (
-    //                         <View style={{ alignItems: "center", justifyContent: "center", paddingTop: 16, gap: 12 }}>
-    //                             <Text variant="heading-lg/bold">{"Looking for more?"}</Text>
-    //                             <Button
-    //                                 size="lg"
-    //                                 text="Browse plugins"
-    //                                 icon={findAssetId("discover")}
-    //                                 onPress={() => navigateToPluginBrowser(navigation)}
-    //                             />
-    //                         </View>
-    //                     )}
-    //                 />
-    //             )
-    //         },
-    //     ]
-    // });
-
-    // return (
-    //     <View style={{ alignItems: "center", justifyContent: "center", height: "100%" }}>
-    //         <View style={{ padding: 8, paddingBottom: 0 }}>
-    //             <SegmentedControl state={state} />
-    //         </View>
-    //         <SegmentedControlPages state={state} />
-    //     </View>
-    // );
 }

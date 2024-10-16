@@ -1,10 +1,10 @@
 import { formatString, Strings } from "@core/i18n";
 import AddonPage from "@core/ui/components/AddonPage";
 import ThemeCard from "@core/ui/settings/pages/Themes/ThemeCard";
+import { useProxy } from "@core/vendetta/storage";
+import { installTheme, Theme, themes } from "@lib/addons/themes";
+import { Author } from "@lib/addons/types";
 import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
-import { installTheme, Theme, themes } from "@lib/themes";
-import { Author } from "@lib/utils/types";
 import { Button } from "@metro/common/components";
 
 export default function Themes() {

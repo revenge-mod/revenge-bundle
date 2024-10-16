@@ -1,11 +1,11 @@
 import { Strings } from "@core/i18n";
 import { VdPluginManager } from "@core/vendetta/plugins";
+import { useProxy } from "@core/vendetta/storage";
+import { installTheme, removeTheme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
 import { after } from "@lib/api/patcher";
-import { useProxy } from "@lib/api/storage";
-import { installTheme, removeTheme, themes } from "@lib/themes";
-import { DISCORD_SERVER_ID, HTTP_REGEX_MULTI, PLUGINS_CHANNEL_ID, THEMES_CHANNEL_ID, VD_PROXY_PREFIX } from "@lib/utils/constants";
+import { HTTP_REGEX_MULTI, VD_DISCORD_SERVER_ID, VD_PLUGINS_CHANNEL_ID, VD_PROXY_PREFIX, VD_THEMES_CHANNEL_ID } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button } from "@metro/common/components";
 import { findByProps, findByPropsLazy } from "@metro/wrappers";
@@ -39,13 +39,13 @@ const postMap = {
 };
 
 function useExtractThreadContent(thread: any, _firstMessage = null, actionSheet = false): ([PostType, string]) | void {
-    if (thread.guild_id !== DISCORD_SERVER_ID) return;
+    if (thread.guild_id !== VD_DISCORD_SERVER_ID) return;
 
     // Determine what type of addon this is.
     let postType: PostType;
-    if (thread.parent_id === PLUGINS_CHANNEL_ID) {
+    if (thread.parent_id === VD_PLUGINS_CHANNEL_ID) {
         postType = "Plugin";
-    } else if (thread.parent_id === THEMES_CHANNEL_ID && isThemeSupported()) {
+    } else if (thread.parent_id === VD_THEMES_CHANNEL_ID && isThemeSupported()) {
         postType = "Theme";
     } else return;
 

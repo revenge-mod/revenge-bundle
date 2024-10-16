@@ -1,12 +1,11 @@
 import { formatString, Strings } from "@core/i18n";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
+import { showConfirmationAlert } from "@core/vendetta/alerts";
+import { useProxy } from "@core/vendetta/storage";
+import { applyTheme, fetchTheme, removeTheme, selectTheme, Theme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
-import { applyTheme, fetchTheme, removeTheme, selectTheme, Theme, themes } from "@lib/themes";
-import { ButtonColors } from "@lib/utils/types";
 import { clipboard } from "@metro/common";
-import { showConfirmationAlert } from "@ui/alerts";
 import { showToast } from "@ui/toasts";
 
 function selectAndApply(value: boolean, theme: Theme) {
@@ -68,7 +67,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<Theme>) {
                         content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.data.name }),
                         confirmText: Strings.DELETE,
                         cancelText: Strings.CANCEL,
-                        confirmColor: ButtonColors.RED,
+                        confirmColor: "red",
                         onConfirm: () => {
                             removeTheme(theme.id).then(wasSelected => {
                                 setRemoved(true);

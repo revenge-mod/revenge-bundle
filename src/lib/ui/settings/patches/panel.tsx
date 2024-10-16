@@ -1,7 +1,7 @@
 import { after } from "@lib/api/patcher";
 import { findInReactTree } from "@lib/utils";
 import { i18n, NavigationNative } from "@metro/common";
-import { LegacyFormIcon, LegacyFormRow, LegacyFormSection } from "@metro/common/components";
+import { LegacyFormDivider,LegacyFormIcon, LegacyFormRow, LegacyFormSection } from "@metro/common/components";
 import { findByNameLazy } from "@metro/wrappers";
 import { registeredSections } from "@ui/settings";
 
@@ -12,16 +12,19 @@ function SettingsSection() {
     const navigation = NavigationNative.useNavigation();
 
     return <>
-        {Object.keys(registeredSections).map(sect => (
+        {Object.keys(registeredSections).map(sect => registeredSections[sect].length > 0 && (
             <LegacyFormSection key={sect} title={sect}>
                 { /** Is usePredicate here safe? */}
-                {registeredSections[sect].filter(r => r.usePredicate?.() ?? true).map(row => (
-                    <LegacyFormRow
-                        label={row.title()}
-                        leading={<LegacyFormIcon source={row.icon} />}
-                        trailing={LegacyFormRow.Arrow}
-                        onPress={wrapOnPress(row.onPress, navigation, row.render, row.title())}
-                    />
+                {registeredSections[sect].filter(r => r.usePredicate?.() ?? true).map((row, i, arr) => (
+                    <>
+                        <LegacyFormRow
+                            label={row.title()}
+                            leading={<LegacyFormIcon source={row.icon} />}
+                            trailing={<LegacyFormRow.Arrow label={row.useTrailing?.() || undefined} />}
+                            onPress={wrapOnPress(row.onPress, navigation, row.render, row.title())}
+                        />
+                        {i !== arr.length - 1 && <LegacyFormDivider />}
+                    </>
                 ))}
             </LegacyFormSection>
         ))}
@@ -55,7 +58,7 @@ export function patchPanelUI(unpatches: (() => void | boolean)[]) {
             const sections = findInReactTree(
                 res.props.children,
                 n => n?.children?.[1]?.type === LegacyFormSection
-            )?.children;
+            )?.children || res.props.children;
 
             if (sections) {
                 const index = sections.findIndex((c: any) => titles.includes(c?.props.label));

@@ -1,7 +1,8 @@
 import { CardWrapper } from "@core/ui/components/AddonCard";
+import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
-import { useProxy } from "@lib/api/storage";
+import AlertModal, { AlertActionButton } from "@lib/ui/components/wrappers/AlertModal";
 import isValidHttpUrl from "@lib/utils/isValidHttpUrl";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
@@ -14,7 +15,6 @@ import { Image, ScrollView, View } from "react-native";
 
 const { showSimpleActionSheet, hideActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet"));
 const { openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
-const { AlertModal, AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions"));
 
 type SearchKeywords = Array<string | ((obj: any & {}) => string)>;
 
@@ -27,19 +27,19 @@ interface AddonPageProps<T extends object, I = any> {
     safeModeHint?: {
         message?: string;
         footer?: ReactNode;
-    }
+    };
     installAction?: {
         label?: string;
         // Ignored when onPress is defined!
         fetchFn?: (url: string) => Promise<void>;
         onPress?: () => void;
-    }
+    };
     CardComponent: ComponentType<CardWrapper<T>>;
     ListHeaderComponent?: ComponentType<any>;
     ListFooterComponent?: ComponentType<any>;
 }
 
-function InputAlert(props: { label: string, fetchFn: (url: string) => Promise<void> }) {
+function InputAlert(props: { label: string, fetchFn: (url: string) => Promise<void>; }) {
     const [value, setValue] = React.useState("");
     const [error, setError] = React.useState("");
     const [isFetching, setIsFetching] = React.useState(false);
@@ -55,7 +55,7 @@ function InputAlert(props: { label: string, fetchFn: (url: string) => Promise<vo
 
     return <AlertModal
         title={props.label}
-        content="Type in the source URL you want to install from:"
+        content="Enter the URL of the source you want to install from:"
         extraContent={
             <Stack style={{ marginTop: -12 }}>
                 <TextInput
@@ -122,7 +122,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
     }, [props.items, sortFn, search]);
 
     const onInstallPress = useCallback(() => {
-        if (!props.installAction) return () => {};
+        if (!props.installAction) return () => { };
         const { label, onPress, fetchFn } = props.installAction;
         if (fetchFn) {
             openAlert("AddonInputAlert", <InputAlert label={label ?? "Install"} fetchFn={fetchFn} />);
@@ -175,7 +175,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
                     })}
                 />}
             </View>
-            {props.ListHeaderComponent && <props.ListHeaderComponent />}
+            {props.ListHeaderComponent && !search && <props.ListHeaderComponent />}
         </View>
     );
 
