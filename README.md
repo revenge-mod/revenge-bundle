@@ -1,42 +1,72 @@
-# Revenge [![Discord](https://img.shields.io/discord/1205207689832038522?style=social&logo=discord&label=Revenge)]([https://discord.gg/24Ue3pzaum])
-A modification for Discord's mobile apps, a fork of [Bunny](https://github.com/pyoncord/Bunny).
+<p align="center">
+  <picture>
+    <source
+      width="512px"
+      media="(prefers-color-scheme: dark)"
+      srcset="assets/wordmark/wordmark+slogan-dark.svg"
+    >
+    <img
+      width="512px"
+      src="assets/wordmark/wordmark+slogan-light.svg"
+    >
+  </picture>
+  <br>
+  <a href="https://revenge-mod.github.io/">
+       <picture>
+           <source height="32px" media="(prefers-color-scheme: dark)" srcset="assets/logo/logo-dark.svg" />
+           <img height="32px" src="assets/logo/logo-light.svg" />
+       </picture>
+   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <a href="https://discord.com/invite/ddcQf3s2Uq">
+       <picture>
+           <source height="32px" media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/13122796/178032563-d4e084b7-244e-4358-af50-26bde6dd4996.png" />
+           <img height="32px" src="https://user-images.githubusercontent.com/13122796/178032563-d4e084b7-244e-4358-af50-26bde6dd4996.png" />
+       </picture>
+   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <a href="https://github.com/revenge-mod">
+       <picture>
+           <source height="32px" media="(prefers-color-scheme: dark)" srcset="https://i.ibb.co/dMMmCrW/Git-Hub-Mark.png" />
+           <img height="32px" src="https://i.ibb.co/9wV3HGF/Git-Hub-Mark-Light.png" />
+       </picture>
+   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-## Installing
+   </a>
+</p>
+
+A client modification for Discord mobile, a continuation of [Bunny](https://github.com/pyoncord/Bunny).
+
+## 💪 Features
+
+- **🔌 Plugins**: Extend Discord with custom features
+- **🎨 Themes & Fonts**: Customize Discord's appearance to your liking
+- **🧪 Experiments**: Try out Discord's new features before they're rolled out
+
+## ⬇️ Download
 
 ### Android
 
-- **Root** with Xposed - [RevengeXposed](https://github.com/revenge-mod/RevengeXposed/releases/latest)
-- **Non-root** - [Revenge Manager](https://github.com/revenge-mod/RevengeManager/releases/latest)
+- **🩹 Root with Xposed**: [RevengeXposed](https://github.com/revenge-mod/revenge-xposed/releases/latest)
+- **📵 Non-root**: [Revenge Manager](https://github.com/revenge-mod/revenge-manager/releases/latest)
 
 ### iOS
-- [**RevengeTweak**](https://github.com/revenge-mod/RevengeTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
+- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
 
-## Building
-1. Install a Revenge loader with config support (any mentioned in the [Installing](#installing) section).
-2. Go to **Settings** > **General** and enable **Developer Settings**.
-3. Clone the repository
 
-    ```sh
-    git clone https://github.com/revenge-mod/Revenge.git
-    ```
+## 📚 Everything else
 
-4. Install dependencies
+### 📙 Contributing
 
-    ```
-    pnpm i
-    ```
+Thank you for considering contributing to Revenge.
+You can find the contribution guidelines [here](CONTRIBUTING.md).
 
-5. Build Revenge's code
+### 🛠️ Building
 
-    ```
-    pnpm build
-    ```
+To build a Revenge, you can follow the [documentation](/docs).
 
-6. In the newly created `dist` directory, run a HTTP server. I recommend [http-server](https://www.npmjs.com/package/http-server).
-7. Go to **Settings** > **Developer** enabled earlier. Enable `Load from custom URL` and input the IP address and port of the server (e.g. `http://192.168.1.236:4040/revenge.js`) in the new input box labeled `Revenge URL`.
-8. Restart Discord. Upon reload, you should notice that your device will download Revenge's bundled code from your server, rather than GitHub.
-9. Make your changes, rebuild, reload, go wild!
+### 📃 Documentation
 
-Alternatively, you can directly *serve* the bundled code by running `pnpm serve`. `revenge.js` will be served on your local address under the port 4040. You will then insert `http://<local ip address>:4040/revenge.js` as a custom URL and reload. Whenever you restart your mobile client, the script will rebuild the bundle as your client fetches it.
+You can find the documentation of Revenge [here](/docs).
 
-If the bundle keeps being cached and not updated, you can instead tap the **Settings** > **Developer** > **Clear JS bundle** option which will prompt you to reload.
+## 📜 Licence
+
+Revenge is licensed under the 3-Clause BSD license. Please see the [license file](LICENSE) for more information.
