@@ -96,7 +96,7 @@ export const VdPluginManager = {
                 // Wrapping this with wrapSync is NOT an option.
                 storage: await createStorage<Record<string, any>>(createMMKVBackend(plugin.id)),
             },
-            logger: new DiscordLogger(`Bunny » ${plugin.manifest.name}`),
+            logger: new DiscordLogger(`Revenge » ${plugin.manifest.name}`),
         };
         const pluginString = `vendetta=>{return ${plugin.js}}\n//# sourceURL=${plugin.id}`;
 
