@@ -4,8 +4,8 @@ on:
         branches: [main, dev]
 
 jobs:
-    build:
-        name: Build and release
+    release:
+        name: Release
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -23,5 +23,5 @@ jobs:
                 npm i -g pnpm
                 pnpm i
 
-          - name: Build and release
+          - name: Release
             run: pnpx semantic-release
