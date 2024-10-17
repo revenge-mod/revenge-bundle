@@ -33,6 +33,11 @@
    </a>
 </p>
 
+# 👊 Revenge
+
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/revenge-mod/revenge-bundle/release.yml)
+[![3-Clause BSD License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 A client modification for Discord mobile, a continuation of [Bunny](https://github.com/pyoncord/Bunny).
 
 ## 💪 Features
@@ -43,13 +48,16 @@ A client modification for Discord mobile, a continuation of [Bunny](https://gith
 
 ## ⬇️ Download
 
+This repository releases JavaScript bundles for loaders to execute. These are the official Revenge loaders:
+
 ### Android
 
 - **🩹 Root with Xposed**: [RevengeXposed](https://github.com/revenge-mod/revenge-xposed/releases/latest)
 - **📵 Non-root**: [Revenge Manager](https://github.com/revenge-mod/revenge-manager/releases/latest)
 
 ### iOS
-- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
+
+- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or prepatched `.ipa`
 
 
 ## 📚 Everything else
