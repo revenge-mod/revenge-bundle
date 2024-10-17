@@ -72,7 +72,7 @@ export default function About() {
         {
             label: Platform.select({ android: Strings.CODENAME, ios: Strings.MACHINE_ID })!,
             version: debugInfo.device.codename,
-            icon: "ic_compose_24px"
+            icon: "ic_copy_id"
         }
     ];
 
