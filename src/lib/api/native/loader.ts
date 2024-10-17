@@ -1,4 +1,4 @@
-import { Theme } from "@lib/themes";
+import { Theme } from "@lib/addons/themes";
 import { removeCacheFile } from "./fs";
 
 // @ts-ignore

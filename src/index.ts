@@ -68,5 +68,5 @@ export default async () => {
     updateFonts();
 
     // We good :)
-    logger.log("Bunny is ready!");
+    logger.log("Revenge is ready!");
 };

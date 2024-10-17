@@ -1,0 +1,27 @@
+name: Release
+on:
+    push:
+        branches: [main, dev]
+
+jobs:
+    release:
+        name: Release
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - uses: actions/setup-node@v4
+            with:
+                node-version: 22
+
+          - name: Install pnpm and dependencies
+            run: |
+                npm i -g pnpm
+                pnpm i
+
+          - name: Release
+            run: pnpx semantic-release

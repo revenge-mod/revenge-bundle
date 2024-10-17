@@ -21,7 +21,7 @@ const { showSimpleActionSheet } = lazyDestructure(() => findByProps("showSimpleA
 const { openAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
 const { AlertModal, AlertActionButton } = lazyDestructure(() => findByProps("AlertModal", "AlertActions"));
 
-const RDT_EMBED_LINK = "https://raw.githubusercontent.com/amsyarasyiq/rdt-embedder/main/dist.js";
+const RDT_EMBED_LINK = "https://github.com/revenge-mod/react-devtools-core/releases/latest/download/rdtc.js";
 
 const useStyles = createStyles({
     leadingText: {
