@@ -1,4 +1,4 @@
-name: Build
+name: Release
 on:
     push:
         branches: [main, dev]
@@ -23,5 +23,5 @@ jobs:
                 npm i -g pnpm
                 pnpm i
 
-          - name: Build
+          - name: Build and release
             run: pnpx semantic-release
