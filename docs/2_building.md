@@ -4,7 +4,7 @@
 3. Clone the repository
 
     ```sh
-    git clone https://github.com/revenge-mod/Revenge.git
+    git clone https://github.com/revenge-mod/revenge-bundle.git
     ```
 
 4. Install dependencies

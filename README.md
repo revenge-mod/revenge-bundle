@@ -57,8 +57,7 @@ This repository releases JavaScript bundles for loaders to execute. These are th
 
 ### iOS
 
-- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or prepatched `.ipa`
-
+- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or the prepatched `.ipa`
 
 ## 📚 Everything else
 
@@ -69,12 +68,12 @@ You can find the contribution guidelines [here](CONTRIBUTING.md).
 
 ### 🛠️ Building
 
-To build a Revenge, you can follow the [documentation](/docs).
+To build Revenge bundle, you can follow the [documentation](/docs).
 
 ### 📃 Documentation
 
-You can find the documentation of Revenge [here](/docs).
+You can find the documentation of Revenge bundle [here](/docs).
 
 ## 📜 Licence
 
-Revenge is licensed under the 3-Clause BSD license. Please see the [license file](LICENSE) for more information.
+Revenge bundle is licensed under the 3-Clause BSD license. Please see the [license file](LICENSE) for more information.
