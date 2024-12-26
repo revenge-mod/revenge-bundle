@@ -6,6 +6,7 @@ import { registeredSections } from "@ui/settings";
 
 import { CustomPageRenderer, wrapOnPress } from "./shared";
 import { Strings } from "@core/i18n";
+import { TableRowIcon } from "@metro/common/components";
 
 const settingConstants = findByPropsLazy("SETTING_RENDERER_CONFIG");
 const SettingsOverviewScreen = findByNameLazy("SettingsOverviewScreen", false);
@@ -23,6 +24,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
                 type: "pressable",
                 title: row.title,
                 icon: row.icon,
+                IconComponent: row.IconComponent ?? (row.icon && (() => <TableRowIcon source={row.icon} />)),
                 usePredicate: row.usePredicate,
                 useTrailing: row.useTrailing,
                 onPress: wrapOnPress(row.onPress, null, row.render, row.title()),

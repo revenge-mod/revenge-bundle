@@ -11,6 +11,7 @@ export interface RowConfig {
     onPress?: () => any;
     render?: Parameters<typeof lazy>[0];
     icon?: ImageURISource | number;
+    IconComponent?: React.ReactNode,
     usePredicate?: () => boolean,
     useTrailing?: () => string | JSX.Element,
     rawTabsConfig?: Record<string, any>;
