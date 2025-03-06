@@ -74,7 +74,7 @@ export default function General() {
                                 "bunny-reload-safe-mode",
                                 <AlertModal
                                     title="Reload now?"
-                                    content={!to ? "All add-ons will loads normally." : "All add-ons will be temporarily disabled upon reload."}
+                                    content={!to ? "All add-ons will load normally." : "All add-ons will be temporarily disabled upon reload."}
                                     actions={<AlertActions>
                                         <AlertActionButton
                                             text="Reload Now"
