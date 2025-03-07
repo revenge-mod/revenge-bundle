@@ -17,7 +17,7 @@
     "CLEAR_DATA_FAILED": "Failed to clear data for {name}",
     "CLEAR_DATA_SUCCESSFUL": "Cleared data for {name}",
     "CODENAME": "Codename",
-    "COMMAND_DEBUG_DESC": "Send cumbug cumformation💦",
+    "COMMAND_DEBUG_DESC": "Send Goonbug cumformation💦",
     "COMMAND_DEBUG_OPT_EPHEMERALLY": "Send the message ephemerally",
     "COMMAND_EVAL_DESC": "Evaluate JavaScript code",
     "COMMAND_EVAL_OPT_ASYNC": "Whether to support 'await' in code, must explicitly return for result (default: false)",
