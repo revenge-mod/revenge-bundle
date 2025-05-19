@@ -1,5 +1,4 @@
 import patchErrorBoundary from "@core/debug/patches/patchErrorBoundary";
-import wrapSafeAreaProvider from "@core/patches/wrapSafeAreaProvider";
 import initFixes from "@core/fixes";
 import { initFetchI18nStrings } from "@core/i18n";
 import initSettings from "@core/ui/settings";
@@ -20,7 +19,6 @@ import * as lib from "./lib";
 export default async () => {
     // Load everything in parallel
     await Promise.all([
-        wrapSafeAreaProvider(),
         initThemes(),
         injectFluxInterceptor(),
         patchSettings(),
