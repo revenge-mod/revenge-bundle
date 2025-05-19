@@ -2,6 +2,7 @@ import { lazyDestructure } from "@lib/utils/lazy";
 import { findByFilePathLazy, findByProps, findByPropsLazy } from "@metro/wrappers";
 
 import type { Dispatcher } from "./types/flux";
+import { Linking } from "react-native";
 
 export * as components from "./components";
 
@@ -9,7 +10,21 @@ export * as components from "./components";
 export const constants = findByPropsLazy("Fonts", "Permissions");
 export const channels = findByPropsLazy("getVoiceChannelId");
 export const i18n = findByPropsLazy("Messages");
-export const url = findByPropsLazy("openURL", "openDeeplink");
+
+// Polyfill LinkingUtils
+const openURL = (url: string) => Linking.openURL(url);
+export const url = nativeModuleProxy.NativeLinkingModule || nativeModuleProxy.DCDLinkingManager ? {
+    openURL,
+    openDeeplink: openURL,
+    handleSupportedURL: openURL,
+    isDiscordConnectOauth2Deeplink: () => {
+        console.warn("url.isDiscordConnectOauth2Deeplink is not implemented and will always return false");
+        return false;
+    },
+    showLongPressUrlActionSheet: () => console.warn("url.showLongPressUrlActionSheet is not implemented"),
+    handleMessageLinking: findByFilePathLazy("modules/links/native/handleContentLinking.tsx", true),
+} : findByPropsLazy("openURL", "openDeeplink");
+
 export const clipboard = findByPropsLazy("setString", "getString", "hasString");
 export const assets = findByPropsLazy("registerAsset");
 export const invites = findByPropsLazy("acceptInviteAndTransitionToInviteChannel");
