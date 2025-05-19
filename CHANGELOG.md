@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.2...v1.7.3) (2025-05-19)
+
+
+### Bug Fixes
+
+* **metro/common:** polyfill `url` ([59ffa77](https://github.com/revenge-mod/revenge-bundle/commit/59ffa77a3aff59181d9dee169f91bda8e31c4400))
+
 ## [1.7.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.1...v1.7.2) (2025-02-27)
 
 
