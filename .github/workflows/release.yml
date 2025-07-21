@@ -28,7 +28,7 @@ jobs:
               bun-version: latest
 
           - name: Install dependencies
-            run: bun install --frozen-lockfile --production
+            run: bun install --frozen-lockfile
 
           - name: Release
             run: bunx semantic-release
