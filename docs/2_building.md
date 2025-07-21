@@ -10,13 +10,13 @@
 4. Install dependencies
 
     ```
-    pnpm i
+    bun i
     ```
 
 5. Build Revenge's code
 
     ```
-    pnpm build
+    bun run build
     ```
 
 6. In the newly created `dist` directory, run a HTTP server. I recommend [http-server](https://www.npmjs.com/package/http-server).
@@ -24,6 +24,6 @@
 8. Restart Discord. Upon reload, you should notice that your device will download Revenge's bundled code from your server, rather than GitHub.
 9. Make your changes, rebuild, reload, go wild!
 
-Alternatively, you can directly *serve* the bundled code by running `pnpm serve`. `revenge.js` will be served on your local address under the port 4040. You will then insert `http://<local ip address>:4040/revenge.js` as a custom URL and reload. Whenever you restart your mobile client, the script will rebuild the bundle as your client fetches it.
+Alternatively, you can directly *serve* the bundled code by running `bun serve`. `revenge.js` will be served on your local address under the port 4040. You will then insert `http://<local ip address>:4040/revenge.js` as a custom URL and reload. Whenever you restart your mobile client, the script will rebuild the bundle as your client fetches it.
 
 If the bundle keeps being cached and not updated, you can instead tap the **Settings** > **Developer** > **Clear JS bundle** option which will prompt you to reload.

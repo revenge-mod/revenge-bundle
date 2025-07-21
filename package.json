@@ -10,7 +10,7 @@
     "scripts": {
         "build": "node scripts/build.mjs",
         "serve": "node scripts/serve.mjs",
-        "serve:adb": "pnpm run serve --adb",
+        "serve:adb": "bun run serve --adb",
         "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
     },
     "license": "BSD-3-Clause",
@@ -53,13 +53,5 @@
         "react-native-reanimated": "^3.18.0",
         "spitroast": "^1.4.4",
         "type-fest": "^4.41.0"
-    },
-    "pnpm": {
-        "peerDependencyRules": {
-            "ignoreMissing": [
-                "react",
-                "react-native"
-            ]
-        }
     }
 }
