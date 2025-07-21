@@ -46,6 +46,7 @@ const config = {
         ".png": "dataurl"
     },
     define: {
+        window: "globalThis",
         __DEV__: dev ?? JSON.stringify(releaseBranch !== "main")
     },
     inject: ["./shims/asyncIteratorSymbol.js", "./shims/promiseAllSettled.js"],
