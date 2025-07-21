@@ -1,5 +1,6 @@
 import type { Metro } from "@metro/types";
 import { version } from "bunny-build-info";
+const { instead } = require("spitroast");
 
 // @ts-ignore - window is defined later in the bundle, so we assign it early
 globalThis.window = globalThis;
@@ -33,29 +34,44 @@ if (typeof window.__r === "undefined") {
     // Revenge delays the execution of index.ts(x) because Revenge's initialization is asynchronous
     interface DeferredQueue {
         object: any;
-        original: any;
         method: string;
+        resume?: (queue: DeferredQueue) => void;
         args: any[];
     }
 
     const deferredCalls: Array<DeferredQueue> = [];
+    const unpatches: Array<() => void> = [];
 
-    const deferMethodExecution = (object: any, method: string, condition?: (...args: any[]) => boolean) => {
-        const originalMethod = object[method];
-        object[method] = (...args: any[]) => {
-            if (condition && !condition(...args)) {
-                originalMethod(...args);
-                return;
+    const deferMethodExecution = (
+        object: any, 
+        method: string, 
+        condition?: (...args: any[]) => boolean, 
+        resume?: (queue: DeferredQueue) => void, 
+        returnWith?: (queue: DeferredQueue) => any
+    ) => {
+        const restore = instead(method, object, function (this: any, args: any[], original: any) {
+            if (!condition || condition(...args)) {
+                const queue: DeferredQueue = { object, method, args, resume };
+                deferredCalls.push(queue);
+                return returnWith ? returnWith(queue) : undefined;
             }
 
-            deferredCalls.push({ object, original: originalMethod, method, args });
-        };
+            // If the condition is not met, we execute the original method immediately
+            return original.apply(this, args);
+        });
+
+        unpatches.push(restore);
     }
 
-    const resumeDeferredAndRestore = () => {
-        for (const { object, method, args, original } of deferredCalls) {
-            object[method] = original;
-            object[method](...args);
+    const resumeDeferred = () => {
+        for (const queue of deferredCalls) {
+            const { object, method, args, resume } = queue;
+
+            if (resume) {
+                resume(queue);
+            } else {
+                object[method](...args);
+            }
         }
 
         deferredCalls.length = 0;
@@ -64,11 +80,20 @@ if (typeof window.__r === "undefined") {
     const onceIndexRequired = (originalRequire: Metro.RequireFn) => {
         // We hold calls from the native side
         if (window.__fbBatchedBridge) {
-            deferMethodExecution(window.__fbBatchedBridge, "callFunctionReturnFlushedQueue", args => {
+            const batchedBridge = window.__fbBatchedBridge;
+            deferMethodExecution(
+                batchedBridge,
+                "callFunctionReturnFlushedQueue",
                 // If the call is to AppRegistry, we want to defer it because it is not yet registered (Revenge delays it)
                 // Same goes to the non-callable modules, which are not registered yet, so we ensure that only registered ones can get through
-                return args[0] !== "AppRegistry" && window.__fbBatchedBridge.getCallableModule(args[0]);
-            });
+                (...args) => args[0] === "AppRegistry" || !batchedBridge.getCallableModule(args[0]),
+                ({ args }) => {
+                    if (batchedBridge.getCallableModule(args[0])) {
+                        batchedBridge.__callFunction(...args);
+                    }
+                },
+                () => batchedBridge.flushedQueue()
+            );
         }
 
         // Introduced since RN New Architecture
@@ -78,9 +103,12 @@ if (typeof window.__r === "undefined") {
 
         const startDiscord = async () => {
             await initializeRevenge();
-            originalRequire(0);
+            
+            for (const unpatch of unpatches) unpatch();
+            unpatches.length = 0;
 
-            resumeDeferredAndRestore();
+            originalRequire(0);
+            resumeDeferred();
         };
 
         startDiscord();
