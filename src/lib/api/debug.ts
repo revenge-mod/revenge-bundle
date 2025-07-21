@@ -113,8 +113,8 @@ export function getDebugInfo() {
             }
         },
         discord: {
-            version: NativeClientInfoModule.Version,
-            build: NativeClientInfoModule.Build,
+            version: NativeClientInfoModule.getConstants().Version,
+            build: NativeClientInfoModule.getConstants().Build,
         },
         react: {
             version: React.version,

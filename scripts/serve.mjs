@@ -27,8 +27,8 @@ export function serve(options) {
                     timeTook
                 );
 
-                res.writeHead(200, { "Content-Type": "application/javascript" });
-                res.end(await readFile(config.outfile, "utf-8"));
+                res.writeHead(200);
+                res.end(await readFile(config.outfile));
             } catch {
                 res.writeHead(500);
                 res.end();
