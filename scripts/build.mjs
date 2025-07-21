@@ -134,8 +134,10 @@ export async function buildBundle(overrideConfig = {}) {
     const sdksDir = './node_modules/react-native/sdks'
     const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`
 
-    execFileSync(binPath, ['-finline', '-strict', '-O', '-g1', '-reuse-prop-cache', '-optimized-eval', '-emit-binary', '-Wno-undefined-variable', '-out', config.outfile], {
-        input: await readFile(config.outfile),
+    const actualFile = overrideConfig.outfile ?? config.outfile;
+
+    execFileSync(binPath, ['-finline', '-strict', '-O', '-g1', '-reuse-prop-cache', '-optimized-eval', '-emit-binary', '-Wno-undefined-variable', '-out', actualFile], {
+        input: await readFile(actualFile),
         stdio: 'pipe'
     });
 
@@ -161,7 +163,7 @@ if (isThisFileBeingRunViaCLI) {
 
     if (buildMinify) {
         const { timeTook } = await buildBundle({
-            minify: true,
+            minifyIdentifiers: true,
             outfile: config.outfile.replace(/\.js$/, ".min.js")
         });
 
