@@ -1,3 +1,11 @@
+# [1.8.0-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2025-07-21)
+
+
+### Bug Fixes
+
+* Restore original behavior broken by b92d2734b33d2f0e719c364ed5aaefd43c7ae457 ([ec2809f](https://github.com/revenge-mod/revenge-bundle/commit/ec2809fe4c835c84101a8b8525cfc3863d1bc4d8))
+* Restore original behavior broken for old architecture ([#194](https://github.com/revenge-mod/revenge-bundle/issues/194)) ([acb85ba](https://github.com/revenge-mod/revenge-bundle/commit/acb85bacbab8b661c797f3b1609e64f2c724382f))
+
 # [1.8.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.5-dev.1...v1.8.0-dev.1) (2025-07-21)
 
 
