@@ -18,7 +18,7 @@ export const getMetroCache = () => _metroCache;
 function buildInitCache() {
     const cache = {
         _v: CACHE_VERSION,
-        _buildNumber: NativeClientInfoModule.Build as number,
+        _buildNumber: NativeClientInfoModule.getConstants().Build,
         _modulesCount: Object.keys(window.modules).length,
         flagsIndex: {} as Record<string, number>,
         findIndex: {} as Record<string, ModulesMap | undefined>,
@@ -48,7 +48,7 @@ export async function initMetroCache() {
             _metroCache = null!;
             throw "cache invalidated; cache version outdated";
         }
-        if (_metroCache._buildNumber !== NativeClientInfoModule.Build) {
+        if (_metroCache._buildNumber !== NativeClientInfoModule.getConstants().Build) {
             _metroCache = null!;
             throw "cache invalidated; version mismatch";
         }

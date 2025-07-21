@@ -1,10 +1,10 @@
+import type { Metro } from "@metro/types";
 import { version } from "bunny-build-info";
-const { instead } = require("spitroast");
 
-// @ts-ignore - shut up fr
+// @ts-ignore - window is defined later in the bundle, so we assign it early
 globalThis.window = globalThis;
 
-async function initializeBunny() {
+async function initializeRevenge() {
     try {
         // Make 'freeze' and 'seal' do nothing
         Object.freeze = Object.seal = Object;
@@ -18,51 +18,80 @@ async function initializeBunny() {
         console.log(stack ?? e?.toString?.() ?? e);
         alert([
             "Failed to load Revenge!\n",
-            `Build Number: ${ClientInfoManager.Build}`,
+            `Build Number: ${ClientInfoManager.getConstants().Build}`,
             `Revenge: ${version}`,
             stack || e?.toString?.(),
         ].join("\n"));
     }
 }
 
-// @ts-ignore
-if (typeof globalThis.__r !== "undefined") {
-    initializeBunny();
-} else {
-    // We hold calls from the native side
-    function onceIndexRequired(originalRequire: any) {
-        const batchedBridge = window.__fbBatchedBridge;
+if (typeof window.__r === "undefined") {
+    // Used for storing the current require function for the global.__r getter defined below
+    var _requireFunc: any;
 
-        const callQueue = new Array<any>;
-        const unpatchHook = instead("callFunctionReturnFlushedQueue", batchedBridge, (args: any, orig: any) => {
-            if (args[0] === "AppRegistry" || !batchedBridge.getCallableModule(args[0])) {
-                callQueue.push(args);
-                return batchedBridge.flushedQueue();
+    // Calls from the native side are deferred until the index.ts(x) is loaded
+    // Revenge delays the execution of index.ts(x) because Revenge's initialization is asynchronous
+    interface DeferredQueue {
+        object: any;
+        original: any;
+        method: string;
+        args: any[];
+    }
+
+    const deferredCalls: Array<DeferredQueue> = [];
+
+    const deferMethodExecution = (object: any, method: string, condition?: (...args: any[]) => boolean) => {
+        const originalMethod = object[method];
+        object[method] = (...args: any[]) => {
+            if (condition && !condition(...args)) {
+                originalMethod(...args);
+                return;
             }
 
-            return orig.apply(batchedBridge, args);
-        });
+            deferredCalls.push({ object, original: originalMethod, method, args });
+        };
+    }
+
+    const resumeDeferredAndRestore = () => {
+        for (const { object, method, args, original } of deferredCalls) {
+            object[method] = original;
+            object[method](...args);
+        }
+
+        deferredCalls.length = 0;
+    }
+
+    const onceIndexRequired = (originalRequire: Metro.RequireFn) => {
+        // We hold calls from the native side
+        if (window.__fbBatchedBridge) {
+            deferMethodExecution(window.__fbBatchedBridge, "callFunctionReturnFlushedQueue", args => {
+                // If the call is to AppRegistry, we want to defer it because it is not yet registered (Revenge delays it)
+                // Same goes to the non-callable modules, which are not registered yet, so we ensure that only registered ones can get through
+                return args[0] !== "AppRegistry" && window.__fbBatchedBridge.getCallableModule(args[0]);
+            });
+        }
+
+        // Introduced since RN New Architecture
+        if (window.RN$AppRegistry) {
+            deferMethodExecution(window.RN$AppRegistry, "runApplication");
+        }
 
         const startDiscord = async () => {
-            await initializeBunny();
-            unpatchHook();
+            await initializeRevenge();
             originalRequire(0);
 
-            callQueue.forEach(arg =>
-                batchedBridge.getCallableModule(arg[0])
-                && batchedBridge.__callFunction(...arg));
+            resumeDeferredAndRestore();
         };
 
         startDiscord();
     }
-
-    var _requireFunc: any; // We can't set properties to 'this' during __r set for some reason
 
     Object.defineProperties(globalThis, {
         __r: {
             configurable: true,
             get: () => _requireFunc,
             set(v) {
+                // _requireFunc is required here, because using 'this' here errors for some unknown reason
                 _requireFunc = function patchedRequire(a: number) {
                     // Initializing index.ts(x)
                     if (a === 0) {
@@ -85,4 +114,8 @@ if (typeof globalThis.__r !== "undefined") {
             set(v) { this.value = v; }
         }
     });
+} else {
+    // It is too late to late to hook __r, so we just initialize Revenge here
+    // Likely because of using the legacy loader (from Vendetta)
+    initializeRevenge();
 }
