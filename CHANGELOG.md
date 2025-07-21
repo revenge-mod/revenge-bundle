@@ -1,3 +1,11 @@
+## [1.7.5-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.4...v1.7.5-dev.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* support New Architecture ([b92d273](https://github.com/revenge-mod/revenge-bundle/commit/b92d2734b33d2f0e719c364ed5aaefd43c7ae457))
+* support versions with New Architecture ([#193](https://github.com/revenge-mod/revenge-bundle/issues/193)) ([1b96867](https://github.com/revenge-mod/revenge-bundle/commit/1b96867ac76e522616186e96120c940b9311d659))
+
 ## [1.7.4](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.3...v1.7.4) (2025-05-19)
 
 
