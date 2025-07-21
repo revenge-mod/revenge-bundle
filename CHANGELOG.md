@@ -19,6 +19,13 @@
 
 * compile to bytecode ([18f21fe](https://github.com/revenge-mod/revenge-bundle/commit/18f21feaaea0a4330e2b098c549b2a516cc8d352))
 
+# [1.8.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.5-dev.1...v1.8.0-dev.1) (2025-07-21)
+
+
+### Features
+
+* compile to bytecode ([18f21fe](https://github.com/revenge-mod/revenge-bundle/commit/18f21feaaea0a4330e2b098c549b2a516cc8d352))
+
 ## [1.7.5-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.7.4...v1.7.5-dev.1) (2025-07-21)
 
 
