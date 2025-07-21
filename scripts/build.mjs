@@ -1,7 +1,7 @@
 // @ts-nocheck
 /* eslint-disable no-restricted-syntax */
 import swc from "@swc/core";
-import { execSync } from "child_process";
+import { execFileSync, execSync } from "child_process";
 import crypto from "crypto";
 import { build } from "esbuild";
 import globalPlugin from "esbuild-plugin-globals";
@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import yargs from "yargs-parser";
 
 import { printBuildSuccess } from "./util.mjs";
+import { readFile } from "fs/promises";
 
 /** @type string[] */
 const metroDeps = await (async () => {
@@ -46,6 +47,7 @@ const config = {
         ".png": "dataurl"
     },
     define: {
+        window: "globalThis",
         __DEV__: dev ?? JSON.stringify(releaseBranch !== "main")
     },
     inject: ["./shims/asyncIteratorSymbol.js", "./shims/promiseAllSettled.js"],
@@ -120,6 +122,25 @@ export async function buildBundle(overrideConfig = {}) {
     const initialStartTime = performance.now();
     await build({ ...config, ...overrideConfig });
 
+    const paths = {
+        win32: 'win64-bin/hermesc.exe',
+        darwin: 'osx-bin/hermesc',
+        linux: 'linux64-bin/hermesc',
+    }
+
+    if (!(process.platform in paths))
+        throw new Error(`Unsupported platform: ${process.platform}`)
+
+    const sdksDir = './node_modules/react-native/sdks'
+    const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`
+
+    const actualFile = overrideConfig.outfile ?? config.outfile;
+
+    execFileSync(binPath, ['-finline', '-strict', '-O', '-g1', '-reuse-prop-cache', '-optimized-eval', '-emit-binary', '-Wno-undefined-variable', '-out', actualFile], {
+        input: await readFile(actualFile),
+        stdio: 'pipe'
+    });
+
     return {
         config,
         context,
@@ -142,7 +163,7 @@ if (isThisFileBeingRunViaCLI) {
 
     if (buildMinify) {
         const { timeTook } = await buildBundle({
-            minify: true,
+            minifyIdentifiers: true,
             outfile: config.outfile.replace(/\.js$/, ".min.js")
         });
 

@@ -2,10 +2,34 @@ import { RNModules } from "./types";
 
 const nmp = window.nativeModuleProxy;
 
-export const NativeCacheModule = (nmp.NativeCacheModule ?? nmp.MMKVManager) as RNModules.MMKVManager;
-export const NativeFileModule = (nmp.NativeFileModule ?? nmp.RTNFileManager ?? nmp.DCDFileManager) as RNModules.FileManager;
-export const NativeClientInfoModule = nmp.NativeClientInfoModule ?? nmp.RTNClientInfoManager ?? nmp.InfoDictionaryManager;
-export const NativeDeviceModule = nmp.NativeDeviceModule ?? nmp.RTNDeviceManager ?? nmp.DCDDeviceManager;
-export const NativeThemeModule = nmp.NativeThemeModule ?? nmp.RTNThemeManager ?? nmp.DCDTheme;
+function getNativeModule<T = any>(...names: string[]): T | undefined {
+    for (const name of names) {
+        if (globalThis.__turboModuleProxy) {
+            const module = globalThis.__turboModuleProxy(name);
+            if (module) return module as T;
+        }
 
-export const { BundleUpdaterManager } = nmp;
+        if (nmp[name]) return nmp[name] as T;
+    }
+
+    return undefined;
+}
+
+export const NativeCacheModule = getNativeModule<RNModules.MMKVManager>(
+    "NativeCacheModule", "MMKVManager"
+)!;
+export const NativeFileModule = getNativeModule<RNModules.FileManager>(
+    "NativeFileModule", "RTNFileManager", "DCDFileManager"
+)!;
+export const NativeClientInfoModule = getNativeModule<RNModules.ClientInfoModule>(
+    "NativeClientInfoModule", "RTNClientInfoManager", "InfoDictionaryManager"
+)!;
+export const NativeDeviceModule = getNativeModule(
+    "NativeDeviceModule", "RTNDeviceManager", "DCDDeviceManager"
+)!;
+export const NativeThemeModule = getNativeModule(
+    "NativeThemeModule", "RTNThemeManager", "DCDTheme"
+)!;
+export const BundleUpdaterManager = getNativeModule(
+    "BundleUpdaterManager"
+)!;

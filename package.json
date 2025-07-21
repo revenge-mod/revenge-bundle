@@ -10,7 +10,7 @@
     "scripts": {
         "build": "node scripts/build.mjs",
         "serve": "node scripts/serve.mjs",
-        "serve:adb": "pnpm run serve --adb",
+        "serve:adb": "bun run serve --adb",
         "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
     },
     "license": "BSD-3-Clause",
@@ -19,47 +19,39 @@
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/exec": "^6.0.3",
         "@semantic-release/git": "^10.0.1",
-        "semantic-release": "^24.1.3",
-        "@swc/core": "^1.7.0",
-        "@swc/helpers": "^0.5.12",
-        "@types/node": "^20.14.11",
+        "semantic-release": "^24.2.7",
+        "@swc/core": "^1.13.1",
+        "@swc/helpers": "^0.5.17",
+        "@types/node": "^20.19.9",
         "@types/yargs-parser": "^21.0.3",
-        "@typescript-eslint/eslint-plugin": "^7.16.1",
-        "@typescript-eslint/parser": "^7.16.1",
-        "@typescript-eslint/typescript-estree": "^7.16.1",
-        "chalk": "^5.3.0",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "@typescript-eslint/typescript-estree": "^7.18.0",
+        "chalk": "^5.4.1",
         "esbuild": "^0.20.2",
         "esbuild-plugin-globals": "^0.2.0",
-        "eslint": "^8.57.0",
+        "eslint": "^8.57.1",
         "eslint-plugin-import-alias": "^1.2.0",
-        "eslint-plugin-react": "^7.35.0",
+        "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "eslint-plugin-unused-imports": "^3.2.0",
-        "typescript": "^5.5.3",
+        "typescript": "^5.8.3",
         "yargs-parser": "^21.1.1"
     },
     "dependencies": {
-        "@gullerya/object-observer": "^6.1.3",
-        "@shopify/react-native-skia": "^1.3.8",
-        "@tanstack/react-query": "^5.51.16",
-        "@types/chroma-js": "~2.4.4",
-        "@types/lodash": "~4.17.7",
+        "@gullerya/object-observer": "^6.1.4",
+        "@shopify/react-native-skia": "^1.12.4",
+        "@tanstack/react-query": "^5.83.0",
+        "@types/chroma-js": "~2.4.5",
+        "@types/lodash": "~4.17.20",
         "@types/react": "18.2.60",
         "@types/react-native": "0.72.3",
-        "es-toolkit": "^1.13.1",
-        "fuzzysort": "^3.0.2",
-        "intl-messageformat": "^10.5.14",
+        "es-toolkit": "^1.39.7",
+        "fuzzysort": "^3.1.0",
+        "intl-messageformat": "^10.7.16",
         "moment": "2.22.2",
-        "react-native-reanimated": "^3.6.2",
+        "react-native-reanimated": "^3.18.0",
         "spitroast": "^1.4.4",
-        "type-fest": "^4.22.1"
-    },
-    "pnpm": {
-        "peerDependencyRules": {
-            "ignoreMissing": [
-                "react",
-                "react-native"
-            ]
-        }
+        "type-fest": "^4.41.0"
     }
 }

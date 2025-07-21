@@ -86,4 +86,53 @@ export namespace RNModules {
          */
         DocumentsDirPath: string;
     }
+
+    export interface ClientInfoModule {
+        getConstants(): {
+            /**
+             * Sentry ingestion DSN URL for alpha/beta builds
+             */
+            SentryAlphaBetaDsn: string
+            /**
+             * Sentry ingestion DSN URL for staff builds (?)
+             */
+            SentryStaffDsn: string
+            /**
+             * Sentry ingestion DSN URL for stable builds
+             */
+            SentryDsn: string
+            DeviceVendorID: string
+            Manifest: string
+            /**
+             * Version code
+             *
+             * Follows the format of `{MINOR}{CHANNEL}{PATCH}` for `{MINOR}.{PATCH} ({CHANNEL})`
+             * - `248200` for `248.0 (alpha)`
+             * - `247105` for `247.5 (beta)`
+             * - `246011` for `246.11 (stable)`
+             */
+            Build: string
+            /**
+             * Version string
+             *
+             * Eg. `248.0`
+             */
+            Version: string
+            /**
+             * Release channel
+             */
+            ReleaseChannel: string
+            /**
+             * Matches `Version`
+             */
+            OTABuild: string
+            /**
+             * Identifier for the installed client
+             *
+             * - **Android**: Package name
+             * - **iOS**: Bundle ID
+             */
+            Identifier: string
+        }
+    }
 }
