@@ -22,7 +22,7 @@ type AfterFn = PatchFn<(args: any[], ret: any) => unknown>;
 
 function create(fn: Function) {
     function patchFn(this: any, ...args: any[]) {
-        if (_patcherDelaySymbol in args[1]) {
+        if (typeof args[1][_patcherDelaySymbol] === "function") {
             const delayCallback: DelayCallback = args[1][_patcherDelaySymbol];
 
             let cancel = false;
