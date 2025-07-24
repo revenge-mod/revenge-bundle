@@ -1,3 +1,10 @@
+## [1.8.1-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.1-dev.1...v1.8.1-dev.2) (2025-07-24)
+
+
+### Bug Fixes
+
+* make React DevTools work again ([d659983](https://github.com/revenge-mod/revenge-bundle/commit/d6599831e6bf78afad77eb1b4e1f820f6a34139e))
+
 ## [1.8.1-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.0...v1.8.1-dev.1) (2025-07-22)
 
 
