@@ -12,7 +12,7 @@ export interface SearchProps {
 }
 
 function SearchIcon() {
-    return <Image style={{ width: 16, height: 16 }} source={findAssetId("search")!} />;
+    return <Image style={{ width: 16, height: 16 }} source={findAssetId("icon-search")!} />;
 }
 
 export default ({ onChangeText, placeholder, style, isRound }: SearchProps) => {
