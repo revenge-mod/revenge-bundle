@@ -1,3 +1,10 @@
+## [1.8.2-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.1...v1.8.2-dev.1) (2025-09-26)
+
+
+### Bug Fixes
+
+* slash commands not sending messages ([#201](https://github.com/revenge-mod/revenge-bundle/issues/201)) ([db2be1c](https://github.com/revenge-mod/revenge-bundle/commit/db2be1ca7ccfed659a143d3ac38d8eec81e731b0))
+
 ## [1.8.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.0...v1.8.1) (2025-07-24)
 
 
