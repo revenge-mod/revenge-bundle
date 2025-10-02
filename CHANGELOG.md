@@ -1,3 +1,10 @@
+# [1.9.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.2-dev.2...v1.9.0-dev.1) (2025-10-02)
+
+
+### Features
+
+* enabled and disabled sort option for plugins ([#93](https://github.com/revenge-mod/revenge-bundle/issues/93)) ([388f2a6](https://github.com/revenge-mod/revenge-bundle/commit/388f2a632cfd07155aefb49902bd6174af8d467b))
+
 ## [1.8.2-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.2-dev.1...v1.8.2-dev.2) (2025-10-02)
 
 
