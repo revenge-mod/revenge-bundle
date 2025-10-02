@@ -1,3 +1,10 @@
+# [1.9.0-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2025-10-02)
+
+
+### Bug Fixes
+
+* Clear data -> Clear Data ([5b28d26](https://github.com/revenge-mod/revenge-bundle/commit/5b28d26db47c3783b9f447cb43bf8e47ac4b6673))
+
 # [1.9.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.2-dev.2...v1.9.0-dev.1) (2025-10-02)
 
 
