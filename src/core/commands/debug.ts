@@ -28,7 +28,8 @@ export default () => <ApplicationCommand>{
         if (ephemeral?.value) {
             messageUtil.sendBotMessage(ctx.channel.id, content);
         } else {
-            messageUtil.sendMessage(ctx.channel.id, { content });
+            const fixNonce = Date.now().toString();
+            messageUtil.sendMessage(ctx.channel.id, { content }, void 0, {nonce:fixNonce});
         }
     }
 };

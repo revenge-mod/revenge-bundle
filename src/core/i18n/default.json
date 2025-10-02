@@ -13,7 +13,7 @@
     "CLEAR": "Clear",
     "CLEAR_BUNDLE": "Clear JS Bundle",
     "CLEAR_BUNDLE_DESC": "Clear the cached bundle. This will force a re-download of the bundle next app launch.",
-    "CLEAR_DATA": "Clear data",
+    "CLEAR_DATA": "Clear Data",
     "CLEAR_DATA_FAILED": "Failed to clear data for {name}",
     "CLEAR_DATA_SUCCESSFUL": "Cleared data for {name}",
     "CODENAME": "Codename",

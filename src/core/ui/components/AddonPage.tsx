@@ -175,7 +175,7 @@ export default function AddonPage<T extends object>({ CardComponent, ...props }:
             <View style={{ flexDirection: "row", gap: 8 }}>
                 <Search style={{ flexGrow: 1 }} isRound={!!props.sortOptions} onChangeText={v => setSearch(v)} />
                 {props.sortOptions && <IconButton
-                    icon={findAssetId("ic_forum_channel_sort_order_24px")}
+                    icon={findAssetId("ArrowsUpDownIcon")}
                     variant="tertiary"
                     disabled={!!search}
                     onPress={() => showSimpleActionSheet({
