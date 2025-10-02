@@ -1,3 +1,10 @@
+## [1.8.2-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.2-dev.1...v1.8.2-dev.2) (2025-10-02)
+
+
+### Bug Fixes
+
+* update AssetId in Search component and AddonPage ([#200](https://github.com/revenge-mod/revenge-bundle/issues/200)) ([809214d](https://github.com/revenge-mod/revenge-bundle/commit/809214d082a294e52d260ed6a9fa034dea971c2c))
+
 ## [1.8.2-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.1...v1.8.2-dev.1) (2025-09-26)
 
 
