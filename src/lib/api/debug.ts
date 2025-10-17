@@ -1,13 +1,13 @@
 import { getThemeFromLoader, selectTheme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
-import { getLoaderName, getLoaderVersion, isThemeSupported } from "@lib/api/native/loader";
+import { getLoaderName, getLoaderVersion, getReactDevToolsProp, isReactDevToolsPreloaded, isThemeSupported } from "@lib/api/native/loader";
 import { BundleUpdaterManager, NativeClientInfoModule, NativeDeviceModule } from "@lib/api/native/modules";
 import { after } from "@lib/api/patcher";
 import { settings } from "@lib/api/settings";
 import { logger } from "@lib/utils/logger";
 import { showToast } from "@ui/toasts";
 import { version } from "bunny-build-info";
-import { Platform, type PlatformConstants } from "react-native";
+import { Platform, type PlatformConstants, StyleSheet } from "react-native";
 
 export interface RNConstants extends PlatformConstants {
     // Android
@@ -44,17 +44,17 @@ export async function toggleSafeMode() {
 }
 
 let socket: WebSocket;
-export function connectToDebugger(url: string) {
+export function connectToDebugger(url: string, quiet?: boolean) {
     if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) socket.close();
 
     if (!url) {
-        showToast("Invalid debugger URL!", findAssetId("Small"));
+        if (!quiet) showToast("Invalid debugger URL!", findAssetId("Small"));
         return;
     }
 
     socket = new WebSocket(`ws://${url}`);
 
-    socket.addEventListener("open", () => showToast("Connected to debugger.", findAssetId("Check")));
+    socket.addEventListener("open", () => !quiet && showToast("Connected to debugger.", findAssetId("Check")));
     socket.addEventListener("message", (message: any) => {
         try {
             (0, eval)(message.data);
@@ -64,8 +64,21 @@ export function connectToDebugger(url: string) {
     });
 
     socket.addEventListener("error", (err: any) => {
+        if (quiet) return;
         console.log(`Debugger error: ${err.message}`);
         showToast("An error occurred with the debugger connection!", findAssetId("Small"));
+    });
+}
+
+export function connectToReactDevTools(url: string, quiet?: boolean) {
+    if (!url) {
+        if (!quiet) showToast("Invalid debugger URL!", findAssetId("Small"));
+        return;
+    }
+
+    window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
+        host: url.split(":")?.[0],
+        resolveRNStyle: StyleSheet.flatten,
     });
 }
 
@@ -163,4 +176,14 @@ export function getDebugInfo() {
             }
         )!
     };
+}
+
+/**
+ * @internal
+ */
+export function initDebugger() {
+    if (!settings.enableAutoDebugger || !settings.debuggerUrl) return;
+
+    connectToDebugger(settings.debuggerUrl, true);
+    connectToReactDevTools(settings.debuggerUrl, true);
 }

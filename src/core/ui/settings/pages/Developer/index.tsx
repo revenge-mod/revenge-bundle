@@ -3,9 +3,10 @@ import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
 import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
-import { connectToDebugger } from "@lib/api/debug";
-import { getReactDevToolsProp, getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
+import { connectToDebugger, connectToReactDevTools } from "@lib/api/debug";
+import { getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
 import { loaderConfig, settings } from "@lib/api/settings";
+import { showToast } from "@lib/ui/toasts";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative } from "@metro/common";
 import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
@@ -53,6 +54,14 @@ export default function Developer() {
                         onChange={(v: string) => settings.debuggerUrl = v}
                     />
                     <TableRowGroup title={Strings.DEBUG}>
+                        <TableSwitchRow
+                            label={Strings.DEBUGGER_AUTOCONNECT}
+                            icon={<TableRow.Icon source={findAssetId("copy")} />}
+                            value={!!settings.enableAutoDebugger}
+                            onValueChange={(v: boolean) => {
+                                settings.enableAutoDebugger = v;
+                            }}
+                        />
                         <TableRow
                             label={Strings.CONNECT_TO_DEBUG_WEBSOCKET}
                             icon={<TableRow.Icon source={findAssetId("copy")} />}
@@ -62,10 +71,7 @@ export default function Developer() {
                             <TableRow
                                 label={Strings.CONNECT_TO_REACT_DEVTOOLS}
                                 icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
-                                onPress={() => window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
-                                    host: settings.debuggerUrl.split(":")?.[0],
-                                    resolveRNStyle: StyleSheet.flatten,
-                                })}
+                                onPress={() => connectToReactDevTools(settings.debuggerUrl)}
                             />
                         </>}
                     </TableRowGroup>
@@ -158,7 +164,8 @@ export default function Developer() {
                                     text={rdtFileExists === CheckState.TRUE ? Strings.UNINSTALL : Strings.INSTALL}
                                     onPress={async () => {
                                         if (rdtFileExists === CheckState.FALSE) {
-                                            fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js");
+                                            fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js")
+                                                .then(() => showToast("Successfully installed! A reload is required", findAssetId("Check")));
                                         } else if (rdtFileExists === CheckState.TRUE) {
                                             fs.removeFile("preloads/reactDevtools.js");
                                         }

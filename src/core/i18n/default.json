@@ -33,6 +33,7 @@
     "COPY_URL": "Copy URL",
     "DEBUG": "Debug",
     "DEBUGGER_URL": "Debugger URL",
+    "DEBUGGER_AUTOCONNECT": "Connect automatically",
     "DELETE": "Delete",
     "DESC_EXTRACT_FONTS_FROM_THEME": "Looks out for \"fonts\" field in your currently applied theme and install it.",
     "DEVELOPER": "Developer",

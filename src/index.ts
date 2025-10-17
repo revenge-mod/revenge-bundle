@@ -8,7 +8,7 @@ import { updateFonts } from "@lib/addons/fonts";
 import { initPlugins, updatePlugins } from "@lib/addons/plugins";
 import { initThemes } from "@lib/addons/themes";
 import { patchCommands } from "@lib/api/commands";
-import { patchLogHook } from "@lib/api/debug";
+import { initDebugger, patchLogHook } from "@lib/api/debug";
 import { injectFluxInterceptor } from "@lib/api/flux";
 import { patchJsx } from "@lib/api/react/jsx";
 import { logger } from "@lib/utils/logger";
@@ -43,6 +43,9 @@ export default async () => {
     VdPluginManager.initPlugins()
         .then(u => lib.unload.push(u))
         .catch(() => alert("Failed to initialize Vendetta plugins"));
+
+    // Start debugger
+    initDebugger();
 
     // And then, load Bunny plugins
     initPlugins();
