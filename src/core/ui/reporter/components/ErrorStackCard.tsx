@@ -3,12 +3,12 @@ import { findAssetId } from "@lib/api/assets";
 import { clipboard, constants } from "@metro/common";
 import { Button, Card, Text } from "@metro/common/components";
 import { useState } from "react";
-import { Image, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 import { INDEX_BUNDLE_FILE } from "./ErrorCard";
 
 export default function ErrorStackCard(props: {
-    error: Error & { stack: string };
+    error: Error & { stack: string; };
 }) {
     const [collapsed, setCollapsed] = useState(true);
 
@@ -34,10 +34,7 @@ export default function ErrorStackCard(props: {
                 <Button
                     variant="secondary"
                     text={`Show ${collapsed ? "more" : "less"}`}
-                    icon={collapsed ? findAssetId("down_arrow") : <Image
-                        style={{ transform: [{ rotate: `${collapsed ? 0 : 180}deg` }] }}
-                        source={findAssetId("down_arrow")!}
-                    />}
+                    icon={findAssetId(collapsed ? "ChevronSmallUpIcon" : "ChevronSmallDownIcon")}
                     onPress={() => setCollapsed(v => !v)} />
                 <Button
                     variant="secondary"
@@ -48,7 +45,7 @@ export default function ErrorStackCard(props: {
         </View>
     </Card>;
 }
-function Line(props: { id: number, frame: StackFrame }) {
+function Line(props: { id: number, frame: StackFrame; }) {
     const [collapsed, setCollapsed] = useState(true);
 
     return <Pressable onPress={() => setCollapsed(v => !v)} key={props.id}>

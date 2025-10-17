@@ -39,18 +39,18 @@ export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
             overflowTitle={theme.data.name}
             overflowActions={[
                 {
-                    icon: "ic_sync_24px",
+                    icon: "RefreshIcon",
                     label: Strings.REFETCH,
                     onPress: () => {
                         fetchTheme(theme.id, theme.selected).then(() => {
-                            showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                            showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("DownloadIcon"));
                         }).catch(() => {
-                            showToast(Strings.THEME_REFETCH_FAILED, findAssetId("Small"));
+                            showToast(Strings.THEME_REFETCH_FAILED, findAssetId("XSmallIcon"));
                         });
                     },
                 },
                 {
-                    icon: "copy",
+                    icon: "LinkIcon",
                     label: Strings.COPY_URL,
                     onPress: () => {
                         clipboard.setString(theme.id);
@@ -58,7 +58,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
                     }
                 },
                 {
-                    icon: "ic_message_delete",
+                    icon: "TrashIcon",
                     label: Strings.DELETE,
                     isDestructive: true,
                     onPress: () => showConfirmationAlert({
@@ -72,7 +72,7 @@ export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
                                 setRemoved(true);
                                 if (wasSelected) selectAndApply(false, theme);
                             }).catch((e: Error) => {
-                                showToast(e.message, findAssetId("Small"));
+                                showToast(e.message, findAssetId("XSmallIcon"));
                             });
                         }
                     })

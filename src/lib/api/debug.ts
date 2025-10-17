@@ -48,13 +48,13 @@ export function connectToDebugger(url: string, quiet?: boolean) {
     if (socket !== undefined && socket.readyState !== WebSocket.CLOSED) socket.close();
 
     if (!url) {
-        if (!quiet) showToast("Invalid debugger URL!", findAssetId("Small"));
+        if (!quiet) showToast("Invalid debugger URL!", findAssetId("XSmallIcon"));
         return;
     }
 
     socket = new WebSocket(`ws://${url}`);
 
-    socket.addEventListener("open", () => !quiet && showToast("Connected to debugger.", findAssetId("Check")));
+    socket.addEventListener("open", () => !quiet && showToast("Connected to debugger.", findAssetId("CheckmarkSmallIcon")));
     socket.addEventListener("message", (message: any) => {
         try {
             (0, eval)(message.data);
@@ -66,13 +66,13 @@ export function connectToDebugger(url: string, quiet?: boolean) {
     socket.addEventListener("error", (err: any) => {
         if (quiet) return;
         console.log(`Debugger error: ${err.message}`);
-        showToast("An error occurred with the debugger connection!", findAssetId("Small"));
+        showToast("An error occurred with the debugger connection!", findAssetId("XSmallIcon"));
     });
 }
 
 export function connectToReactDevTools(url: string, quiet?: boolean) {
     if (!url) {
-        if (!quiet) showToast("Invalid debugger URL!", findAssetId("Small"));
+        if (!quiet) showToast("Invalid debugger URL!", findAssetId("XSmallIcon"));
         return;
     }
 

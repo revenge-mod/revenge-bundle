@@ -38,14 +38,14 @@ export default async () => {
 
     // Assign window object
     window.bunny = lib;
+    
+    // Start debugger
+    initDebugger();
 
     // Once done, load Vendetta plugins
     VdPluginManager.initPlugins()
         .then(u => lib.unload.push(u))
         .catch(() => alert("Failed to initialize Vendetta plugins"));
-
-    // Start debugger
-    initDebugger();
 
     // And then, load Bunny plugins
     initPlugins();

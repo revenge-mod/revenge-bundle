@@ -48,9 +48,9 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
 
                         try {
                             await VdPluginManager.fetchPlugin(plugin.id);
-                            showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                            showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("DownloadIcon"));
                         } catch {
-                            showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                            showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("XSmallIcon"));
                         }
 
                         if (vdPlugin.enabled) await VdPluginManager.startPlugin(plugin.id);
@@ -73,7 +73,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                         showToast(formatString("TOASTS_PLUGIN_UPDATE", {
                             update: vdPlugin.update,
                             name: plugin.name
-                        }), findAssetId("toast_image_saved"));
+                        }), findAssetId("DownloadIcon"));
                     }}
                 />
                 <ActionSheetRow
@@ -91,17 +91,17 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
 
                             try {
                                 await VdPluginManager.fetchPlugin(plugin.id);
-                                showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                                showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("DownloadIcon"));
                             } catch {
-                                showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                                showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("XSmallIcon"));
                             }
 
                             let message: any[];
                             try {
                                 purgeStorage(plugin.id);
-                                message = ["CLEAR_DATA_SUCCESSFUL", "trash"];
+                                message = ["CLEAR_DATA_SUCCESSFUL", "TrashIcon"];
                             } catch {
-                                message = ["CLEAR_DATA_FAILED", "Small"];
+                                message = ["CLEAR_DATA_FAILED", "XSmallIcon"];
                             }
 
                             showToast(
@@ -128,7 +128,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                             try {
                                 VdPluginManager.removePlugin(plugin.id);
                             } catch (e) {
-                                showToast(String(e), findAssetId("Small"));
+                                showToast(String(e), findAssetId("XSmallIcon"));
                             }
                             hideSheet("PluginInfoActionSheet");
                         }

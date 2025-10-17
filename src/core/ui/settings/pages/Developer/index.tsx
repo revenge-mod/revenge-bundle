@@ -56,7 +56,7 @@ export default function Developer() {
                     <TableRowGroup title={Strings.DEBUG}>
                         <TableSwitchRow
                             label={Strings.DEBUGGER_AUTOCONNECT}
-                            icon={<TableRow.Icon source={findAssetId("copy")} />}
+                            icon={<TableRow.Icon source={findAssetId("WrenchIcon")} />}
                             value={!!settings.enableAutoDebugger}
                             onValueChange={(v: boolean) => {
                                 settings.enableAutoDebugger = v;
@@ -64,13 +64,13 @@ export default function Developer() {
                         />
                         <TableRow
                             label={Strings.CONNECT_TO_DEBUG_WEBSOCKET}
-                            icon={<TableRow.Icon source={findAssetId("copy")} />}
+                            icon={<TableRow.Icon source={findAssetId("LinkIcon")} />}
                             onPress={() => connectToDebugger(settings.debuggerUrl)}
                         />
                         {isReactDevToolsPreloaded() && <>
                             <TableRow
                                 label={Strings.CONNECT_TO_REACT_DEVTOOLS}
-                                icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
+                                icon={<TableRow.Icon source={findAssetId("StaffBadgeIcon")} />}
                                 onPress={() => connectToReactDevTools(settings.debuggerUrl)}
                             />
                         </>}
@@ -80,7 +80,7 @@ export default function Developer() {
                             <TableSwitchRow
                                 label={Strings.LOAD_FROM_CUSTOM_URL}
                                 subLabel={Strings.LOAD_FROM_CUSTOM_URL_DEC}
-                                icon={<TableRow.Icon source={findAssetId("copy")} />}
+                                icon={<TableRow.Icon source={findAssetId("LinkIcon")} />}
                                 value={loaderConfig.customLoadUrl.enabled}
                                 onValueChange={(v: boolean) => {
                                     loaderConfig.customLoadUrl.enabled = v;
@@ -96,7 +96,7 @@ export default function Developer() {
                             {isReactDevToolsPreloaded() && isVendettaLoader() && <TableSwitchRow
                                 label={Strings.LOAD_REACT_DEVTOOLS}
                                 subLabel={`${Strings.VERSION}: ${getReactDevToolsVersion()}`}
-                                icon={<TableRow.Icon source={findAssetId("ic_badge_staff")} />}
+                                icon={<TableRow.Icon source={findAssetId("StaffBadgeIcon")} />}
                                 value={loaderConfig.loadReactDevTools}
                                 onValueChange={(v: boolean) => {
                                     loaderConfig.loadReactDevTools = v;
@@ -108,7 +108,7 @@ export default function Developer() {
                         <TableRow
                             label={Strings.CLEAR_BUNDLE}
                             subLabel={Strings.CLEAR_BUNDLE_DESC}
-                            icon={<TableRow.Icon source={findAssetId("trash")} />}
+                            icon={<TableRow.Icon source={findAssetId("TrashIcon")} />}
                             onPress={() => {
                                 openAlert("revenge-clear-bundle-reload-confirmation", <AlertModal
                                     title={Strings.MODAL_RELOAD_REQUIRED}
@@ -125,7 +125,7 @@ export default function Developer() {
                         <TableRow
                             arrow
                             label={Strings.ASSET_BROWSER}
-                            icon={<TableRow.Icon source={findAssetId("ic_image")} />}
+                            icon={<TableRow.Icon source={findAssetId("ImageIcon")} />}
                             trailing={TableRow.Arrow}
                             onPress={() => navigation.push("BUNNY_CUSTOM_PAGE", {
                                 title: Strings.ASSET_BROWSER,
@@ -135,12 +135,12 @@ export default function Developer() {
                         <TableRow
                             arrow
                             label={Strings.ERROR_BOUNDARY_TOOLS_LABEL}
-                            icon={<TableRow.Icon source={findAssetId("ic_warning_24px")} />}
+                            icon={<TableRow.Icon source={findAssetId("WarningIcon")} />}
                             onPress={() => showSimpleActionSheet({
                                 key: "ErrorBoundaryTools",
                                 header: {
                                     title: "Which ErrorBoundary do you want to trip?",
-                                    icon: <TableRow.Icon style={{ marginRight: 8 }} source={findAssetId("ic_warning_24px")} />,
+                                    icon: <TableRow.Icon style={{ marginRight: 8 }} source={findAssetId("WarningIcon")} />,
                                     onClose: () => hideActionSheet(),
                                 },
                                 options: [
@@ -165,12 +165,12 @@ export default function Developer() {
                                     onPress={async () => {
                                         if (rdtFileExists === CheckState.FALSE) {
                                             fs.downloadFile(RDT_EMBED_LINK, "preloads/reactDevtools.js")
-                                                .then(() => showToast("Successfully installed! A reload is required", findAssetId("Check")));
+                                                .then(() => showToast("Successfully installed! A reload is required", findAssetId("DownloadIcon")));
                                         } else if (rdtFileExists === CheckState.TRUE) {
                                             fs.removeFile("preloads/reactDevtools.js");
                                         }
                                     }}
-                                    icon={findAssetId(rdtFileExists === CheckState.TRUE ? "ic_message_delete" : "DownloadIcon")}
+                                    icon={findAssetId(rdtFileExists === CheckState.TRUE ? "TrashIcon" : "DownloadIcon")}
                                     style={{ marginLeft: 8 }}
                                 />
                             }
