@@ -4,6 +4,7 @@ import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger, connectToReactDevTools } from "@lib/api/debug";
+import { disconnect, useIsConnected } from "@lib/api/debug/devtools";
 import { getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
 import { loaderConfig, settings } from "@lib/api/settings";
 import { showToast } from "@lib/ui/toasts";
@@ -11,6 +12,7 @@ import { lazyDestructure } from "@lib/utils/lazy";
 import { NavigationNative } from "@metro/common";
 import { Button, LegacyFormText, Stack, TableRow, TableRowGroup, TableSwitchRow, TextInput } from "@metro/common/components";
 import { findByProps } from "@metro/wrappers";
+import { DevToolsClient } from "@revenge-mod/devtools-client";
 import { semanticColors } from "@ui/color";
 import { ErrorBoundary } from "@ui/components";
 import { createStyles, TextStyleSheet } from "@ui/styles";
@@ -34,6 +36,7 @@ const useStyles = createStyles({
 
 export default function Developer() {
     const [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
+    const dtConnected = useIsConnected();
 
     const styles = useStyles();
     const navigation = NavigationNative.useNavigation();
@@ -47,25 +50,28 @@ export default function Developer() {
                 <Stack style={{ paddingVertical: 24, paddingHorizontal: 12 }} spacing={24}>
                     <TextInput
                         label={Strings.DEBUGGER_URL}
-                        placeholder="127.0.0.1:9090"
+                        placeholder="localhost:7864"
                         size="md"
                         leadingIcon={() => <LegacyFormText style={styles.leadingText}>ws://</LegacyFormText>}
                         defaultValue={settings.debuggerUrl}
                         onChange={(v: string) => settings.debuggerUrl = v}
+                        isDisabled={dtConnected}
                     />
                     <TableRowGroup title={Strings.DEBUG}>
                         <TableSwitchRow
                             label={Strings.DEBUGGER_AUTOCONNECT}
-                            icon={<TableRow.Icon source={findAssetId("WrenchIcon")} />}
+                            subLabel={Strings.DEBUGGER_AUTOCONNECT_DESC}
+                            icon={<TableRow.Icon source={findAssetId("BookmarkIcon")} />}
                             value={!!settings.enableAutoDebugger}
                             onValueChange={(v: boolean) => {
                                 settings.enableAutoDebugger = v;
                             }}
                         />
                         <TableRow
-                            label={Strings.CONNECT_TO_DEBUG_WEBSOCKET}
-                            icon={<TableRow.Icon source={findAssetId("LinkIcon")} />}
-                            onPress={() => connectToDebugger(settings.debuggerUrl)}
+                            label={dtConnected ? Strings.DISCCONNECT_FROM_DEBUG_WEBSOCKET : Strings.CONNECT_TO_DEBUG_WEBSOCKET}
+                            subLabel={`Version ${DevToolsClient.version}`}
+                            icon={<TableRow.Icon source={findAssetId(dtConnected ? "DenyIcon" : "LinkIcon")} />}
+                            onPress={() => dtConnected ? disconnect() : connectToDebugger(settings.debuggerUrl)}
                         />
                         {isReactDevToolsPreloaded() && <>
                             <TableRow
@@ -90,7 +96,7 @@ export default function Developer() {
                                 defaultValue={loaderConfig.customLoadUrl.url}
                                 size="md"
                                 onChange={(v: string) => loaderConfig.customLoadUrl.url = v}
-                                placeholder="http://localhost:4040/vendetta.js"
+                                placeholder="http://localhost:4040/revenge.js"
                                 label={Strings.BUNNY_URL}
                             />} />}
                             {isReactDevToolsPreloaded() && isVendettaLoader() && <TableSwitchRow
@@ -108,7 +114,7 @@ export default function Developer() {
                         <TableRow
                             label={Strings.CLEAR_BUNDLE}
                             subLabel={Strings.CLEAR_BUNDLE_DESC}
-                            icon={<TableRow.Icon source={findAssetId("TrashIcon")} />}
+                            icon={<TableRow.Icon source={findAssetId("TrashIcon")} variant="danger" />}
                             onPress={() => {
                                 openAlert("revenge-clear-bundle-reload-confirmation", <AlertModal
                                     title={Strings.MODAL_RELOAD_REQUIRED}
@@ -121,6 +127,7 @@ export default function Developer() {
                                     }
                                 />);
                             }}
+                            variant="danger"
                         />
                         <TableRow
                             arrow

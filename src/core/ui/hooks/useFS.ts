@@ -21,11 +21,12 @@ export function useFileExists(path: string, prefix?: string): [CheckState, typeo
             if (typeof val !== "function") return;
 
             return (...args: any[]) => {
-                const promise = (check(), val(...args));
+                const promise = val(...args);
                 if (promise?.constructor?.name === "Promise") {
                     setState(CheckState.LOADING);
                     promise.finally(check);
                 }
+
                 return promise;
             };
         },
