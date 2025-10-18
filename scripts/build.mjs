@@ -5,12 +5,12 @@ import { execFileSync, execSync } from "child_process";
 import crypto from "crypto";
 import { build } from "esbuild";
 import globalPlugin from "esbuild-plugin-globals";
+import { readFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import yargs from "yargs-parser";
 
 import { printBuildSuccess } from "./util.mjs";
-import { readFile } from "fs/promises";
 
 /** @type string[] */
 const metroDeps = await (async () => {
@@ -35,7 +35,7 @@ const config = {
     format: "iife",
     splitting: false,
     external: [
-        "node:util"
+        /^node:.+/
     ],
     supported: {
         // Hermes does not actually support const and let, even though it syntactically
@@ -125,22 +125,22 @@ export async function buildBundle(overrideConfig = {}) {
     await build({ ...config, ...overrideConfig });
 
     const paths = {
-        win32: 'win64-bin/hermesc.exe',
-        darwin: 'osx-bin/hermesc',
-        linux: 'linux64-bin/hermesc',
-    }
+        win32: "win64-bin/hermesc.exe",
+        darwin: "osx-bin/hermesc",
+        linux: "linux64-bin/hermesc",
+    };
 
     if (!(process.platform in paths))
-        throw new Error(`Unsupported platform: ${process.platform}`)
+        throw new Error(`Unsupported platform: ${process.platform}`);
 
-    const sdksDir = './node_modules/react-native/sdks'
-    const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`
+    const sdksDir = "./node_modules/react-native/sdks";
+    const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`;
 
     const actualFile = overrideConfig.outfile ?? config.outfile;
 
-    execFileSync(binPath, ['-finline', '-strict', '-O', '-g1', '-reuse-prop-cache', '-optimized-eval', '-emit-binary', '-Wno-undefined-variable', '-out', actualFile], {
+    execFileSync(binPath, ["-finline", "-strict", "-O", "-g1", "-reuse-prop-cache", "-optimized-eval", "-emit-binary", "-Wno-undefined-variable", "-out", actualFile], {
         input: await readFile(actualFile),
-        stdio: 'pipe'
+        stdio: "pipe"
     });
 
     return {
