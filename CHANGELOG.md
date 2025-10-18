@@ -1,3 +1,22 @@
+# [1.10.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.9.0...v1.10.0-dev.1) (2025-10-18)
+
+
+### Bug Fixes
+
+* **adb:** fix matching for multiple packages ([4279a88](https://github.com/revenge-mod/revenge-bundle/commit/4279a88b34fb6419ac1d71457349169f8864d632))
+* **build:** mark `node:util` as external ([7052fd1](https://github.com/revenge-mod/revenge-bundle/commit/7052fd181071f79449d4b695a9262d3feb45dbd8))
+* **build:** use wildcard instead of regex ([5d44e13](https://github.com/revenge-mod/revenge-bundle/commit/5d44e13bdde1e979e1c489fb254b78072c4f8a76))
+
+
+### Features
+
+* add autoconnect ([684e60f](https://github.com/revenge-mod/revenge-bundle/commit/684e60f52da6bc50b2d5f51099a39d9d143db26b))
+* **build:** update `external` package regex ([e21f365](https://github.com/revenge-mod/revenge-bundle/commit/e21f36546e59373d110987d7dd78f672977c6768))
+* improvements ([#204](https://github.com/revenge-mod/revenge-bundle/issues/204)) ([926fb1f](https://github.com/revenge-mod/revenge-bundle/commit/926fb1fa379341a4b8a0b63242e74bb5d4b287ff))
+* modernify all icons ([ac77de7](https://github.com/revenge-mod/revenge-bundle/commit/ac77de7820ae8390fadbf5793ee58af1d054866b))
+* reinstall devtools from npm ([0875e01](https://github.com/revenge-mod/revenge-bundle/commit/0875e01c3844724c6066581fa6bf3535b98f1a69))
+* **ui:** don't use `isDisabled` ([e5a6e60](https://github.com/revenge-mod/revenge-bundle/commit/e5a6e606125ad4b57c8e1e8a09c64a483296412b))
+
 # [1.9.0](https://github.com/revenge-mod/revenge-bundle/compare/v1.8.1...v1.9.0) (2025-10-02)
 
 
