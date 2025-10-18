@@ -10,7 +10,7 @@ import { version } from "bunny-build-info";
 export { PyoncordIcon };
 
 export default function initSettings() {
-    
+
     registerSection({
         name: Strings.BUNNY,
         items: [
@@ -37,7 +37,7 @@ export default function initSettings() {
             {
                 key: "BUNNY_FONTS",
                 title: () => Strings.FONTS,
-                icon: findAssetId("ic_add_text"),
+                icon: findAssetId("LettersIcon"),
                 render: () => import("@core/ui/settings/pages/Fonts"),
                 usePredicate: () => isFontSupported()
             },
@@ -50,12 +50,12 @@ export default function initSettings() {
             }
         ]
     });
-    
+
     // Retain compatibility with plugins which inject into this section
     registerSection({
         name: "Bunny",
         items: []
-    })
+    });
 
     // Compat for plugins which injects into the settings
     // Flaw: in the old UI, this will be displayed anyway with no items

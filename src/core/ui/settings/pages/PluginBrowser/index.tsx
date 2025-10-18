@@ -169,9 +169,9 @@ function AddRepositoryAlert() {
                 onPress={async () => {
                     try {
                         await updateRepository(value);
-                        showToast("Added repository!", findAssetId("Check"));
+                        showToast("Added repository!", findAssetId("CheckmarkSmallIcon"));
                     } catch (e) {
-                        showToast("Failed to add repository!", findAssetId("Small"));
+                        showToast("Failed to add repository!", findAssetId("XSmallIcon"));
                     } finally {
                         dismissAlert("bunny-add-plugin-repository");
                         showSheet("plugin-browser-options", PluginBrowserOptions);
