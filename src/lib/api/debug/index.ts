@@ -49,6 +49,8 @@ export function connectToDebugger(url: string, quiet?: boolean) {
 }
 
 export function connectToReactDevTools(url: string, quiet?: boolean) {
+    if (!isReactDevToolsPreloaded()) return;
+
     if (!url) {
         if (!quiet) showToast("Invalid debugger URL!", findAssetId("XSmallIcon"));
         return;

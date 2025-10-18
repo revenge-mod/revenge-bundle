@@ -15,21 +15,19 @@ export let dtConnected = false;
 // this is a replacement for Emitter
 const changeHooks = new Set<(value: boolean) => void>();
 
-const logging = {
-    debug: LogLevel.Debug,
-    log: LogLevel.Default,
-    info: LogLevel.Default,
-    warn: LogLevel.Warn,
-    error: LogLevel.Error,
-};
-
 let intercepted = false;
 function interceptLogging() {
     if (intercepted) return;
     intercepted = true;
 
     const unpatches: (() => void)[] = [];
-    for (const [key, level] of Object.entries(logging)) {
+    for (const [key, level] of [
+        ['log', LogLevel.Default],
+        ['warn', LogLevel.Warn],
+        ['error', LogLevel.Error],
+        ['info', LogLevel.Default],
+        ['debug', LogLevel.Debug],
+    ] as const) {
         unpatches.push(
             instead(key, console, (args, orig) => {
                 if (dtConnected && dtClient)
