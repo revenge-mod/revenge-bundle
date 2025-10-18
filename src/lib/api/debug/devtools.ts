@@ -53,7 +53,9 @@ function cleanup() {
 }
 
 /** @internal */
-export function connect(url: string, quiet?: boolean) {
+export function connectDt(url: string, quiet?: boolean) {
+    if (dtClient) return;
+
     const info = getDebugInfo();
     const client = (dtClient = new DevToolsClient());
 
@@ -65,7 +67,7 @@ export function connect(url: string, quiet?: boolean) {
     const ws = client.ws!;
 
     ws.addEventListener('open', () => {
-        if (!quiet) showToast("Connected to debugger.", findAssetId("CheckmarkSmallIcon"));
+        if (!quiet) showToast("Connected to DevTools", findAssetId("CheckmarkSmallIcon"));
 
         if (client.settings.log.interceptConsole) {
             const unintercept = interceptLogging();
@@ -90,15 +92,15 @@ export function connect(url: string, quiet?: boolean) {
         const err = e?.message ?? e?.stack ?? String(e);
         logger.error('DevTools error:', err);
 
-        showToast(err, findAssetId("CircleXIcon-primary"));
+        if (!quiet) showToast(err, findAssetId("CircleXIcon-primary"));
     });
 }
 
-export function disconnect() {
+export function disconnectDt() {
     dtClient?.disconnect();
 }
 
-export function useIsConnected() {
+export function useIsDtConnected() {
     const [connected, update] = React.useState(dtConnected);
 
     React.useEffect(() => {

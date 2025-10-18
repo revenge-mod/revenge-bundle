@@ -1,12 +1,12 @@
 import { getThemeFromLoader, selectTheme, themes } from "@lib/addons/themes";
-import { findAssetId } from "@lib/api/assets";
-import { getLoaderName, getLoaderVersion, getReactDevToolsProp, isReactDevToolsPreloaded, isThemeSupported } from "@lib/api/native/loader";
+import { getLoaderName, getLoaderVersion, isReactDevToolsPreloaded, isThemeSupported } from "@lib/api/native/loader";
 import { BundleUpdaterManager, NativeClientInfoModule, NativeDeviceModule } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
-import { showToast } from "@ui/toasts";
 import { version } from "bunny-build-info";
-import { Platform, type PlatformConstants, StyleSheet } from "react-native";
-import { connect, dtConnected } from "./devtools";
+import { Platform, type PlatformConstants } from "react-native";
+import { connectDt, dtConnected } from "./devtools";
+import { connectRdt, rdtConnected } from "./react";
+import { logger } from "@lib/utils/logger";
 
 export interface RNConstants extends PlatformConstants {
     // Android
@@ -45,21 +45,13 @@ export async function toggleSafeMode() {
 export function connectToDebugger(url: string, quiet?: boolean) {
     if (dtConnected) return;
 
-    connect(url, quiet);
+    connectDt(url, quiet);
 }
 
 export function connectToReactDevTools(url: string, quiet?: boolean) {
-    if (!isReactDevToolsPreloaded()) return;
+    if (!isReactDevToolsPreloaded() || rdtConnected) return;
 
-    if (!url) {
-        if (!quiet) showToast("Invalid debugger URL!", findAssetId("XSmallIcon"));
-        return;
-    }
-
-    window[getReactDevToolsProp() || "__vendetta_rdc"]?.connectToDevTools({
-        host: url.split(":")?.[0],
-        resolveRNStyle: StyleSheet.flatten,
-    });
+    connectRdt(url, quiet);
 }
 
 /** @internal */
@@ -149,6 +141,10 @@ export function getDebugInfo() {
 export function initDebugger() {
     if (!settings.enableAutoDebugger || !settings.debuggerUrl) return;
 
-    connectToDebugger(settings.debuggerUrl, true);
-    connectToReactDevTools(settings.debuggerUrl, true);
+    try {
+        connectToDebugger(settings.debuggerUrl, true);
+        connectToReactDevTools(settings.debuggerUrl, true);
+    } catch (e) {
+        logger.error("Failed to connect to DevTools during startup:", e);
+    }
 }

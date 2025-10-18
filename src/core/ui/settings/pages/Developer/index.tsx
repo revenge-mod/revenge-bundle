@@ -4,7 +4,8 @@ import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger, connectToReactDevTools } from "@lib/api/debug";
-import { disconnect, useIsConnected } from "@lib/api/debug/devtools";
+import { disconnectDt, useIsDtConnected } from "@lib/api/debug/devtools";
+import { disconnectRdt, useIsRdtConnected } from "@lib/api/debug/react";
 import { getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
 import { loaderConfig, settings } from "@lib/api/settings";
 import { showToast } from "@lib/ui/toasts";
@@ -17,7 +18,7 @@ import { semanticColors } from "@ui/color";
 import { ErrorBoundary } from "@ui/components";
 import { createStyles, TextStyleSheet } from "@ui/styles";
 import { NativeModules } from "react-native";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 
 const { hideActionSheet } = lazyDestructure(() => findByProps("openLazy", "hideActionSheet"));
 const { showSimpleActionSheet } = lazyDestructure(() => findByProps("showSimpleActionSheet"));
@@ -36,7 +37,8 @@ const useStyles = createStyles({
 
 export default function Developer() {
     const [rdtFileExists, fs] = useFileExists("preloads/reactDevtools.js");
-    const dtConnected = useIsConnected();
+    const dtConnected = useIsDtConnected();
+    const rdtConnected = useIsRdtConnected();
 
     const styles = useStyles();
     const navigation = NavigationNative.useNavigation();
@@ -67,16 +69,17 @@ export default function Developer() {
                             }}
                         />
                         <TableRow
-                            label={dtConnected ? Strings.DISCCONNECT_FROM_DEBUG_WEBSOCKET : Strings.CONNECT_TO_DEBUG_WEBSOCKET}
+                            label={dtConnected ? Strings.DISCONNECT_FROM_DEBUG_WEBSOCKET : Strings.CONNECT_TO_DEBUG_WEBSOCKET}
                             subLabel={`Version ${DevToolsClient.version}`}
                             icon={<TableRow.Icon source={findAssetId(dtConnected ? "DenyIcon" : "LinkIcon")} />}
-                            onPress={() => dtConnected ? disconnect() : connectToDebugger(settings.debuggerUrl)}
+                            onPress={() => dtConnected ? disconnectDt() : connectToDebugger(settings.debuggerUrl)}
                         />
                         {isReactDevToolsPreloaded() && <>
                             <TableRow
-                                label={Strings.CONNECT_TO_REACT_DEVTOOLS}
-                                icon={<TableRow.Icon source={findAssetId("StaffBadgeIcon")} />}
-                                onPress={() => connectToReactDevTools(settings.debuggerUrl)}
+                                label={rdtConnected ? Strings.DISCONNECT_FROM_REACT_DEVTOOLS : Strings.CONNECT_TO_REACT_DEVTOOLS}
+                                subLabel={`Version ${getReactDevToolsVersion()}`}
+                                icon={<TableRow.Icon source={findAssetId(rdtConnected ? "DenyIcon" : "StaffBadgeIcon")} />}
+                                onPress={() => rdtConnected ? disconnectRdt() : connectToReactDevTools(settings.debuggerUrl)}
                             />
                         </>}
                     </TableRowGroup>
