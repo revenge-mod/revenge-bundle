@@ -133,7 +133,7 @@ export default function Plugins() {
                         actions={<AlertActions>
                             <AlertActionButton text="Continue" variant="primary" onPress={() => {
                                 VdPluginManager.installPlugin(url)
-                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check")))
+                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("DownloadIcon")))
                                     .catch(e => openAlert("bunny-plugin-install-failed", <AlertModal
                                         title="Install Failed"
                                         content={`Unable to install plugin from '${url}':`}

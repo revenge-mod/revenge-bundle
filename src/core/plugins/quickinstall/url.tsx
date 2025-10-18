@@ -30,10 +30,10 @@ function typeFromUrl(url: string) {
 function installWithToast(type: "plugin" | "theme", url: string) {
     (type === "plugin" ? VdPluginManager.installPlugin.bind(VdPluginManager) : installTheme)(url)
         .then(() => {
-            showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("Check"));
+            showToast(Strings.SUCCESSFULLY_INSTALLED, findAssetId("DownloadIcon"));
         })
         .catch((e: Error) => {
-            showToast(e.message, findAssetId("Small"));
+            showToast(e.message, findAssetId("XSmallIcon"));
         });
 }
 

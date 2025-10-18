@@ -40,6 +40,8 @@
     },
     "dependencies": {
         "@gullerya/object-observer": "^6.1.4",
+        "@revenge-mod/devtools-client": "^1.1.3",
+        "@revenge-mod/devtools-shared": "^1.0.2",
         "@shopify/react-native-skia": "^1.12.4",
         "@tanstack/react-query": "^5.83.0",
         "@types/chroma-js": "~2.4.5",

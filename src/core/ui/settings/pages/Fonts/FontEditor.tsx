@@ -399,7 +399,7 @@ export default function FontEditor(props: {
                                 .finally(() => setIsImporting(false));
                         }
                     }}
-                    icon={findAssetId(props.name ? "toast_image_saved" : "DownloadIcon")}
+                    icon={findAssetId(props.name ? "UploadIcon" : "DownloadIcon")}
                     style={{ marginLeft: 8 }}
                 />
             </View>

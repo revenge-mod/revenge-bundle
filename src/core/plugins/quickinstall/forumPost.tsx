@@ -77,7 +77,7 @@ function useInstaller(thread: any, firstMessage = null, actionSheet = false): [t
         try {
             await postMap[postType].installOrRemove(url);
         } catch (e: any) {
-            showToast(e.message, findAssetId("Small"));
+            showToast(e.message, findAssetId("XSmallIcon"));
         } finally {
             setIsInstalling(false);
         }
@@ -96,7 +96,7 @@ function useInstaller(thread: any, firstMessage = null, actionSheet = false): [t
 
 //     actions.unshift(<ActionsSection key="install">
 //         <ActionSheetRow
-//             icon={<ActionSheetRow.Icon source={getAssetIDByName(installed ? "ic_message_delete" : "DownloadIcon")} />}
+//             icon={<ActionSheetRow.Icon source={getAssetIDByName(installed ? "TrashIcon" : "DownloadIcon")} />}
 //             label={formatString(installed ? "UNINSTALL_TITLE" : "INSTALL_TITLE", { title: postType })}
 //             disabled={loading}
 //             onPress={installOrRemove}
@@ -119,7 +119,7 @@ const installButtonPatch = () => after("MostCommonForumPostReaction", forumReact
                 variant={installed ? "secondary" : "primary"}
                 text={installed ? Strings.UNINSTALL : Strings.INSTALL}
                 onPress={installOrRemove}
-                icon={findAssetId(installed ? "ic_message_delete" : "DownloadIcon")}
+                icon={findAssetId(installed ? "TrashIcon" : "DownloadIcon")}
                 style={{ marginLeft: 8 }}
             />
         </ErrorBoundary>

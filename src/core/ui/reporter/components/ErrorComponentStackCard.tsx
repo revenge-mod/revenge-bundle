@@ -3,7 +3,7 @@ import { findAssetId } from "@lib/api/assets";
 import { clipboard } from "@metro/common";
 import { Button, Card, Text } from "@metro/common/components";
 import { useState } from "react";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 
 export default function ErrorComponentStackCard(props: {
     componentStack: string;
@@ -21,7 +21,7 @@ export default function ErrorComponentStackCard(props: {
     return <Card>
         <View style={{ gap: 8 }}>
             <Text variant="heading-lg/bold">
-                    Component Stack
+                Component Stack
             </Text>
             <View style={{ gap: 4 }}>
                 {stack.map(component => (
@@ -37,10 +37,7 @@ export default function ErrorComponentStackCard(props: {
                 <Button
                     variant="secondary"
                     text={`Show ${collapsed ? "more" : "less"}`}
-                    icon={collapsed ? findAssetId("down_arrow") : <Image
-                        style={{ transform: [{ rotate: `${collapsed ? 0 : 180}deg` }] }}
-                        source={findAssetId("down_arrow")!}
-                    />}
+                    icon={findAssetId(collapsed ? "ChevronSmallUpIcon" : "ChevronSmallDownIcon")}
                     onPress={() => setCollapsed(v => !v)} />
                 <Button
                     variant="secondary"

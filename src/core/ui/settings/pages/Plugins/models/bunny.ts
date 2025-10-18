@@ -30,7 +30,7 @@ export default function unifyBunnyPlugin(manifest: BunnyPluginManifest): Unified
                     : disablePlugin(manifest.id);
             } catch (e) {
                 console.error(e);
-                // showToast("Failed to toggle plugin " + e, findAssetId("Small"));
+                // showToast("Failed to toggle plugin " + e, findAssetId("XSmallIcon"));
             }
         },
         resolveSheetComponent() {

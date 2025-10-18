@@ -3,6 +3,7 @@ import { getLoaderConfigPath } from "@lib/api/native/loader";
 
 export interface Settings {
     debuggerUrl: string;
+    enableAutoDebugger?: boolean;
     developerSettings: boolean;
     enableDiscordDeveloperSettings: boolean;
     safeMode?: {
@@ -26,7 +27,7 @@ export const loaderConfig = wrapSync(createStorage<LoaderConfig>(
     createFileBackend(getLoaderConfigPath(), {
         customLoadUrl: {
             enabled: false,
-            url: "http://localhost:4040/bunny.js"
+            url: "http://localhost:4040/revenge.js"
         }
     })
 ));

@@ -20,7 +20,7 @@ export default function About() {
         {
             label: "Discord",
             version: `${debugInfo.discord.version} (${debugInfo.discord.build})`,
-            icon: "Discord",
+            icon: "ClydeIcon",
         },
         {
             label: "React",
@@ -63,7 +63,7 @@ export default function About() {
         {
             label: Strings.BRAND,
             version: debugInfo.device.brand,
-            icon: "SparklesIcon"
+            icon: "PencilSparkleIcon"
         },
         {
             label: Strings.MODEL,
