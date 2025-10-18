@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.0...v1.10.1) (2025-10-18)
+
+
+### Bug Fixes
+
+* **i18n:** replace `Debugger` with `DevTools` ([6bab54a](https://github.com/revenge-mod/revenge-bundle/commit/6bab54afe2c71d607a11dbf46ae72bfe84aa7c5d))
+
 # [1.10.0](https://github.com/revenge-mod/revenge-bundle/compare/v1.9.0...v1.10.0) (2025-10-18)
 
 
