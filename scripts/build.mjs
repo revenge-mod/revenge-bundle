@@ -35,7 +35,7 @@ const config = {
     format: "iife",
     splitting: false,
     external: [
-        /^node:.+/
+        "node:*"
     ],
     supported: {
         // Hermes does not actually support const and let, even though it syntactically
