@@ -5,8 +5,8 @@
       "name": "@revenge-mod/revenge",
       "dependencies": {
         "@gullerya/object-observer": "^6.1.4",
-        "@revenge-mod/devtools-client": "npm:@jsr/revenge-mod__devtools-client",
-        "@revenge-mod/devtools-shared": "npm:@jsr/revenge-mod__devtools-shared",
+        "@revenge-mod/devtools-client": "^1.1.3",
+        "@revenge-mod/devtools-shared": "^1.0.2",
         "@shopify/react-native-skia": "^1.12.4",
         "@tanstack/react-query": "^5.83.0",
         "@types/chroma-js": "~2.4.5",
@@ -392,8 +392,6 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
 
-    "@jsr/revenge-mod__devtools-shared": ["@jsr/revenge-mod__devtools-shared@1.0.0", "https://npm.jsr.io/~/11/@jsr/revenge-mod__devtools-shared/1.0.0.tgz", { "dependencies": { "chalk": "^5.6.2", "superjson": "^2.2.2" } }, "sha512-9sJlqRyaf5OC8nYQg+AsvKMQqzn8uU50LQMJ1MCXTH+pcS9ueq4uBx+LUPgF2Qt58Zl7NLXsgNzgHTfba9v6Iw=="],
-
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
     "@nodelib/fs.stat": ["@nodelib/fs.stat@2.0.5", "", {}, "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A=="],
@@ -452,9 +450,9 @@
 
     "@react-native/virtualized-lists": ["@react-native/virtualized-lists@0.72.8", "", { "dependencies": { "invariant": "^2.2.4", "nullthrows": "^1.1.1" }, "peerDependencies": { "react-native": "*" } }, "sha512-J3Q4Bkuo99k7mu+jPS9gSUSgq+lLRSI/+ahXNwV92XgJ/8UgOTxu2LPwhJnBk/sQKxq7E8WkZBnBiozukQMqrw=="],
 
-    "@revenge-mod/devtools-client": ["@jsr/revenge-mod__devtools-client@1.1.0", "https://npm.jsr.io/~/11/@jsr/revenge-mod__devtools-client/1.1.0.tgz", { "dependencies": { "@jsr/revenge-mod__devtools-shared": "^1.0.0" } }, "sha512-8CJO0ed5I8HgH+BJiZgon7+eAGwbSjVJwzp0h/ob4REf0daHNNd8GtpX/S+aJrXalUOhvlR7s5EIzMQ1w01K8Q=="],
+    "@revenge-mod/devtools-client": ["@revenge-mod/devtools-client@1.1.3", "", { "dependencies": { "@revenge-mod/devtools-shared": "^1.0.2" } }, "sha512-wC15vJgwvZbBQC5UWa8LoLHgOfrTAFk4tD+/i08+f0L0rr7PiJ8rJ8SDUjjYfvCounQN/SAb8b8GxPyxvWCsLg=="],
 
-    "@revenge-mod/devtools-shared": ["@jsr/revenge-mod__devtools-shared@1.0.0", "https://npm.jsr.io/~/11/@jsr/revenge-mod__devtools-shared/1.0.0.tgz", { "dependencies": { "chalk": "^5.6.2", "superjson": "^2.2.2" } }, "sha512-9sJlqRyaf5OC8nYQg+AsvKMQqzn8uU50LQMJ1MCXTH+pcS9ueq4uBx+LUPgF2Qt58Zl7NLXsgNzgHTfba9v6Iw=="],
+    "@revenge-mod/devtools-shared": ["@revenge-mod/devtools-shared@1.0.2", "", { "dependencies": { "chalk": "^5.6.2", "superjson": "^2.2.2" } }, "sha512-Ri/KUX0QZlFCAZWKKQol4kpySHfVKQTBiPug9nRWP0bG8EyDaKgrXDiQtm+obBI9ncKrkCXb4Vbw0uM9zaGgSA=="],
 
     "@saithodev/semantic-release-backmerge": ["@saithodev/semantic-release-backmerge@4.0.1", "", { "dependencies": { "@semantic-release/error": "^3.0.0", "aggregate-error": "^3.1.0", "debug": "^4.3.4", "execa": "^5.1.1", "lodash": "^4.17.21", "semantic-release": "^22.0.7" } }, "sha512-WDsU28YrXSLx0xny7FgFlEk8DCKGcj6OOhA+4Q9k3te1jJD1GZuqY8sbIkVQaw9cqJ7CT+fCZUN6QDad8JW4Dg=="],
 
@@ -1779,8 +1777,6 @@
     "@jest/types/@types/node": ["@types/node@20.17.19", "", { "dependencies": { "undici-types": "~6.19.2" } }, "sha512-LEwC7o1ifqg/6r2gn9Dns0f1rhK+fPFDoMiceTJ6kWmVk6bgXBI/9IOWfVan4WiAavK9pIVWdX0/e3J+eEUh5A=="],
 
     "@jest/types/chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
-
-    "@jsr/revenge-mod__devtools-shared/chalk": ["chalk@5.6.2", "", {}, "sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA=="],
 
     "@pnpm/network.ca-file/graceful-fs": ["graceful-fs@4.2.10", "", {}, "sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA=="],
 
