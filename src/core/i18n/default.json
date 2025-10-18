@@ -36,7 +36,7 @@
     "DEBUG": "Debug",
     "DEBUGGER_AUTOCONNECT_DESC": "Automatically connect to the DevTools during startup",
     "DEBUGGER_AUTOCONNECT": "Auto-connect to DevTools",
-    "DEBUGGER_URL": "Debugger URL",
+    "DEBUGGER_URL": "DevTools URL",
     "DELETE": "Delete",
     "DESC_EXTRACT_FONTS_FROM_THEME": "Looks out for \"fonts\" field in your currently applied theme and install it.",
     "DEVELOPER_SETTINGS": "Developer Settings",
