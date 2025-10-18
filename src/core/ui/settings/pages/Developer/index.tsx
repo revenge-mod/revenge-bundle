@@ -55,7 +55,6 @@ export default function Developer() {
                         leadingIcon={() => <LegacyFormText style={styles.leadingText}>ws://</LegacyFormText>}
                         defaultValue={settings.debuggerUrl}
                         onChange={(v: string) => settings.debuggerUrl = v}
-                        isDisabled={dtConnected}
                     />
                     <TableRowGroup title={Strings.DEBUG}>
                         <TableSwitchRow
