@@ -1,3 +1,10 @@
+## [1.10.4](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.3...v1.10.4) (2025-11-14)
+
+
+### Bug Fixes
+
+* **settings:** correct settings injecting into every menu  ([#211](https://github.com/revenge-mod/revenge-bundle/issues/211)) ([e261747](https://github.com/revenge-mod/revenge-bundle/commit/e2617470a80b2eba6eef750e622ad45b0dc63876))
+
 ## [1.10.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.2...v1.10.3) (2025-11-14)
 
 
