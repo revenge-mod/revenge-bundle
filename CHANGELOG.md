@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.1...v1.10.2) (2025-11-14)
+
+
+### Bug Fixes
+
+* **settings:** add support for discord 306.4+ ([#208](https://github.com/revenge-mod/revenge-bundle/issues/208)) ([0076200](https://github.com/revenge-mod/revenge-bundle/commit/007620028e02511c37bfdfc538e3e5bc03034cde))
+
 ## [1.10.2-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.1...v1.10.2-dev.1) (2025-11-14)
 
 
