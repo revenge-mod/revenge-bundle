@@ -1,3 +1,10 @@
+## [1.10.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.2...v1.10.3) (2025-11-14)
+
+
+### Bug Fixes
+
+* missing import in settings fix ([add81de](https://github.com/revenge-mod/revenge-bundle/commit/add81de302ee6198eabe194758807e129f3a7ef4))
+
 ## [1.10.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.1...v1.10.2) (2025-11-14)
 
 
