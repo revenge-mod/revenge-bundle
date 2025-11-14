@@ -72,27 +72,34 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
     });
 
     try{
-    unpatches.push(after("createList", createListModule, function(args, ret) {
-        const [config] = args;
+        unpatches.push(after("createList", createListModule, function(args, ret) {
+            const [config] = args;
         
-        if (config?.sections && Array.isArray(config.sections)) {
-            const sections = config.sections;
-            // Credit to @palmdevs - https://discord.com/channels/1196075698301968455/1243605828783571024/1307940348378742816
-            let index = -~sections.findIndex((i: any) => i.settings?.includes("ACCOUNT")) || 1;
+            if (config?.sections && Array.isArray(config.sections)) {
+                const sections = config.sections;
+            
+                const accountSectionIndex = sections.findIndex((i: any) => i.settings?.includes("ACCOUNT"));
+            
+                if (accountSectionIndex !== -1) {
+                    // Credit to @palmdevs - https://discord.com/channels/1196075698301968455/1243605828783571024/1307940348378742816
 
-            Object.keys(registeredSections).forEach(sect => {
-                const alreadyExists = sections.some((s: any) => s.label === sect);
-                if (!alreadyExists) {
-                    sections.splice(index++, 0, {
-                        label: sect,
-                        title: sect,
-                        settings: registeredSections[sect].map(a => a.key)
+                    let index = accountSectionIndex + 1;
+                
+                    Object.keys(registeredSections).forEach(sect => {
+                        const alreadyExists = sections.some((s: any) => s.label === sect);
+                        if (!alreadyExists) {
+                            sections.splice(index++, 0, {
+                                label: sect,
+                                title: sect,
+                                settings: registeredSections[sect].map(a => a.key)
+                            });
+                        }
                     });
                 }
-            });
-        }
-        return ret;
-    },));
+            }
+            return ret;
+        },));
+
     }catch{
     unpatches.push(after("default", SettingsOverviewScreen, (_, ret) => {
         if (useIsFirstRender()) return; // :shrug:
