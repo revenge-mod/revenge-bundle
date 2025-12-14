@@ -10,7 +10,7 @@ export function getPackageName() {
 export function isADBAvailableAndAppInstalled() {
     try {
         const out = execSync(`adb shell pm list packages ${packageName}`);
-        return out.toString().trim().split("\n").includes(`package:${packageName}`);
+        return out.toString().trim().replace(/\r/g, "").split("\n").includes(`package:${packageName}`);
     } catch {
         return false;
     }
