@@ -19,7 +19,7 @@ import FontEditor from "./FontEditor";
 const { useToken } = lazyDestructure(() => findByProps("useToken"));
 
 function FontPreview({ font }: { font: FontDefinition; }) {
-    const TEXT_NORMAL = useToken(tokens.colors.TEXT_NORMAL);
+    const TEXT_DEFAULT = useToken(tokens.colors.TEXT_DEFAULT);
     const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     const fontFamily = fontFamilyList!.split(/,/g)[0];
 
@@ -34,7 +34,7 @@ function FontPreview({ font }: { font: FontDefinition; }) {
 
         return SkiaApi.ParagraphBuilder.Make({}, fMgr)
             .pushStyle({
-                color: SkiaApi.Color(TEXT_NORMAL),
+                color: SkiaApi.Color(TEXT_DEFAULT),
                 fontFamilies: [fontFamily],
                 fontSize,
             })
