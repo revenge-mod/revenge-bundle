@@ -4,53 +4,66 @@ import { showConfirmationAlert } from "@core/vendetta/alerts";
 import { useProxy } from "@core/vendetta/storage";
 import { FontDefinition, fonts, selectFont } from "@lib/addons/fonts";
 import { findAssetId } from "@lib/api/assets";
+import { lazyDestructure } from "@lib/utils/lazy";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
-import { NavigationNative } from "@metro/common";
+import { createStyles, TextStyleSheet } from "@lib/ui/styles";
+import { NavigationNative, tokens } from "@metro/common";
 import { Button, Card, IconButton, Stack, Text } from "@metro/common/components";
-import { View } from "react-native";
+import { findByProps } from "@metro";
+import { PixelRatio, View } from "react-native";
+import { WebView } from "react-native-webview";
+import previewHtml from "./preview.html";
 
 import FontEditor from "./FontEditor";
+import { useMemo, useState } from "react";
 
-// TODO: Readd the FontPreview without using skia
-// function FontPreview({ font }: { font: FontDefinition; }) {
-//     const TEXT_DEFAULT = useToken(tokens.colors.TEXT_DEFAULT);
-//     const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
-//     const fontFamily = fontFamilyList!.split(/,/g)[0];
+const { useToken } = lazyDestructure(() => findByProps("useToken"));
 
-//     const typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
+const useStyles = createStyles({
+    full: {
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%"
+    }
+});
 
-//     const paragraph = useMemo(() => {
-//         if (!typeface) return null;
+function FontPreview({ font }: { font: FontDefinition; }) {
+    const [loaded, setLoaded] = useState(false);
+    const styles = useStyles();
 
-//         const fMgr = SkiaApi.TypefaceFontProvider.Make();
-//         fMgr.registerFont(typeface, fontFamily);
+    const TEXT_DEFAULT = useToken(tokens.colors.TEXT_DEFAULT);
+    const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
+    const fontFamily = fontFamilyList!.split(/,/g)[0];
 
-//         return SkiaApi.ParagraphBuilder.Make({}, fMgr)
-//             .pushStyle({
-//                 color: SkiaApi.Color(TEXT_DEFAULT),
-//                 fontFamilies: [fontFamily],
-//                 fontSize,
-//             })
-//             .addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
-//             .pop()
-//             .build();
-//     }, [typeface]);
+    const props = {
+        family: font.main[fontFamily],
+        size: fontSize! * PixelRatio.getFontScale(),
+        color: TEXT_DEFAULT,
+        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    };
 
-//     return (
-//         // This does not work, actually :woeis:
-//         <View style={{ height: 64 }}>
-//             {typeface
-//                 ? <Skia.Canvas style={{ height: 64 }}>
-//                     <Skia.Paragraph paragraph={paragraph} x={0} y={0} width={300} />
-//                 </Skia.Canvas>
-//                 : <View style={{ justifyContent: "center", alignItems: "center" }}>
-//                     <Text color="text-muted" variant="heading-lg/semibold">
-//                         Loading...
-//                     </Text>
-//                 </View>}
-//         </View>
-//     );
-// }
+    return <View style={{ width: "100%", height: 64 }}>
+        <WebView
+            onMessage={() => setLoaded(true)}
+            source={{
+                html: previewHtml.replace("$$props", JSON.stringify(props))
+            }}
+            javaScriptEnabled
+            scrollEnabled={false}
+            overScrollMode="never"
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            pointerEvents="none"
+            style={[styles.full, { backgroundColor: "transparent", opacity: Number(loaded) }]}
+        />
+        {!loaded && <View style={[styles.full, { justifyContent: "center", alignItems: "center" }]}>
+            <Text color="text-muted" variant="heading-lg/semibold">
+                Loading...
+            </Text>
+        </View>}
+    </View>;
+}
 
 export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
     useProxy(fonts);
@@ -104,7 +117,7 @@ export default function FontCard({ item: font }: CardWrapper<FontDefinition>) {
                         </Stack>
                     </View>
                 </View>
-                {/* <FontPreview font={font} /> */}
+                <FontPreview font={font} />
             </Stack>
         </Card>
     );
