@@ -1,3 +1,10 @@
+# [1.11.0-dev.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0-dev.2...v1.11.0-dev.3) (2025-12-17)
+
+
+### Features
+
+* **fonts:** memoize webview props ([a43af2c](https://github.com/revenge-mod/revenge-bundle/commit/a43af2cee9e43d989e39e59dd1c5ac9d7bdd12b4))
+
 # [1.11.0-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0-dev.1...v1.11.0-dev.2) (2025-12-17)
 
 
