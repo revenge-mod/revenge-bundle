@@ -48,7 +48,7 @@ const useStyles = createStyles({
         gap: 5
     },
     iconStyle: {
-        tintColor: semanticColors.LOGO_PRIMARY,
+        tintColor: semanticColors.INTERACTIVE_ICON_DEFAULT,
         opacity: 0.2,
         height: 64,
         width: 64,
