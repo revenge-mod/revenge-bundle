@@ -10,12 +10,12 @@ import { createStyles, TextStyleSheet } from "@lib/ui/styles";
 import { NavigationNative, tokens } from "@metro/common";
 import { Button, Card, IconButton, Stack, Text } from "@metro/common/components";
 import { findByProps } from "@metro";
+import { useMemo, useState } from "react";
 import { PixelRatio, View } from "react-native";
 import { WebView } from "react-native-webview";
 import previewHtml from "./preview.html";
 
 import FontEditor from "./FontEditor";
-import { useMemo, useState } from "react";
 
 const { useToken } = lazyDestructure(() => findByProps("useToken"));
 
@@ -36,12 +36,13 @@ function FontPreview({ font }: { font: FontDefinition; }) {
     const { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     const fontFamily = fontFamilyList!.split(/,/g)[0];
 
-    const props = {
+    const props = useMemo(() => ({
         family: font.main[fontFamily],
         size: fontSize! * PixelRatio.getFontScale(),
         color: TEXT_DEFAULT,
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    };
+        text:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    }), [font.main, fontFamily, fontSize, TEXT_DEFAULT]);
 
     return <View style={{ width: "100%", height: 64 }}>
         <WebView
