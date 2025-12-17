@@ -46,7 +46,8 @@ const config = {
         js: "//# sourceURL=revenge"
     },
     loader: {
-        ".png": "dataurl"
+        ".png": "dataurl",
+        ".html": "text"
     },
     define: {
         window: "globalThis",
