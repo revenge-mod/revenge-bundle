@@ -1,3 +1,10 @@
+## [1.11.1-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0...v1.11.1-dev.1) (2025-12-17)
+
+
+### Bug Fixes
+
+* **ui:** use default color for Text ([d585bce](https://github.com/revenge-mod/revenge-bundle/commit/d585bce8f58cdfe626a2e2e276149fc3eb075a1e))
+
 # [1.11.0](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.5...v1.11.0) (2025-12-17)
 
 
