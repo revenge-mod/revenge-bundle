@@ -1,3 +1,15 @@
+# [1.11.0-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0-dev.1...v1.11.0-dev.2) (2025-12-17)
+
+
+### Bug Fixes
+
+* **fonts:** re-add FontPreview ([8fe6c41](https://github.com/revenge-mod/revenge-bundle/commit/8fe6c41dad8e9b7a63a72bf42f899a98a25365d6))
+
+
+### Features
+
+* add `react-native-webview` ([7fcf051](https://github.com/revenge-mod/revenge-bundle/commit/7fcf0510256fcc715cda200368f3bdf25e52fadd))
+
 # [1.11.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.5...v1.11.0-dev.1) (2025-12-17)
 
 
