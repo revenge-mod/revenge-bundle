@@ -52,6 +52,7 @@
         "intl-messageformat": "^10.7.16",
         "moment": "2.22.2",
         "react-native-reanimated": "^3.18.0",
+        "react-native-webview": "^13.16.0",
         "spitroast": "^1.4.4",
         "type-fest": "^4.41.0"
     }

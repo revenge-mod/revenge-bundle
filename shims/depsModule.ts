@@ -6,5 +6,6 @@ module.exports = {
     "util": findByPropsLazy("inspect", "isNullOrUndefined"),
     "moment": findByPropsLazy("isMoment"),
     "chroma-js": findByPropsLazy("brewer"),
-    "lodash": findByPropsLazy("forEachRight")
+    "lodash": findByPropsLazy("forEachRight"),
+    "react-native-webview": findByPropsLazy("WebView")
 };
