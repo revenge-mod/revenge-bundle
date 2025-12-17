@@ -42,7 +42,6 @@
         "@gullerya/object-observer": "^6.1.4",
         "@revenge-mod/devtools-client": "^1.1.3",
         "@revenge-mod/devtools-shared": "^1.0.2",
-        "@shopify/react-native-skia": "^1.12.4",
         "@tanstack/react-query": "^5.83.0",
         "@types/chroma-js": "~2.4.5",
         "@types/lodash": "~4.17.20",
@@ -53,6 +52,7 @@
         "intl-messageformat": "^10.7.16",
         "moment": "2.22.2",
         "react-native-reanimated": "^3.18.0",
+        "react-native-webview": "^13.16.0",
         "spitroast": "^1.4.4",
         "type-fest": "^4.41.0"
     }

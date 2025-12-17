@@ -19,7 +19,7 @@ export function serve(options) {
         const { pathname } = url.parse(req.url || "", true);
         if (pathname?.endsWith(".js")) {
             try {
-                const { config, context, timeTook } = await buildBundle();
+                const { config, context, timeTook } = await buildBundle({}, true);
 
                 printBuildSuccess(
                     context.hash,

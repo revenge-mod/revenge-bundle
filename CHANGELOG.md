@@ -1,3 +1,38 @@
+# [1.11.0-dev.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0-dev.2...v1.11.0-dev.3) (2025-12-17)
+
+
+### Features
+
+* **fonts:** memoize webview props ([a43af2c](https://github.com/revenge-mod/revenge-bundle/commit/a43af2cee9e43d989e39e59dd1c5ac9d7bdd12b4))
+
+# [1.11.0-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0-dev.1...v1.11.0-dev.2) (2025-12-17)
+
+
+### Bug Fixes
+
+* **fonts:** re-add FontPreview ([8fe6c41](https://github.com/revenge-mod/revenge-bundle/commit/8fe6c41dad8e9b7a63a72bf42f899a98a25365d6))
+
+
+### Features
+
+* add `react-native-webview` ([7fcf051](https://github.com/revenge-mod/revenge-bundle/commit/7fcf0510256fcc715cda200368f3bdf25e52fadd))
+
+# [1.11.0-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.5...v1.11.0-dev.1) (2025-12-17)
+
+
+### Bug Fixes
+
+* fix more colors ([b26b0db](https://github.com/revenge-mod/revenge-bundle/commit/b26b0dbd80cd16b08703c5f3688697b8dc5e34f8))
+* **fonts:** remove FontPreview ([8947785](https://github.com/revenge-mod/revenge-bundle/commit/8947785b609eaf892306a764b973260baa20853e))
+* remove Skia ([3b864fb](https://github.com/revenge-mod/revenge-bundle/commit/3b864fb9e6cee86e9a25c385065dd0fd960bea02))
+* **scripts:** fix \r for windows ([0c749f0](https://github.com/revenge-mod/revenge-bundle/commit/0c749f055794044e8ba4fd99680e3461764d26ab))
+* update colors for 309.5 ([961340c](https://github.com/revenge-mod/revenge-bundle/commit/961340c0f1159f3a813310d273f9f2030792985d))
+
+
+### Features
+
+* **scripts:** skip hermes in `serve` script ([1185b47](https://github.com/revenge-mod/revenge-bundle/commit/1185b47de6cb9111da7c054303e7acde1b027ae7))
+
 ## [1.10.5](https://github.com/revenge-mod/revenge-bundle/compare/v1.10.4...v1.10.5) (2025-11-14)
 
 
