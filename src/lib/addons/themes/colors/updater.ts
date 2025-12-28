@@ -2,6 +2,7 @@ import { settings } from "@lib/api/settings";
 import { findByProps, findByPropsLazy, findByStoreNameLazy } from "@metro";
 
 import { parseColorManifest } from "./parser";
+import { colorsPref } from "./preferences";
 import { ColorManifest, InternalColorDefinition } from "./types";
 
 const tokenRef = findByProps("SemanticColor");
@@ -30,14 +31,26 @@ export const _colorRef: InternalColorRef = {
 export function updateBunnyColor(colorManifest: ColorManifest | null, { update = true }) {
     if (settings.safeMode?.enabled) return;
 
+    const resolveType = (type = "dark") => (colorsPref.type ?? type) === "dark" ? "darker" : "light";
     const internalDef = colorManifest ? parseColorManifest(colorManifest) : null;
-    const ref = Object.assign(_colorRef, {
-        current: internalDef,
-        key: `bn-theme-${++_inc}`,
-        lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-")
-            ? ThemeStore.theme
-            : _colorRef.lastSetDiscordTheme
-    });
+
+    if (resolveType() == "light" || update) {
+        var ref = Object.assign(_colorRef, {
+            current: internalDef,
+            key: `bn-theme-${++_inc}`,
+            lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-") || !ThemeStore.theme.startsWith("darker")
+                ? ThemeStore.theme
+                : _colorRef.lastSetDiscordTheme
+        });
+    } else {
+        var ref = Object.assign(_colorRef, {
+            current: internalDef,
+            key: `dark`,
+            lastSetDiscordTheme: !ThemeStore.theme.startsWith("bn-theme-") || !ThemeStore.theme.startsWith("darker")
+                ? ThemeStore.theme
+                : _colorRef.lastSetDiscordTheme
+        });
+    }
 
     if (internalDef != null) {
         tokenRef.Theme[ref.key.toUpperCase()] = ref.key;
@@ -53,7 +66,7 @@ export function updateBunnyColor(colorManifest: ColorManifest | null, { update =
 
     if (update) {
         AppearanceManager.setShouldSyncAppearanceSettings(false);
-        AppearanceManager.updateTheme(internalDef != null ? ref.key : ref.lastSetDiscordTheme);
+        AppearanceManager.updateTheme(internalDef != null ? ref.key : "darker");
     }
 }
 
