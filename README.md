@@ -57,7 +57,7 @@ This repository releases JavaScript bundles for loaders to execute. These are th
 
 ### iOS
 
-- [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or the prepatched `.ipa`
+- 🍎 [**RevengeTweak**](https://github.com/revenge-mod/revenge-tweak): Prebuilt rootful and rootless `.deb` files or the prepatched `.ipa`
 
 ## 📚 Everything else
 
