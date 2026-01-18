@@ -1,3 +1,10 @@
+## [1.11.1-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.1-dev.1...v1.11.1-dev.2) (2026-01-18)
+
+
+### Bug Fixes
+
+* themes on 307+ ([#217](https://github.com/revenge-mod/revenge-bundle/issues/217)) ([f383f05](https://github.com/revenge-mod/revenge-bundle/commit/f383f05d2c6926a406335758343b1de69cbf75cd))
+
 ## [1.11.1-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0...v1.11.1-dev.1) (2025-12-17)
 
 
