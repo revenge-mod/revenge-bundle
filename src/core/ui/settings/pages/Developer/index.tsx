@@ -6,6 +6,7 @@ import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger, connectToReactDevTools } from "@lib/api/debug";
 import { disconnectDt, useIsDtConnected } from "@lib/api/debug/devtools";
 import { disconnectRdt, useIsRdtConnected } from "@lib/api/debug/react";
+import { bridge } from "@lib/api/native";
 import { getReactDevToolsVersion, isLoaderConfigSupported, isReactDevToolsPreloaded, isVendettaLoader } from "@lib/api/native/loader";
 import { loaderConfig, settings } from "@lib/api/settings";
 import { showToast } from "@lib/ui/toasts";
@@ -123,7 +124,18 @@ export default function Developer() {
                                     content={Strings.MODAL_RELOAD_REQUIRED_DESC}
                                     actions={
                                         <Stack>
-                                            <AlertActionButton text={Strings.RELOAD} variant="destructive" onPress={() => NativeModules.BundleUpdaterManager.reload()} />
+                                            <AlertActionButton
+                                                text={Strings.RELOAD}
+                                                variant="destructive"
+                                                onPress={async () => {
+                                                    try {
+                                                        await bridge.callBridgeMethod("revenge.updater.clear", []);
+                                                        await bridge.callBridgeMethod("revenge.app.reload", []);
+                                                    } catch {
+                                                        NativeModules.BundleUpdaterManager.reload();
+                                                    }
+                                                }}
+                                            />
                                             <AlertActionButton text={Strings.CANCEL} variant="secondary" />
                                         </Stack>
                                     }
