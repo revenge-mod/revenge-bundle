@@ -8,7 +8,7 @@ import chroma from "chroma-js";
 import { ImageBackground, StyleSheet } from "react-native";
 import { logger } from "@lib/utils/logger";
 
-const Messages = findByDisplayNameLazy("MessagesConnected");
+const Messages = findByDisplayNameLazy("Messages");
 
 function ThemeBackground({ children }: { children: React.ReactNode; }) {
     useObservable([colorsPref]);
