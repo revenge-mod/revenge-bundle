@@ -24,7 +24,7 @@ export default function initSettings() {
             {
                 key: "BUNNY_PLUGINS",
                 title: () => Strings.PLUGINS,
-                icon: findAssetId("ActivitiesIcon"),
+                icon: findAssetId("PuzzlePieceIcon"),
                 render: () => import("@core/ui/settings/pages/Plugins")
             },
             {
