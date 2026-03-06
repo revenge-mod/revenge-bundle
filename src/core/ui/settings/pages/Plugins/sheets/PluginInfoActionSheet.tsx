@@ -94,7 +94,7 @@ export default function PluginInfoActionSheet({ plugin, navigation }: PluginInfo
                 />
             </View>
             <Card>
-                <Text variant="text-md/semibold" color="text-primary" style={{ marginBottom: 4 }}>
+                <Text variant="text-md/semibold" color="text-strong" style={{ marginBottom: 4 }}>
                     Description
                 </Text>
                 <Text variant="text-md/medium">

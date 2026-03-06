@@ -43,7 +43,7 @@ export default function AssetDisplay({ asset }: AssetDisplayProps) {
                     extraContent={
                         displayable.has(asset.type)
                             ? <Image resizeMode="contain" source={asset.id} style={{ flex: 1, width: 'auto', height: 192 }} />
-                            : (<Text variant='text-sm/medium' color="text-danger" style={{ width: '100%', textAlign: 'center' }}>
+                            : (<Text variant='text-sm/medium' color="text-feedback-critical" style={{ width: '100%', textAlign: 'center' }}>
                                 Asset type {asset.type.toUpperCase()} is not supported for preview.
                             </Text>)
                     }

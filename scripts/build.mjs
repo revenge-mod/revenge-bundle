@@ -46,7 +46,8 @@ const config = {
         js: "//# sourceURL=revenge"
     },
     loader: {
-        ".png": "dataurl"
+        ".png": "dataurl",
+        ".html": "text"
     },
     define: {
         window: "globalThis",
@@ -116,7 +117,7 @@ const config = {
     ]
 };
 
-export async function buildBundle(overrideConfig = {}) {
+export async function buildBundle(overrideConfig = {}, skipHermes) {
     context = {
         hash: releaseBranch ? execSync("git rev-parse --short HEAD").toString().trim() : crypto.randomBytes(8).toString("hex").slice(0, 7)
     };
@@ -124,24 +125,26 @@ export async function buildBundle(overrideConfig = {}) {
     const initialStartTime = performance.now();
     await build({ ...config, ...overrideConfig });
 
-    const paths = {
-        win32: "win64-bin/hermesc.exe",
-        darwin: "osx-bin/hermesc",
-        linux: "linux64-bin/hermesc",
-    };
+    if (!skipHermes) {
+        const paths = {
+            win32: "win64-bin/hermesc.exe",
+            darwin: "osx-bin/hermesc",
+            linux: "linux64-bin/hermesc",
+        };
 
-    if (!(process.platform in paths))
-        throw new Error(`Unsupported platform: ${process.platform}`);
+        if (!(process.platform in paths))
+            throw new Error(`Unsupported platform: ${process.platform}`);
 
-    const sdksDir = "./node_modules/react-native/sdks";
-    const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`;
+        const sdksDir = "./node_modules/react-native/sdks";
+        const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`;
 
-    const actualFile = overrideConfig.outfile ?? config.outfile;
+        const actualFile = overrideConfig.outfile ?? config.outfile;
 
-    execFileSync(binPath, ["-finline", "-strict", "-O", "-g1", "-reuse-prop-cache", "-optimized-eval", "-emit-binary", "-Wno-undefined-variable", "-out", actualFile], {
-        input: await readFile(actualFile),
-        stdio: "pipe"
-    });
+        execFileSync(binPath, ["-finline", "-strict", "-O", "-g1", "-reuse-prop-cache", "-optimized-eval", "-emit-binary", "-Wno-undefined-variable", "-out", actualFile], {
+            input: await readFile(actualFile),
+            stdio: "pipe"
+        });
+    }
 
     return {
         config,

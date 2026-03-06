@@ -32,7 +32,7 @@ const useStyles = createStyles({
     },
     headerLabel: {
         ...TextStyleSheet["heading-md/semibold"],
-        color: semanticColors.TEXT_NORMAL,
+        color: semanticColors.TEXT_DEFAULT,
     },
     headerSubtitle: {
         ...TextStyleSheet["text-md/semibold"],
@@ -40,7 +40,7 @@ const useStyles = createStyles({
     },
     descriptionLabel: {
         ...TextStyleSheet["text-md/semibold"],
-        color: semanticColors.TEXT_NORMAL,
+        color: semanticColors.TEXT_DEFAULT,
     },
     actions: {
         flexDirection: "row-reverse",
@@ -48,7 +48,7 @@ const useStyles = createStyles({
         gap: 5
     },
     iconStyle: {
-        tintColor: semanticColors.LOGO_PRIMARY,
+        tintColor: semanticColors.INTERACTIVE_ICON_DEFAULT,
         opacity: 0.2,
         height: 64,
         width: 64,

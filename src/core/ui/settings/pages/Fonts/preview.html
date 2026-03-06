@@ -1,0 +1,18 @@
+<head><meta name="viewport" content="initial-scale=1.0"></head>
+<body style="overflow: hidden; padding: 0; margin: 0;"></body>
+<script>
+    const props = $$props;
+
+    new FontFace("Preview", `url(${props.family})`).load().then((font) => {
+        document.fonts.add(font);
+
+        const p = document.createElement("p");
+        p.textContent = props.text;
+        p.style.fontFamily = font.family;
+        p.style.fontSize = `${props.size}px`;
+        p.style.color = props.color;
+
+        document.body.appendChild(p);
+        ReactNativeWebView.postMessage(true);
+    });
+</script>
