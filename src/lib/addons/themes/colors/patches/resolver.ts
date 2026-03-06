@@ -2,12 +2,14 @@ import { _colorRef } from "@lib/addons/themes/colors/updater";
 import { NativeThemeModule } from "@lib/api/native/modules";
 import { before, instead } from "@lib/api/patcher";
 import { findByProps } from "@metro";
-import { byMutableProp } from "@metro/filters";
-import { createLazyModule } from "@metro/lazy";
 import chroma from "chroma-js";
 
 const tokenReference = findByProps("SemanticColor");
-const isThemeModule = createLazyModule(byMutableProp("isThemeDark"));
+const themeTypes = findByProps("ThemeTypes")?.ThemeTypes;
+
+const origRawColor = { ...tokenReference.RawColor };
+const origDarker = themeTypes.DARKER as string;
+const origLight = themeTypes.LIGHT as string;
 
 const SEMANTIC_FALLBACK_MAP: Record<string, string> = {
     "BG_BACKDROP": "BACKGROUND_FLOATING",
@@ -25,20 +27,30 @@ const SEMANTIC_FALLBACK_MAP: Record<string, string> = {
 export default function patchDefinitionAndResolver() {
     const callback = ([theme]: any[]) => theme === _colorRef.key ? [_colorRef.current!.reference] : void 0;
 
+    Object.defineProperty(themeTypes, "DARKER", {
+        configurable: true,
+        enumerable: true,
+        get: () => _colorRef.current?.reference === "darker" ? _colorRef.key : origDarker,
+    });
+    Object.defineProperty(themeTypes, "LIGHT", {
+        configurable: true,
+        enumerable: true,
+        get: () => _colorRef.current?.reference === "light" ? _colorRef.key : origLight,
+    });
+
     Object.keys(tokenReference.RawColor).forEach(key => {
         Object.defineProperty(tokenReference.RawColor, key, {
             configurable: true,
             enumerable: true,
             get: () => {
                 const ret = _colorRef.current?.raw[key];
-                return ret || _colorRef.origRaw[key];
+                if (ret) return ret;
+                return origRawColor[key];
             }
         });
     });
 
     const unpatches = [
-        before("isThemeDark", isThemeModule, callback),
-        before("isThemeLight", isThemeModule, callback),
         before("updateTheme", NativeThemeModule, callback),
         instead("resolveSemanticColor", tokenReference.default.meta ?? tokenReference.default.internal, (args: any[], orig: any) => {
             if (!_colorRef.current) return orig(...args);
@@ -54,8 +66,9 @@ export default function patchDefinitionAndResolver() {
             }
 
             if (semanticDef?.value) {
-                if (semanticDef.opacity === 1) return semanticDef.value;
-                return chroma(semanticDef.value).alpha(semanticDef.opacity).hex();
+                return semanticDef.opacity === 1
+                    ? semanticDef.value
+                    : chroma(semanticDef.value).alpha(semanticDef.opacity).hex();
             }
 
             const rawValue = _colorRef.current.raw[colorDef.raw];
@@ -68,11 +81,16 @@ export default function patchDefinitionAndResolver() {
             return orig(...args);
         }),
         () => {
-            // Not the actual module but.. yeah.
+            Object.defineProperty(themeTypes, "DARKER", {
+                configurable: true, writable: true, value: origDarker
+            });
+            Object.defineProperty(themeTypes, "LIGHT", {
+                configurable: true, writable: true, value: origLight
+            });
             Object.defineProperty(tokenReference, "RawColor", {
                 configurable: true,
                 writable: true,
-                value: _colorRef.origRaw
+                value: origRawColor
             });
         }
     ];
