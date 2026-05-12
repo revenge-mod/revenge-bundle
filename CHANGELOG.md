@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.1...v1.11.2) (2026-05-12)
+
+
+### Bug Fixes
+
+* settings crash after discord's settings refactor ([#233](https://github.com/revenge-mod/revenge-bundle/issues/233)) ([d321571](https://github.com/revenge-mod/revenge-bundle/commit/d321571dc6be9b3d0d967bcdd9a7378acd07b356))
+
 ## [1.11.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.0...v1.11.1) (2026-01-19)
 
 
