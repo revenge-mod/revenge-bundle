@@ -21,6 +21,8 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
         .flatMap(sect => sect.map(row => ({
             [row.key]: {
                 type: "pressable",
+                // title was renamed to useTitle, both are here for compatibility (thanks kmiioo) https://codeberg.org/raincord/rain/pulls/52
+                useTitle: row.title,
                 title: row.title,
                 icon: row.icon,
                 IconComponent: () => <TableRow.Icon source={row.icon} />,
@@ -43,6 +45,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
             ...rendererConfigValue,
             VendettaCustomPage: {
                 type: "route",
+                useTitle: () => Strings.BUNNY,
                 title: () => Strings.BUNNY,
                 screen: {
                     route: "VendettaCustomPage",
@@ -51,6 +54,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
             },
             BUNNY_CUSTOM_PAGE: {
                 type: "route",
+                useTitle: () => Strings.BUNNY,
                 title: () => Strings.BUNNY,
                 screen: {
                     route: "BUNNY_CUSTOM_PAGE",
