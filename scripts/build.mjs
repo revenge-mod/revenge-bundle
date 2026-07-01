@@ -135,7 +135,7 @@ export async function buildBundle(overrideConfig = {}, skipHermes) {
         if (!(process.platform in paths))
             throw new Error(`Unsupported platform: ${process.platform}`);
 
-        const sdksDir = "./node_modules/react-native/sdks";
+        const sdksDir = "./node_modules/hermes-compiler";
         const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`;
 
         const actualFile = overrideConfig.outfile ?? config.outfile;
