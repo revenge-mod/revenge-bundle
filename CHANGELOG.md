@@ -1,3 +1,11 @@
+## [1.11.3](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.2...v1.11.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* build script not finding hermesc ([e4c50ea](https://github.com/revenge-mod/revenge-bundle/commit/e4c50eafe7198ed4b3b6cd9f68a499b07effd4cb))
+* update DevTools client to latest version ([304e022](https://github.com/revenge-mod/revenge-bundle/commit/304e022c09b7ed5ae4e8d0f092a4f9f1cc0c5177))
+
 ## [1.11.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.1...v1.11.2) (2026-05-12)
 
 
