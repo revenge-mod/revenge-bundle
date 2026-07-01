@@ -29,8 +29,7 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
                 usePredicate: row.usePredicate,
                 useTrailing: row.useTrailing,
                 onPress: wrapOnPress(row.onPress, null, row.render, row.title()),
-                withArrow: true,
-                ...row.rawTabsConfig
+                withArrow: true
             }
         })))
         .reduce((a, c) => Object.assign(a, c));
