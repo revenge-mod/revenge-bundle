@@ -1,3 +1,10 @@
+## [1.11.5](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.4...v1.11.5) (2026-08-12)
+
+
+### Bug Fixes
+
+* skip bytecode compilation for the time being ([59a96a7](https://github.com/revenge-mod/revenge-bundle/commit/59a96a702c270d4bc7749ab41643b43d6f61ec56))
+
 ## [1.11.4](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.3...v1.11.4) (2026-07-01)
 
 
