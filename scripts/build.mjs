@@ -158,7 +158,7 @@ const pathPassedToNode = path.resolve(process.argv[1]);
 const isThisFileBeingRunViaCLI = pathToThisFile.includes(pathPassedToNode);
 
 if (isThisFileBeingRunViaCLI) {
-    const { timeTook } = await buildBundle();
+    const { timeTook } = await buildBundle({}, true);
 
     printBuildSuccess(
         context.hash,
@@ -168,9 +168,9 @@ if (isThisFileBeingRunViaCLI) {
 
     if (buildMinify) {
         const { timeTook } = await buildBundle({
-            minifyIdentifiers: true,
+            minify: true,
             outfile: config.outfile.replace(/\.js$/, ".min.js")
-        });
+        }, true);
 
         printBuildSuccess(
             context.hash,
