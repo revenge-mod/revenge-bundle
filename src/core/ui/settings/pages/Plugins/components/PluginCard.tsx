@@ -1,39 +1,39 @@
+import { React, NavigationNative, tokens } from "@metro/common";
 import { CardWrapper } from "@core/ui/components/AddonCard";
 import { UnifiedPluginModel } from "@core/ui/settings/pages/Plugins/models";
 import { usePluginCardStyles } from "@core/ui/settings/pages/Plugins/usePluginCardStyles";
 import { findAssetId } from "@lib/api/assets";
-import { NavigationNative, tokens } from "@metro/common";
-import { Card, IconButton, Stack, TableSwitch, Text } from "@metro/common/components";
+import {
+  Card,
+  IconButton,
+  Stack,
+  TableSwitch,
+  Text,
+} from "@metro/common/components";
 import { showSheet } from "@ui/sheets";
-import chroma from "chroma-js";
 import { createContext, useContext, useMemo } from "react";
 import { Image, View } from "react-native";
 
-const CardContext = createContext<{ plugin: UnifiedPluginModel, result: Fuzzysort.KeysResult<UnifiedPluginModel>; }>(null!);
+const getChroma = () => require("chroma-js") as typeof import("chroma-js").default;
+
+const CardContext = createContext<{
+  plugin: UnifiedPluginModel;
+  result: Fuzzysort.KeysResult<UnifiedPluginModel>;
+}>(null!);
 const useCardContext = () => useContext(CardContext);
 
 function getHighlightColor(): import("react-native").ColorValue {
-    return chroma(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
+  return getChroma()(tokens.unsafe_rawColors.YELLOW_300).alpha(0.3).hex();
 }
 
 function Title() {
-    const styles = usePluginCardStyles();
-    const { plugin, result } = useCardContext();
+  const styles = usePluginCardStyles();
+  const { plugin, result } = useCardContext();
 
-    // could be empty if the plugin name is irrelevant!
-    const highlightedNode = result[0].highlight((m, i) =>
-        <Text key={i} style={{ backgroundColor: getHighlightColor() }}>
-            {m}
-        </Text>
-    );
-
-    const icon = plugin.icon && findAssetId(plugin.icon);
-
-    const textNode = (
-        <Text
-            numberOfLines={1}
-            variant="heading-lg/semibold"
-        >
+  // Guard the fuzzysort key result — it may be absent for some items
+  const titleResult = result?.[0];
+  const highlightedNode = titleResult
+    ? titleResult.highlight((m, i) => (
             {highlightedNode.length ? highlightedNode : plugin.name}
         </Text>
     );
