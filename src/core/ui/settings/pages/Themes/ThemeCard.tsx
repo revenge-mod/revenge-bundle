@@ -1,83 +1,48 @@
-import { formatString, Strings } from "@core/i18n";
 import AddonCard, { CardWrapper } from "@core/ui/components/AddonCard";
-import { showConfirmationAlert } from "@core/vendetta/alerts";
-import { useProxy } from "@core/vendetta/storage";
-import { fetchTheme, removeTheme, selectTheme, themes, VdThemeInfo } from "@lib/addons/themes";
+import { VdThemeInfo, themes, selectTheme } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { settings } from "@lib/api/settings";
-import { clipboard } from "@metro/common";
-import { showToast } from "@ui/toasts";
-
-function selectAndApply(value: boolean, theme: VdThemeInfo) {
-    try {
-        selectTheme(value ? theme : null);
-    } catch (e: any) {
-        console.error("Error while selectAndApply,", e);
-    }
-}
+import { showSheet } from "@lib/ui/sheets";
+import { NavigationNative, React } from "@metro/common";
 
 export default function ThemeCard({ item: theme }: CardWrapper<VdThemeInfo>) {
-    useProxy(theme);
+  const navigation = NavigationNative.useNavigation();
+  const [removed, setRemoved] = React.useState(false);
 
-    const [removed, setRemoved] = React.useState(false);
+  // This is needed because of React™
+  if (removed) return null;
 
-    // This is needed because of React™
-    if (removed) return null;
+  const { authors } = theme.data;
 
-    const { authors } = theme.data;
-
-    return (
-        <AddonCard
-            headerLabel={theme.data.name}
-            headerSublabel={authors ? `by ${authors.map(i => i.name).join(", ")}` : ""}
-            descriptionLabel={theme.data.description ?? "No description."}
-            toggleType={!settings.safeMode?.enabled ? "radio" : undefined}
-            toggleValue={() => themes[theme.id].selected}
-            onToggleChange={(v: boolean) => {
-                selectAndApply(v, theme);
-            }}
-            overflowTitle={theme.data.name}
-            overflowActions={[
-                {
-                    icon: "RefreshIcon",
-                    label: Strings.REFETCH,
-                    onPress: () => {
-                        fetchTheme(theme.id, theme.selected).then(() => {
-                            showToast(Strings.THEME_REFETCH_SUCCESSFUL, findAssetId("DownloadIcon"));
-                        }).catch(() => {
-                            showToast(Strings.THEME_REFETCH_FAILED, findAssetId("XSmallIcon"));
-                        });
-                    },
-                },
-                {
-                    icon: "LinkIcon",
-                    label: Strings.COPY_URL,
-                    onPress: () => {
-                        clipboard.setString(theme.id);
-                        showToast.showCopyToClipboard();
-                    }
-                },
-                {
-                    icon: "TrashIcon",
-                    label: Strings.DELETE,
-                    isDestructive: true,
-                    onPress: () => showConfirmationAlert({
-                        title: Strings.HOLD_UP,
-                        content: formatString("ARE_YOU_SURE_TO_DELETE_THEME", { name: theme.data.name }),
-                        confirmText: Strings.DELETE,
-                        cancelText: Strings.CANCEL,
-                        confirmColor: "red",
-                        onConfirm: () => {
-                            removeTheme(theme.id).then(wasSelected => {
-                                setRemoved(true);
-                                if (wasSelected) selectAndApply(false, theme);
-                            }).catch((e: Error) => {
-                                showToast(e.message, findAssetId("XSmallIcon"));
-                            });
-                        }
-                    })
-                },
-            ]}
-        />
-    );
+  return (
+    <AddonCard
+      headerLabel={theme.data.name}
+      headerSublabel={
+        authors ? `by ${authors.map((i) => i.name).join(", ")}` : ""
+      }
+      descriptionLabel={theme.data.description ?? "No description."}
+      toggleType={!settings.safeMode?.enabled ? "radio" : undefined}
+      toggleValue={() => themes[theme.id].selected}
+      onToggleChange={(v: boolean) => {
+        try {
+          selectTheme(v ? theme : null);
+        } catch (e: any) {
+          console.error("Error while selecting theme:", e);
+        }
+      }}
+      overflowTitle={theme.data.name}
+      actions={[
+        {
+          icon: "CircleInformationIcon-primary",
+          onPress: () => {
+            const importPromise = import("./sheets/ThemeInfoActionSheet");
+            showSheet("ThemeInfoActionSheet", importPromise, {
+              theme,
+              navigation,
+            });
+          },
+        },
+      ]}
+    />
+  );
 }
