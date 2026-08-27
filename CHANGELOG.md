@@ -1,3 +1,10 @@
+## [1.11.6-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.6-dev.1...v1.11.6-dev.2) (2026-08-27)
+
+
+### Bug Fixes
+
+* update Plugins section icon ([4004e76](https://github.com/revenge-mod/revenge-bundle/commit/4004e76f7cc1344a62211b0b2192593dec430dad))
+
 ## [1.11.6-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.5...v1.11.6-dev.1) (2026-08-27)
 
 
