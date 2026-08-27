@@ -1,3 +1,10 @@
+## [1.11.6-dev.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.5...v1.11.6-dev.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* properly resolve design components ([#250](https://github.com/revenge-mod/revenge-bundle/issues/250)) ([6064541](https://github.com/revenge-mod/revenge-bundle/commit/60645417ee6f8940e8b68c23f3300077e5e6baed))
+
 ## [1.11.5](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.4...v1.11.5) (2026-08-12)
 
 
