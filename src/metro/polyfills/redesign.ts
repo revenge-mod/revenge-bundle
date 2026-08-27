@@ -117,17 +117,13 @@ for (const [id, moduleExports] of cacher.getModules()) {
         }
 
         const exportsKeysLength = Reflect.ownKeys(actualExports).length;
-        if (_source[prop] && exportsKeysLength >= _source[prop]) {
+        if (_source[prop] && exportsKeysLength <= _source[prop]) {
             continue;
         }
 
         _module[prop] = actualExports[prop];
         _source[prop] = Reflect.ownKeys(actualExports).length;
         cacher.cacheId(id);
-
-        if (exportsKeysLength === 1) {
-            redesignProps.delete(prop);
-        }
     }
 }
 
