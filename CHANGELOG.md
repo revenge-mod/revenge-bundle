@@ -1,3 +1,11 @@
+## [1.11.6](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.5...v1.11.6) (2026-08-27)
+
+
+### Bug Fixes
+
+* properly resolve design components ([#250](https://github.com/revenge-mod/revenge-bundle/issues/250)) ([6064541](https://github.com/revenge-mod/revenge-bundle/commit/60645417ee6f8940e8b68c23f3300077e5e6baed))
+* update Plugins section icon ([4004e76](https://github.com/revenge-mod/revenge-bundle/commit/4004e76f7cc1344a62211b0b2192593dec430dad))
+
 ## [1.11.6-dev.2](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.6-dev.1...v1.11.6-dev.2) (2026-08-27)
 
 
