@@ -57,6 +57,7 @@ function PluginPage(props: PluginPageProps) {
 export default function Plugins() {
     useProxy(settings);
     const navigation = NavigationNative.useNavigation();
+    const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     return <PluginPage
         useItems={() => {
@@ -133,7 +134,10 @@ export default function Plugins() {
                         actions={<AlertActions>
                             <AlertActionButton text="Continue" variant="primary" onPress={() => {
                                 VdPluginManager.installPlugin(url)
-                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("DownloadIcon")))
+                                    .then(() => {
+                                        showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("DownloadIcon"));
+                                        forceUpdate();
+                                    })
                                     .catch(e => openAlert("bunny-plugin-install-failed", <AlertModal
                                         title="Install Failed"
                                         content={`Unable to install plugin from '${url}':`}
@@ -145,7 +149,9 @@ export default function Plugins() {
                         </AlertActions>}
                     />);
                 } else {
-                    return await VdPluginManager.installPlugin(url);
+                    await VdPluginManager.installPlugin(url);
+                    showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("DownloadIcon"));
+                    forceUpdate();
                 }
             }
         }}
