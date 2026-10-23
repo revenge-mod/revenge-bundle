@@ -1,3 +1,10 @@
+## [1.11.7](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.6...v1.11.7) (2026-10-23)
+
+
+### Bug Fixes
+
+* chat background patch on 350+ ([aabec1b](https://github.com/revenge-mod/revenge-bundle/commit/aabec1bb3fa4ad1c785985b9d558d236fa2a0bf2))
+
 ## [1.11.6](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.5...v1.11.6) (2026-08-27)
 
 
