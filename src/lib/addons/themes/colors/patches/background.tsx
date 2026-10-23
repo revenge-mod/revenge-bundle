@@ -32,6 +32,11 @@ function ThemeBackground({ children }: { children: React.ReactNode; }) {
 
 export default function patchChatBackground() {
     try {
+        if (typeof Messages.render !== "function") {
+            logger.warn("MessagesConnected does not expose a render method; skipping chat background patch.");
+            return () => { };
+        }
+
         const patches = [
             after("render", Messages, (_, ret) => {
                 if (!_colorRef.current || !_colorRef.current.background?.url) return;
