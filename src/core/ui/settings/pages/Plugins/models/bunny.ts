@@ -4,6 +4,8 @@ import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { useObservable } from "@lib/api/storage";
 
 import { UnifiedPluginModel } from ".";
+import { findAssetId } from "@lib/api/assets";
+import { showToast } from "@lib/ui/toasts";
 
 export default function unifyBunnyPlugin(manifest: BunnyPluginManifest): UnifiedPluginModel {
     return {
@@ -23,14 +25,14 @@ export default function unifyBunnyPlugin(manifest: BunnyPluginManifest): Unified
         usePluginState() {
             useObservable([pluginSettings]);
         },
-        toggle(start: boolean) {
+        async toggle(start: boolean) {
             try {
-                start
-                    ? enablePlugin(manifest.id, true)
-                    : disablePlugin(manifest.id);
-            } catch (e) {
-                console.error(e);
-                // showToast("Failed to toggle plugin " + e, findAssetId("XSmallIcon"));
+							start
+									? await enablePlugin(manifest.id, true)
+									: disablePlugin(manifest.id);
+            } catch (e: any) {
+                console.error(`Failed to toggle (${start?"enable":"disable"}) plugin`, e);
+                showToast(`Failed to toggle (${start?"enable":"disable"}) plugin: ${e?.message ?? e}`, findAssetId("XSmallIcon"));
             }
         },
         resolveSheetComponent() {

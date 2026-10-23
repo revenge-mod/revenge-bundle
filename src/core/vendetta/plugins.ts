@@ -6,8 +6,8 @@ import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { logger,LoggerClass } from "@lib/utils/logger";
 
 type EvaledPlugin = {
-    onLoad?(): void;
-    onUnload(): void;
+    onLoad?(): Promise<void> | void;
+    onUnload(): Promise<void> | void;
     settings: React.ComponentType<unknown>;
 };
 
@@ -55,8 +55,9 @@ export const VdPluginManager = {
 
         try {
             pluginManifest = await (await this.pluginFetch(id + "manifest.json")).json();
-        } catch {
-            throw new Error(`Failed to fetch manifest for ${id}`);
+        } catch (e: any) {
+          logger.error(`Failed to fetch manifest for ${id}`, e);
+          throw new Error(`Failed to fetch manifest for ${id}\n${e?.stack ?? e}`);
         }
 
         let pluginJs: string | undefined;
@@ -116,20 +117,21 @@ export const VdPluginManager = {
             if (!settings.safeMode?.enabled) {
                 const pluginRet: EvaledPlugin = await this.evalPlugin(plugin);
                 pluginInstance[id] = pluginRet;
-                pluginRet.onLoad?.();
+                await pluginRet.onLoad?.();
             }
             plugin.enabled = true;
         } catch (e) {
             logger.error(`Plugin ${plugin.id} errored whilst loading, and will be unloaded`, e);
 
             try {
-                pluginInstance[plugin.id]?.onUnload?.();
+                await pluginInstance[plugin.id]?.onUnload?.();
             } catch (e2) {
                 logger.error(`Plugin ${plugin.id} errored whilst unloading`, e2);
             }
 
             delete pluginInstance[id];
             plugin.enabled = false;
+            throw e;
         }
     },
 

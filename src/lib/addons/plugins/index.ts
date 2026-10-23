@@ -212,7 +212,7 @@ export async function deleteRepository(repoUrl: string) {
 }
 
 /**
- * Enablea a plugin. The plugin must have been declared as installed.
+ * Enable a plugin. The plugin must have been declared as installed.
  * @param id The installed plugin ID
  * @param start Whether to start the plugin
  */
@@ -224,7 +224,7 @@ export async function enablePlugin(id: string, start: boolean) {
 }
 
 /**
- * Disables and stop the plugin. The plugin must have been declared as installed
+ * Disables and stops the plugin. The plugin must have been declared as installed
  * @param id The installed plugin ID
  */
 export function disablePlugin(id: string) {
