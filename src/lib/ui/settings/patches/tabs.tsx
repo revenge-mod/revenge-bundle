@@ -1,10 +1,12 @@
 import { after } from "@lib/api/patcher";
+import { deleteJsxCreate, onJsxCreate } from "@lib/api/react/jsx";
 import { TableRow } from "@metro/common/components";
 import { findByNameLazy, findByPropsLazy } from "@metro/wrappers";
 import { registeredSections } from "@ui/settings";
 import { Strings } from "@core/i18n";
 import { CustomPageRenderer, wrapOnPress } from "./shared";
 import { findInReactTree } from "@lib/utils";
+import { logger } from "@lib/utils/logger";
 
 const settingConstants = findByPropsLazy("SETTING_RENDERER_CONFIG");
 const createListModule = findByPropsLazy("createList");
@@ -14,6 +16,23 @@ function useIsFirstRender() {
     let firstRender = false;
     React.useEffect(() => void (firstRender = true), []);
     return firstRender;
+}
+
+function createHarnessBoundary() {
+    return class HarnessBoundary extends React.Component<{ children: JSX.Element; }, { errored: boolean; generation: number; }> {
+        state = { errored: false, generation: 0 };
+        static getDerivedStateFromError = () => ({ errored: true });
+
+        componentDidCatch(error: unknown) {
+            logger.warn("SettingHookHarness crashed, remounting it", error);
+            if (this.state.generation < 3) this.setState(s => ({ errored: false, generation: s.generation + 1 }));
+        }
+
+        render() {
+            if (this.state.errored) return null;
+            return React.cloneElement(this.props.children, { key: this.state.generation });
+        }
+    };
 }
 
 export function patchTabsUI(unpatches: (() => void | boolean)[]) {
@@ -65,6 +84,11 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
         }),
         set: v => rendererConfigValue = v,
     });
+
+    const HarnessBoundary = createHarnessBoundary();
+    const wrapHarness = (_: any, ret: JSX.Element) => <HarnessBoundary>{ret}</HarnessBoundary>;
+    onJsxCreate("SettingHookHarness", wrapHarness);
+    unpatches.push(() => deleteJsxCreate("SettingHookHarness", wrapHarness));
 
     unpatches.push(() => {
         Object.defineProperty(settingConstants, "SETTING_RENDERER_CONFIG", {

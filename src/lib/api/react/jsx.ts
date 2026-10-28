@@ -30,8 +30,11 @@ export function patchJsx() {
         }
 
         // The check could be more complex, but this is fine for now to avoid overhead
-        if (typeof Component === "function" && callbacks.has(Component.name)) {
-            const cbs = callbacks.get(Component.name)!;
+        const name = typeof Component === "function" ? Component.name
+            : (Component as any)?.type?.name ?? (Component as any)?.render?.name;
+
+        if (name && callbacks.has(name)) {
+            const cbs = callbacks.get(name)!;
             for (const cb of cbs) {
                 const _ret = cb(Component, ret);
                 if (_ret !== undefined) ret = _ret;
