@@ -6,8 +6,8 @@ import { NavigationNative, tokens } from "@metro/common";
 import { Card, IconButton, Stack, TableSwitch, Text } from "@metro/common/components";
 import { showSheet } from "@ui/sheets";
 import chroma from "chroma-js";
-import { createContext, useContext, useMemo } from "react";
-import { Image, View } from "react-native";
+import React, { createContext, useContext, useMemo } from "react";
+import { Image, View, TouchableOpacity } from "react-native";
 
 const CardContext = createContext<{ plugin: UnifiedPluginModel, result: Fuzzysort.KeysResult<UnifiedPluginModel>; }>(null!);
 const useCardContext = () => useContext(CardContext);
@@ -123,8 +123,21 @@ const Actions = () => {
 export default function PluginCard({ result, item: plugin }: CardWrapper<UnifiedPluginModel>) {
     plugin.usePluginState();
 
-    const [, forceUpdate] = React.useReducer(() => ({}), 0);
+    const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+    const [isToggling, setIsToggling] = React.useState(false);
+
     const cardContextValue = useMemo(() => ({ plugin, result }), [plugin, result]);
+
+    const handleToggle = async () => {
+        if (isToggling) return;
+        setIsToggling(true);
+        try {
+            await plugin.toggle(!plugin.isEnabled());
+        } finally {
+            setIsToggling(false);
+            forceUpdate();
+        }
+    };
 
     return (
         <CardContext.Provider value={cardContextValue}>
@@ -138,13 +151,16 @@ export default function PluginCard({ result, item: plugin }: CardWrapper<Unified
                         <View>
                             <Stack spacing={12} direction="horizontal">
                                 <Actions />
-                                <TableSwitch
-                                    value={plugin.isEnabled()}
-                                    onValueChange={(v: boolean) => {
-                                        plugin.toggle(v);
-                                        forceUpdate();
-                                    }}
-                                />
+                                <TouchableOpacity
+                                    activeOpacity={0.8}
+                                    onPress={handleToggle}
+                                    disabled={isToggling}
+                                    style={{ opacity: isToggling ? 0.5 : 1 }}
+                                >
+                                    <View pointerEvents="none">
+                                        <TableSwitch value={plugin.isEnabled()} />
+                                    </View>
+                                </TouchableOpacity>
                             </Stack>
                         </View>
                     </View>
