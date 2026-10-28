@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/revenge-mod/revenge-bundle/compare/v1.12.0...v1.12.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* toast and settings crashes on Discord 351 ([#264](https://github.com/revenge-mod/revenge-bundle/issues/264)) ([7dd7ddc](https://github.com/revenge-mod/revenge-bundle/commit/7dd7ddcfcb5ed0abda5fa976f15a3d57504e3bc1))
+
 # [1.12.0](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.7...v1.12.0) (2026-10-28)
 
 
