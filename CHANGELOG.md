@@ -1,3 +1,16 @@
+# [1.12.0](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.7...v1.12.0) (2026-10-28)
+
+
+### Bug Fixes
+
+* **plugins:** await plugin toggling and prevent button spam ([e2a7e7a](https://github.com/revenge-mod/revenge-bundle/commit/e2a7e7a89c93bf3a2c0b62ede4de98e065e73f45))
+* **plugins:** rerender list after installation ([e4b82cb](https://github.com/revenge-mod/revenge-bundle/commit/e4b82cb521f7bec6a73c29fe3a502075d6651bde))
+
+
+### Features
+
+* improve plugin toggles ([#254](https://github.com/revenge-mod/revenge-bundle/issues/254)) ([5b3be46](https://github.com/revenge-mod/revenge-bundle/commit/5b3be4697272e5cb477aaa741e0809aaa03a8a64))
+
 ## [1.11.7](https://github.com/revenge-mod/revenge-bundle/compare/v1.11.6...v1.11.7) (2026-10-23)
 
 
